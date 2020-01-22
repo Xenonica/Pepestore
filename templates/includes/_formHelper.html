@@ -9,17 +9,17 @@
 {% endmacro %}
 
 {% macro filter(i) %}
+
+<a href="/listingPage/{{i.get_listingID()}}" style="color:black">
 <div class="listing_wrapper">
     <span>Seller: <b>{{ i.get_seller_name() }}</b></span>
     <br>
     <img src='{{i.get_displaypic()}}' width="250px" height="250px">
     <br>
-    <span>Name: <b>{{ i.get_name() }}</b></span>
+    <span><b>{{ i.get_name() }}</b></span>
     <br>
-    <span>Price: <b>${{ i.get_price() }}</b></span>
+    <span><b>${{ i.get_price() }}</b></span>
     <br>
     <span>Quantity: <b style="color:red">{{ i.get_quantity() }}</b></span>
-    <br>
-    <p><a href="/listingPage/{{i.get_listingID()}}" class="btn btn-warning">View</a></p>
-</div>
+</div></a>
 {% endmacro %}
