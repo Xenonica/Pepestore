@@ -230,12 +230,16 @@ class Chat :
         self.__SellerLastOnline = lastonline
 
 class Delivery:
-    countID = 0
-
-
     def __init__(self, username, product, location):
-        Delivery.countID += 1
-        self.__deliveryID = Delivery.countID
+        db = shelve.open('storage.db','c')
+        try:
+            deliveryDict = db['Delivery']
+            key = list(deliveryDict.keys())
+            count = sorted(key)[-1]
+        except:
+            count = 0
+        count += 1
+        self.__deliveryID = count
         self.__username = username
         self.__product  = product
         self.__location = location

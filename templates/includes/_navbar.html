@@ -27,7 +27,10 @@
                 <a class="dropdown-item" href="/retrieveUsers">Retrieve Users</a>
                 {% endif %}
                 <a class="dropdown-item" href="/createDelivery">Create Delivery</a>
-                <a class="dropdown-item" href="/retrieveDelivery">Delivery Records</a>
+                <a class="dropdown-item" href="/manageDelivery">Manage Delivery</a>
+                    {% if session['userID'] == 1 %}
+                <a class="dropdown-item" href="/retrieveDelivery">Retrieve Delivery Records</a>
+                    {% endif %}
                 <a class="dropdown-item" href="/Proof">Proof Of Delivery</a>
                 <a class="dropdown-item" href="/analytics">Analytics</a>
                  <a class="dropdown-item">

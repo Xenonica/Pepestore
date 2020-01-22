@@ -3,11 +3,20 @@ from Forms import CreateListing , CreateAccount , LoginAccount, Logout , Chat , 
 from flask_socketio import SocketIO , send , disconnect
 from datetime import datetime , timedelta
 import shelve, os , Classes , hashlib,shutil
+import folium
+import geocoder
+from folium import plugins
+from geopy import distance
+import random
 
 # Absolute path of the program
 APP_ROOT = os.path.dirname(os.path.abspath(__file__))
 app = Flask(__name__)
 app.secret_key = 'J'
+app.jinja_env.auto_reload = True
+app.config['TEMPLATES_AUTO_RELOAD'] = True
+
+
 
 socketio = SocketIO(app)
 
@@ -672,31 +681,37 @@ def AllChats():
 
     return render_template('AllChats.html',userDict = userDict,listingDict = listingDict,ChatList = ChatList,alert = navbar()[0] , logout = navbar()[1] , regform = navbar()[2] , logform = navbar()[3])
 
+
 @app.route('/retrieveDelivery')
 def retrieveDelivery():
-    deliveryDict = {}
-    db = shelve.open('storage.db', 'w')
-    try:
+    if session['userID'] == 1 :
+        deliveryDict = {}
+        db = shelve.open('storage.db', 'w')
+        try:
 
-        deliveryDict = db['Delivery']
+            deliveryDict = db['Delivery']
 
-    except:
-        print(deliveryDict)
+        except:
+            print(deliveryDict)
 
-    deliveryList = []
-    for key in deliveryDict:
-        user = deliveryDict.get(key)
-        deliveryList.append(user)
+        deliveryList = []
+        for key in deliveryDict:
+            delivery = deliveryDict.get(key)
+            deliveryList.append(delivery)
 
-    for key in deliveryList:
-        print(deliveryList)
-        key.set_time(key.get_time() + timedelta(seconds=1))
-        if datetime.now() > key.get_estimatedTime():
-            key.set_status('Delivered')
+        for key in deliveryList:
+            print(deliveryList)
+            if key.get_status() == "In Delivery":
+                if datetime.now() > key.get_estimatedTime():
+                    key.set_status('Delivered')
 
-    db.close()
+        db.close()
 
-    return render_template('retrieveDelivery.html', usersList=deliveryList, count=len(deliveryList),alert = navbar()[0] , logout = navbar()[1] , regform = navbar()[2] , logform = navbar()[3])
+
+    else:
+        return redirect(url_for('home'))
+
+    return render_template('retrieveDelivery.html', deliveryList=deliveryList, count=len(deliveryList),alert = navbar()[0] , logout = navbar()[1] , regform = navbar()[2] , logform = navbar()[3])
 
 @app.route('/createDelivery', methods=['GET', 'POST'])
 def createDelivery():
@@ -712,25 +727,55 @@ def createDelivery():
             print("Error in retrieving delivery from storage")
 
 
-        delivery = Classes.Delivery(createDeliveryForm.username.data, createDeliveryForm.product.data, createDeliveryForm.location.data)
+        delivery = Classes.Delivery(session['username'], createDeliveryForm.product.data, createDeliveryForm.location.data)
         delivery.set_time(datetime.now())
-        delivery.set_estimatedTime(datetime.now() + timedelta(days = 3))
+        randomtime = random.randint(10,30) # Random generate estimated time of delivery
+        delivery.set_estimatedTime(datetime.now() + timedelta(seconds = randomtime))
         delivery.set_status('In Delivery')
 
 
-        if delivery.get_deliveryID() == 1:
-            delivery.set_deliveryID(delivery.get_deliveryID()+len(deliveryDict))
-            #print(User.User.countID)
-
         deliveryDict[delivery.get_deliveryID()] = delivery
         db['Delivery'] = deliveryDict
+        deliveryDict = db['Delivery']
+        delivery = deliveryDict[delivery.get_deliveryID()]
 
         print(deliveryDict)
 
         db.close()
 
-        return redirect(url_for('retrieveDelivery'))
+        return redirect(url_for('manageDelivery'))
     return render_template('createDelivery.html', form=createDeliveryForm,alert = navbar()[0] , logout = navbar()[1] , regform = navbar()[2] , logform = navbar()[3])
+
+
+@app.route('/manageDelivery', methods=['GET', 'POST'])
+def manageDelivery():
+    deliveryDict = {}
+    try :
+        db = shelve.open('storage.db', 'r')
+        deliveryDict = db['Delivery']
+        db.close()
+    except :
+        db = shelve.open('storage.db', 'c')
+        deliveryDict = []
+        db.close()
+
+    deliveryList = []
+    for key in deliveryDict:
+        delivery = deliveryDict.get(key)
+        if delivery.get_username() == session['username']:
+            deliveryList.append(delivery)
+
+    for key in deliveryList:
+        print(deliveryList)
+        if key.get_status() == 'In Delivery':
+            if datetime.now() > key.get_estimatedTime():
+                key.set_status('Delivered')
+
+    return render_template('manageDelivery.html', deliveryList=deliveryList, count=len(deliveryList),alert = navbar()[0] , logout = navbar()[1] , regform = navbar()[2] , logform = navbar()[3])
+
+
+
+
 
 @app.route('/updateDelivery/<int:id>',methods = ["GET","POST"])
 def updateDelivery(id):
@@ -741,26 +786,23 @@ def updateDelivery(id):
         db = shelve.open('storage.db','w')
         deliveryDict = db['Delivery']
 
-        user = deliveryDict.get(id)
-        user.set_username(updateDeliveryForm.username.data)
-        user.set_product(updateDeliveryForm.product.data)
-        user.set_location(updateDeliveryForm.location.data)
+        delivery = deliveryDict.get(id)
+        delivery.set_product(updateDeliveryForm.product.data)
+        delivery.set_location(updateDeliveryForm.location.data)
 
         db['Delivery'] =deliveryDict
         db.close()
 
-        return redirect(url_for('retrieveDelivery'))
-
+        return redirect(url_for('manageDelivery'))
 
     else:
         deliveryDict={}
         db = shelve.open('storage.db', 'r')
         deliveryDict = db['Delivery']
         db.close()
-        user = deliveryDict.get(id)
-        updateDeliveryForm.username.data = user.get_username()
-        updateDeliveryForm.product.data = user.get_product()
-        updateDeliveryForm.location.data = user.get_location()
+        delivery = deliveryDict.get(id)
+        updateDeliveryForm.product.data = delivery.get_product()
+        updateDeliveryForm.location.data = delivery.get_location()
 
         return render_template('updateDelivery.html', form=updateDeliveryForm, alert=navbar()[0], logout = navbar()[1] , regform = navbar()[2] , logform = navbar()[3])
 
@@ -775,15 +817,46 @@ def deleteDelivery(id):
     db["Delivery"] = deliveryDict
     db.close()
 
+    if session['username'] == 1:
+        return redirect(url_for('retrieveDelivery'))
+    else:
+        return redirect(url_for('manageDelivery'))
+
+
+
+@app.route('/deleteDeliveryatretrieve/<int:id>', methods = ['POST'])
+def deleteDeliveryatretrieve(id):
+    deliveryDict = {}
+    db = shelve.open('storage.db','w')
+    deliveryDict = db['Delivery']
+
+    deliveryDict.pop(id)
+
+    db["Delivery"] = deliveryDict
+    db.close()
+
     return redirect(url_for('retrieveDelivery'))
+
+
+@app.route('/CancelDelivery/<int:id>')
+def CancelDelivery(id):
+    deliveryDict = {}
+    db =shelve.open('storage.db', 'w')
+    deliveryDict = db['Delivery']
+
+    delivery = deliveryDict.get(id)
+    delivery.set_status("Cancelled")
+
+    db['Delivery'] = deliveryDict
+    db.close()
+    return redirect(url_for('manageDelivery'))
 
 
 @app.route('/Proof')
 def Proof():
     deliveryDict = {}
-    db = shelve.open('storage.db', 'w')
+    db = shelve.open('storage.db', 'r')
     try:
-
         deliveryDict = db['Delivery']
 
     except:
@@ -792,17 +865,58 @@ def Proof():
     deliveryList = []
     for key in deliveryDict:
         delivery = deliveryDict.get(key)
-        deliveryList.append(delivery)
+        if delivery.get_username() == session['username']:
+            deliveryList.append(delivery)
 
     for key in deliveryList:
         print(deliveryList)
-        key.set_time(key.get_time() + timedelta(seconds = 1))
-        if datetime.now() > key.get_estimatedTime():
-            key.set_status('Delivered')
+        if key.get_status() == "In Delivery":
+            if datetime.now() > key.get_estimatedTime():
+                key.set_status('Delivered')
+
 
     db.close()
 
-    return render_template('Proof.html', usersList=deliveryList, count=len(deliveryList),alert = navbar()[0] , logout = navbar()[1] , regform = navbar()[2] , logform = navbar()[3])
+    return render_template('Proof.html', deliveryList=deliveryList, count=len(deliveryList),alert = navbar()[0] , logout = navbar()[1] , regform = navbar()[2] , logform = navbar()[3])
+
+
+@app.route('/Track/<int:id>')
+def Track(id):
+    deliveryDict={}
+    db = shelve.open('storage.db', 'w')
+
+    deliveryDict = db['Delivery']
+
+    delivery = deliveryDict.get(id)
+    locationx = delivery.get_location()
+    statusx = delivery.get_status()
+    buyer = delivery .get_username()
+
+    m = folium.Map(location=[1.3800,103.8489], zoom_start=12)
+    tooltip = 'Pepestore'
+    folium.Marker([1.3800,103.8489], popup='<strong>PepeStore</strong>',tooltip=tooltip).add_to(m)
+
+    pepe= geocoder.osm('Nanyang Polytechnic,Singapore')
+    address = geocoder.osm(locationx)
+    address_latlng = [address.lat, address.lng]
+    pepe_latlng = [pepe.lat, pepe.lng]
+    folium.Marker(address_latlng, popup=locationx, tooltip=buyer).add_to(m)
+    distance_path = [pepe_latlng,address_latlng]
+    plugins.AntPath(distance_path,tooltip = "In Delivery",).add_to(m)
+
+
+    m.save('templates/map.html')
+
+
+    db['Delivery'] =deliveryDict
+    db.close()
+
+    return render_template('Track.html',delivery=delivery,alert = navbar()[0] , logout = navbar()[1] , regform = navbar()[2] , logform = navbar()[3])
+
+@app.route('/map')
+def map():
+    return render_template("map.html")
+
 
 
 if __name__ == '__main__':

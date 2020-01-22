@@ -1,14 +1,14 @@
 {% extends "base.html" %}
 {% block title %}Delivery Records{% endblock %}
 {% block content %}
-<h1 class="display-4">Delivery Records</h1>
+<h1 class="display-4">Delivery Records (All Users)</h1>
 <div>
  {% if count == 0 %}
  <p>There are no deliveries.</p>
  {% elif count == 1 %}
- <p>There is 1 Delivery added.</p>
+ <p>There is 1 Delivery .</p>
  {% else %}
- <p>There are {{ count }} Deliveries added.</p>
+ <p>There are {{ count }} total Deliveries .</p>
  {% endif %}
 </div>
 
@@ -19,7 +19,7 @@ function startTime() {
   var h = today.getHours();
   var m = today.getMinutes();
   var s = today.getSeconds();
-  var ampm = h >= 12 ? 'PM' : 'AM';
+  var ampm = h >= 12 ? ' PM' : ' AM';
    h = h % 12;
   h = h ? h: 12;
   m = checkTime(m);
@@ -34,21 +34,33 @@ function checkTime(i) {
 }
 </script>
 
-
 <body onload="startTime()">
 
 <div id="txt"></div>
 
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+<script type="text/javascript">
+ $(document).ready(function() {
+    refreshTable();
+  });
+
+     function refreshTable(){
+       $('#MyTable').load('retrieveDelivery #MyTable', function(){
+          setTimeout(refreshTable, 1000);
+        });
+      }
+
+</script>
 
 <br>
 
 <div>
- <table class="table table-striped">
+ <table class="table table-striped" id="MyTable">
  <thead>
  <tr>
  <th>Delivery ID</th>
  <th>Username</th>
- <th>Product ID</th>
+ <th>Listing ID</th>
  <th>Delivery Address</th>
  <th>Delivery Status</th>
  <th>Order Time</th>
@@ -56,20 +68,32 @@ function checkTime(i) {
  </tr>
  </thead>
  <tbody>
- {% for user in usersList %}
+ {% for delivery in deliveryList %}
  <tr>
- <td>{{ user.get_deliveryID() }}</td>
- <td>{{ user.get_username() }}</td>
- <td>{{ user.get_product() }}</td>
- <td>{{ user.get_location() }}</td>
- <td>{{user.get_status()}}</td>
-  <td>{{user.get_time().strftime("%d %B %Y, %I:%M:%S %p") }}</td>
-  <td>{{user.get_estimatedTime().strftime("%d %B %Y, %I:%M:%S %p") }}</td>
+ <td>{{ delivery.get_deliveryID() }}</td>
+ <td>{{ delivery.get_username() }}</td>
+ <td>{{ delivery.get_product() }}</td>
+ <td>{{ delivery.get_location() }}</td>
+ <td>{{delivery.get_status()}}
+   {% if delivery.get_status() == "In Delivery" %}
+   <img src="/static/icons/indelivery.svg" width="28px" height="28px">
+  {% elif delivery.get_status() == "Delivered" %}
+   <img src="/static/icons/delivered.svg" width="28px" height="28px">
+  {% else %}
+  <img src="/static/icons/cancel.svg" width="28px" height="28px">
+  {% endif %}
+ </td>
+  <td>{{delivery.get_time().strftime("%d %B %Y, %I:%M:%S %p") }}</td>
+  {% if delivery.get_status() == "Cancelled" %}
+  <td>-</td>
+  {% else %}
+  <td>{{delivery.get_estimatedTime().strftime("%d %B %Y, %I:%M:%S %p") }}</td>
+  {% endif %}
 
- <td><a href="/updateDelivery/{{user.get_deliveryID()}}" class="btn btn-warning">Update</a></td>
+ <td><a href="/updateDelivery/{{delivery.get_deliveryID()}}" class="btn btn-warning">Update</a></td>
  <td>
- <form action=" {{url_for('deleteDelivery' ,id=user.get_deliveryID())}}" method="POST">
- <input type="submit" value="Cancel" class="btn btn-danger">
+ <form action=" {{url_for('deleteDeliveryatretrieve' ,id=delivery.get_deliveryID())}}" method="POST">
+ <input type="submit" value="Delete" class="btn btn-danger">
  </form>
  </td>
  </tr>
