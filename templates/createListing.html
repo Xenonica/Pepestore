@@ -1,34 +1,56 @@
 {% extends "base.html" %}
-{% block title %}Library Loan System - Create User{% endblock %}
+{% block title %}Pepestore - Create Listing{% endblock %}
 
 {% block content %}
 {% from "includes/_formHelper.html" import render_field %}
 <script>
 </script>
 <h1 class="display-4">Create Listing</h1>
-<form method="POST" action="">
+<div class="container">
   <img src={{Img1}} height="400" width="400" id="DisplayImg">
+<form method="POST" action="" class="list-info-container">
   <div class="form-group">
-    {{ render_field(form.name, class="form-control") }}
+    {{ render_field(form.name, class="form-control custom_name" ) }}
   </div>
   <div class="form-group">
-    {{ render_field(form.price, class="form-control") }}
+    {{ render_field(form.price, class="form-control custom_price") }}
   </div>
   <div class="form-group">
-    {{ render_field(form.description, class="form-control") }}
+    {{ render_field(form.description, class="form-control custom_description") }}
   </div>
   <div class="form-group">
-    {{ render_field(form.category, class="form-control") }}
+    {{ render_field(form.category, class="form-control custom_category") }}
   </div>
   <div class="form-group">
-    {{ render_field(form.quantity, class="form-control") }}
+    {{ render_field(form.quantity, class="form-control custom_quantity") }}
   </div>
   <input type="submit" value="Submit" class="btn btn-primary"/>
 </form>
+  </div>
 <style>
   #DisplayImg {
     object-fit: cover;
-    margin:20px;
     }
+
+   .container{
+   display:flex;
+   margin-left:0;
+   margin-top:10px;
+   padding:0
+   }
+
+   .list-info-container{
+   margin-left:5%;
+   margin-bottom: 5%;
+   }
+
+  .custom_quantity, .custom_price{
+  width: 100px;
+  }
+
+
+  .custom_category, .custom_name, .custom_description{
+  width: 300px;
+  }
 </style>
 {% endblock %}
