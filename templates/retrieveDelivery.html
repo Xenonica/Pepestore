@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+{% block title %}Delivery Records{% endblock %}
+{% block content %}
+<h1 class="display-4">Delivery Records</h1>
+<div>
+ {% if count == 0 %}
+ <p>There are no deliveries.</p>
+ {% elif count == 1 %}
+ <p>There is 1 Delivery added.</p>
+ {% else %}
+ <p>There are {{ count }} Deliveries added.</p>
+ {% endif %}
+</div>
+
+
+<script>
+function startTime() {
+  var today = new Date();
+  var h = today.getHours();
+  var m = today.getMinutes();
+  var s = today.getSeconds();
+  var ampm = h >= 12 ? 'PM' : 'AM';
+   h = h % 12;
+  h = h ? h: 12;
+  m = checkTime(m);
+  s = checkTime(s);
+  document.getElementById('txt').innerHTML =
+  "Current Time: " + h + ":" + m + ":" + s  +ampm;
+  var t = setTimeout(startTime, 500);
+}
+function checkTime(i) {
+  if (i < 10) {i = "0" + i};  // add zero in front of numbers < 10
+  return i;
+}
+</script>
+
+
+<body onload="startTime()">
+
+<div id="txt"></div>
+
+
+<br>
+
+<div>
+ <table class="table table-striped">
+ <thead>
+ <tr>
+ <th>Delivery ID</th>
+ <th>Username</th>
+ <th>Product ID</th>
+ <th>Delivery Address</th>
+ <th>Delivery Status</th>
+ <th>Order Time</th>
+  <th> Estimated Time of Delivery </th>
+ </tr>
+ </thead>
+ <tbody>
+ {% for user in usersList %}
+ <tr>
+ <td>{{ user.get_deliveryID() }}</td>
+ <td>{{ user.get_username() }}</td>
+ <td>{{ user.get_product() }}</td>
+ <td>{{ user.get_location() }}</td>
+ <td>{{user.get_status()}}</td>
+  <td>{{user.get_time().strftime("%d %B %Y, %I:%M:%S %p") }}</td>
+  <td>{{user.get_estimatedTime().strftime("%d %B %Y, %I:%M:%S %p") }}</td>
+
+ <td><a href="/updateDelivery/{{user.get_deliveryID()}}" class="btn btn-warning">Update</a></td>
+ <td>
+ <form action=" {{url_for('deleteDelivery' ,id=user.get_deliveryID())}}" method="POST">
+ <input type="submit" value="Cancel" class="btn btn-danger">
+ </form>
+ </td>
+ </tr>
+ {% endfor %}
+ </tbody>
+ </table>
+</div>
+{% endblock %}

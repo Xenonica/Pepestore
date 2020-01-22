@@ -1,0 +1,139 @@
+{% extends "base.html" %}
+{% block title %}Pepestore - Home{% endblock %}
+
+{% from "includes/_formHelper.html" import render_field %}
+{% block content %}
+<div class="bannercon">
+  <img class="banner" src="static/banner/CNY-Banner-2020-1.png">
+<!--  <img class="banner" src="static/banner/cny-2020_header-banner.png">-->
+  <img class="banner" src="static/banner/CNY-web-banner-2020-01-1024x401.png">
+
+  <button class="w3-button w3-black w3-display-left" onclick="plusDivs(-1)">&#10094;</button>
+  <button class="w3-button w3-black w3-display-right" onclick="plusDivs(1)">&#10095;</button>
+</div>
+<script>
+var slideIndex = 1;
+showDivs(slideIndex);
+
+function plusDivs(n) {
+  showDivs(slideIndex += n);
+}
+
+function showDivs(n) {
+  var i;
+  var x = document.getElementsByClassName("banner");
+  if (n > x.length) {slideIndex = 1}
+  if (n < 1) {slideIndex = x.length}
+  for (i = 0; i < x.length; i++) {
+    x[i].style.display = "none";
+  }
+  x[slideIndex-1].style.display = "block";
+}
+
+
+var myIndex = 0;
+carousel();
+
+function carousel() {
+  var i;
+  var x = document.getElementsByClassName("banner");
+  for (i = 0; i < x.length; i++) {
+    x[i].style.display = "none";
+  }
+  myIndex++;
+  if (myIndex > x.length) {myIndex = 1}
+  x[myIndex-1].style.display = "block";
+  setTimeout(carousel, 10000);
+}
+
+</script>
+  <br>
+    <h2>Newest Listings</h2>
+
+<br>
+  <div class="row">
+    <div class="col-lg-8 mx-auto">
+
+      <!-- List group-->
+      <ul class="list-group shadow">
+        {% for i in newestLists %}
+        <li class="list-group-item" onclick='window.location.href="/listingPage/{{i.get_listingID()}}"'>
+          <!-- Custom content-->
+          <div class="media align-items-lg-center flex-column flex-lg-row p-3 list">
+            <div class="media-body order-2 order-lg-1">
+              <h4>Seller: <b>{{i.get_seller_name()}}</b></h4>
+              <br>
+              <h5 class="mt-0 font-weight-bold mb-2">{{ i.get_name() }}</h5>
+              <p class="font-italic text-muted mb-0 small">{{ i.get_description() }}</p>
+              <div class="d-flex align-items-center justify-content-between mt-1">
+                <h6 class="font-weight-bold my-2">${{ i.get_price() }}</h6>
+                <h7 class="font-weight-bold my-2">Quantity: {{ i.get_quantity() }}</h7>
+              </div>
+            </div><img src={{i.get_displaypic()}} width="200" height="200" class="ml-lg-5 order-1 order-lg-2 listings">
+          </div>
+          <!-- End -->
+        </li>
+        <!-- End -->
+          {% endfor %}
+      </ul>
+    </div>
+  </div>
+
+<style>
+.list-group-item {
+  cursor:pointer;
+}
+
+.listings {
+    object-fit: cover;
+}
+
+@keyframes fading{
+0%{
+opacity:0.7
+}
+50%{
+opacity:1
+}
+100%{opacity:0
+}
+}
+
+.banner{
+  display: relative;
+  width:100%;
+  height:300px;
+  animation:fading 15s infinite;
+  object-fit: contain;
+ }
+
+.row{
+margin-left:0;
+margin-right:0;
+margin-bottom: 10%;
+}
+
+.w3-display-left{
+  position:absolute;
+  left:0%;
+  top:35%;
+  color:white;
+  background-color:#343a40;
+  display:inline-block;
+  border:none;
+  outline:0;
+  }
+
+.w3-display-right{
+  position:absolute;
+  top:35%;
+  right:0%;
+  color:white;
+  background-color:#343a40;
+  border:none;
+  outline:0;
+
+
+}
+</style>
+{% endblock %}

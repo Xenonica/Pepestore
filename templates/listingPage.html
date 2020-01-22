@@ -1,0 +1,133 @@
+{% extends "base.html" %}
+{% block title %}Pepestore - Listings{% endblock %}
+{% block content %}
+
+<style>
+    .container{
+    display:flex;
+    margin-left: 3%;
+    margin-top: 3%;
+    padding:0;
+    margin-right:0;
+    }
+
+    .image_wrapper{
+    }
+
+    .listing-info_wrapper{
+    margin-left:10%;
+    display:flex;
+    flex-direction: column;
+    }
+
+    .description_div{
+    flex-grow:1;
+    }
+
+    img{
+    object-fit: cover;
+    }
+
+    .chat_button{
+    border-radius: 50px;
+    -moz-border-radius: 50px;
+    -webkit-border-radius: 50px;
+    width: 200px;
+    height: 40px;
+    background-color: #343a40;
+    color: white;
+    border: 1px solid black;
+    }
+
+    .images_container{
+    margin-left: 3%;
+    margin-top: 3%;
+    margin-right:3%;
+    margin-bottom: 3%;
+    padding:0;
+    display:flex;
+    }
+
+    .opac{
+    opacity:0.5;
+    }
+
+    .opac:hover{
+    opacity:1;
+    }
+
+    .w3-opacity-off{
+    opacity:1;
+    }
+
+    .w3-opacity-off,.w3-hover-opacity-off:hover{opacity:1}
+    .w3-opacity,.w3-hover-opacity:hover{opacity:0.60}
+</style>
+<div class="container">
+    <div class="image_wrapper">
+        {% for i in piclist %}
+        {% if piclist.index(i) == 0 %}
+        <img class="mySlides" src="{{i}}"
+             style="width:400px; height:400px">
+        {% endif %}
+        <img class="mySlides" src="{{i}}"
+             style="display:none; width:400px; height:400px">
+        {% endfor %}
+        <!--    <img src={{listingID.get_displaypic()}} class="image-responsive" height="400" width="400">-->
+    </div>
+        <div class="listing-info_wrapper">
+            <div class="">
+                <h1 class="listing_info">{{listingID.get_name()}}</h1>
+            </div>
+
+            <div class="">
+                <h3 class="listing_info" style="color:red">S${{ listingID.get_price() }}</h3>
+            </div>
+
+            <div class="description_div">
+                <p class="listing_info">
+                    {{ listingID.get_description() }}
+                </p>
+            </div>
+
+            <div id="quantity-chat-button_div">
+                <h6 class="listing_info">Quantity left: <span style="color:red">{{listingID.get_quantity()}}</span></h6>
+                <form method="POST">
+                    {{ chatform.chat(class="chat_button") }}
+                    <i class="fas fa-heart fa-2x"></i>
+                </form>
+            </div>
+        </div>
+</div>
+
+<div class="images_container">
+    {% for i in piclist %}
+    <img class="demo w3-opacity w3-hover-opacity-off" src="{{i}}"
+         style="width:100px;height:100px;float:left;cursor:pointer;margin-right:10px"
+         onclick="currentDiv({{piclist.index(i)+2}})">
+    {% endfor %}
+</div>
+
+<script>
+function currentDiv(n) {
+  showDivs(slideIndex = n);
+}
+
+function showDivs(n) {
+  var i;
+  var x = document.getElementsByClassName("mySlides");
+  var dots = document.getElementsByClassName("demo");
+  if (n > x.length) {slideIndex = 1}
+  if (n < 1) {slideIndex = x.length}
+  for (i = 0; i < x.length; i++) {
+    x[i].style.display = "none";
+  }
+  for (i = 0; i < dots.length; i++) {
+    dots[i].className = dots[i].className.replace("w3-opacity-off", "");
+  }
+  x[slideIndex-1].style.display = "block";
+  dots[slideIndex-1].className += "w3-opacity-off";
+}
+</script>
+
+{% endblock %}

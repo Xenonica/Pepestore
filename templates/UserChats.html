@@ -1,0 +1,475 @@
+{% extends "base.html" %}
+{% block title %}Library Loan System - Home{% endblock %}
+
+{% block content %}
+{% from "includes/_formHelper.html" import render_field %}
+<html>
+<head>
+<title>Chat Room</title>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.4.8/socket.io.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+</head>
+<body>
+<script type="text/javascript">
+$(document).ready(function() {
+    var count = 0
+    var start = new Date
+
+    $("#OfferCancel").hide();
+    $("#OfferAccept").hide();
+    $("#OfferDecline").hide();
+
+    if ({{Offers}}.length !== 0){
+    $("#OfferCancel").show();
+    $("#OfferAccept").show();
+    $("#OfferDecline").show();
+    $("#ListingOfferPrice").hide();
+    $("#ListingOfferSubmit").hide();
+    }
+
+	var socket = io.connect('http://'+document.domain+':'+location.port);
+
+    socket.on('connect', function() {
+        if ('{{Position}}' == 'S'){
+            socket.send('SellerConnected')
+        }
+        else {
+            socket.send('BuyerConnected')
+        }
+    });
+
+	socket.on('message', function(msg) {
+	if (typeof msg == "string" && msg.indexOf('/Offer ') > -1) {
+        if ('{{Position}}' == 'S'){
+            $("#currentChat").append('<p id="OfferParaS" class="Generated">'+'The buyer made an offer of $'+parseFloat(msg.slice(7)).toFixed(2));
+            $("#OfferAccept").show();
+            $("#OfferDecline").show();
+            $("#ResponseParaS").remove();
+            console.log('Received Offer');}
+
+        else {
+            $("#ListingOfferPrice").hide();
+            $("#ListingOfferSubmit").hide();
+            $("#currentChat").append('<p id="OfferParaB" class="Generated">'+'You made an offer of $'+parseFloat(msg.slice(7)).toFixed(2));
+            $("#OfferCancel").show();
+            $("#ResponseParaB").remove();
+            console.log('Received Offer');}
+	}
+	else if (msg === 'SellerConnected') {
+	    $("#SellerOnOff").text('Online');
+	    if ($("#SellerOnOff").hasClass('Offline')){
+            $("#SellerOnOff").removeClass('Offline');
+	    }
+	}
+
+    else if (msg === 'BuyerConnected') {
+	    $("#BuyerOnOff").text('Online');
+	    if ($("#BuyerOnOff").hasClass('Offline')){
+            $("#BuyerOnOff").removeClass('Offline');
+	    }
+	}
+
+    else if (msg === 'SellerDisconnected') {
+	    $("#SellerOnOff").text('Offline');
+	    $("#SellerOnOff").addClass('Offline');
+	}
+
+    else if (msg === 'BuyerDisconnected') {
+	    $("#BuyerOnOff").text('Offline');
+	    $("#BuyerOnOff").addClass('Offline');
+	}
+
+	else if (msg == null) {
+    console.log('Offer already sent');
+	}
+
+	else if (msg === '/CancelOffer') {
+        if ('{{Position}}' == 'S'){
+            $("#OfferParaS").remove();
+            $("#OfferAccept").hide();
+            $("#OfferDecline").hide();
+            $("#currentChat").append('<p id="ResponseParaS" class="Generated">'+'The buyer has cancelled the offer');
+            }
+        else {
+            $("#ListingOfferPrice").show();
+            $("#ListingOfferSubmit").show();
+            $("#OfferParaB").remove();
+            $("#OfferCancel").hide();
+            $("#currentChat").append('<p id="ResponseParaB" class="Generated">'+'You have cancelled your offer');
+            }
+	}
+
+	else if (msg === '/DeclineOffer') {
+        if ('{{Position}}' == 'S'){
+            $("#OfferParaS").remove();
+            $("#OfferAccept").hide();
+            $("#OfferDecline").hide();
+            $("#currentChat").append('<p id="ResponseParaS" class="Generated">'+'You have declined the offer');
+            }
+        else {
+            $("#ListingOfferPrice").show();
+            $("#ListingOfferSubmit").show();
+            $("#OfferParaB").remove();
+            $("#OfferCancel").hide();
+            $("#currentChat").append('<p id="ResponseParaB" class="Generated">'+'The seller has declined your offer');
+            }
+	}
+
+    else if (msg === '/AcceptOffer') {
+        if ('{{Position}}' == 'S'){
+            $("#OfferParaS").remove();
+            $("#OfferAccept").hide();
+            $("#OfferDecline").hide();
+            $("#currentChat").append('<p id="ResponseParaS" class="Generated">'+'You have accepted the offer');
+            }
+        else {
+            $("#ListingOfferPrice").show();
+            $("#ListingOfferSubmit").show();
+            $("#OfferParaB").remove();
+            $("#OfferCancel").hide();
+            $("#currentChat").append('<p id="ResponseParaB" class="Generated">'+'The seller has accepted your offer');
+            }
+	}
+
+	else {
+	    if ('{{session['username']}}' == msg.Username){
+            $("#messages").append('<div class="container darker">'+'<img src="{{session['profpic']}}" alt="Avatar" class="right" width="100" height="100">'+'<p>'+msg.Message+'</p>'+'<span class="time-left">'+msg.Time+'</span>'+'</div>');
+            console.log('Received message');}
+		else if (msg.Username !== undefined){
+            $("#messages").append('<div class="container">'+'<img src="{{OtherProfPic}}" alt="Avatar" width="100" height="100">'+'<p>'+msg.Message+'</p>'+'<span class="time-right">'+msg.Time+'</span>'+'</div>');
+            console.log('Received message');
+            console.log(msg.Username)
+	    }
+	}
+
+	});
+	$('#sendbutton').on('click', function() {
+	    if ($('#myMessage').val() === '/AcceptOffer') {
+	        socket.send($('#myMessage').val()+{{session['userID']}});
+	        $('#myMessage').val('');
+	    }
+	    else {
+	    socket.send($('#myMessage').val());
+		$('#myMessage').val('');
+		console.log($('#myMessage').val())
+	    }
+	});
+	$('#myMessage').on('keypress',function(e) {
+    if(e.which == 13) {
+        socket.send($('#myMessage').val());
+		$('#myMessage').val('');
+        }
+    });
+	$('#ListingOfferSubmit').on('click', function() {
+	    if( isNaN($('#ListingOfferPrice').val()) == false ){
+	    var ListingOfferPrice = parseFloat($('#ListingOfferPrice').val()).toFixed(2);
+		socket.send('/Offer '+ListingOfferPrice);
+		$('#ListingOfferPrice').val(0);
+	    }
+	    else{
+	    $('#ListingOfferPrice').val(0);
+	    socket.send(null);
+	    }
+	});
+	$('#ListingOfferPrice').on('keypress',function(e) {
+    if(e.which == 13) {
+        if( isNaN($('#ListingOfferPrice').val()) == false ){
+	    var ListingOfferPrice = parseFloat($('#ListingOfferPrice').val()).toFixed(2);
+		socket.send('/Offer '+ListingOfferPrice);
+		$('#ListingOfferPrice').val(0);
+	    }
+	    else{
+	    $('#ListingOfferPrice').val(0);
+	    socket.send(null);
+	    }
+        }
+    });
+	$('#OfferAccept').on('click', function() {
+		socket.send('/AcceptOffer'+{{session['userID']}});
+		console.log('/AcceptOffer'+{{session['userID']}});
+	});
+	$('#OfferDecline').on('click', function() {
+	    console.log('Decline offer');
+		socket.send('/DeclineOffer');
+	});
+	$('#OfferCancel').on('click', function() {
+	    console.log('Cancel offer');
+		socket.send('/CancelOffer');
+	});
+	$(window).bind('beforeunload', function(){
+        var dt = new Date();
+	    var date = dt.getFullYear()+'-'+(dt.getMonth()+1)+'-'+dt.getDate();
+        var time = dt.getHours() + ":" + dt.getMinutes() + ":" + dt.getSeconds();
+        socket.send('Pos:{{Position}},'+date+' '+time);
+    });
+     function get_elapsed_time_string(total_seconds) {
+      function pretty_time_string(num) {
+        return ( num < 10 ? "0" : "" ) + num;
+      }
+
+      var days = Math.floor(total_seconds / 86400);
+      total_seconds = total_seconds % 86400;
+
+      var hours = Math.floor(total_seconds / 3600);
+      total_seconds = total_seconds % 3600;
+
+      var minutes = Math.floor(total_seconds / 60);
+      total_seconds = total_seconds % 60;
+
+      var seconds = Math.floor(total_seconds);
+
+      // Pad the minutes and seconds with leading zeros, if required
+      hours = pretty_time_string(hours);
+      minutes = pretty_time_string(minutes);
+      seconds = pretty_time_string(seconds);
+
+      // Compose the string for display
+      if (days<1){
+          if (hours<1) {
+            if (minutes<1) {
+                var currentTimeString = seconds + " Secs";
+            }
+            else{
+                var currentTimeString = minutes + " Mins " +seconds + " Secs";
+            }
+          }
+          else {
+            var currentTimeString = hours +" Hours "+ minutes + " Mins " +seconds + " Secs";
+          }
+      }
+      else {
+      var currentTimeString = days+" Days "+hours +" Hours "+ minutes + " Mins " +seconds + " Secs";
+      }
+
+      return currentTimeString;
+    }
+
+    var elapsed_seconds = parseInt({{BOfflineTime}});
+    var elapsed_seconds2 = parseInt({{SOfflineTime}});
+    setInterval(function() {
+    if ($("#BuyerOnOff").hasClass('Offline')){
+      elapsed_seconds = elapsed_seconds + 1;
+      $('#BuyerOnOff').text('Offline for '+get_elapsed_time_string(elapsed_seconds));}
+    else if ($("#SellerOnOff").hasClass('Offline')){
+      elapsed_seconds2 = elapsed_seconds2 + 1;
+      $('#SellerOnOff').text('Offline for '+get_elapsed_time_string(elapsed_seconds2));}
+    else if (!$("#BuyerOnOff").hasClass("Offline")) {
+      elapsed_seconds=0;
+    }
+    else if (!$("#SellerOnOff").hasClass("Offline")) {
+      elapsed_seconds2=0;
+    }
+    }, 1000);
+
+});
+</script>
+<div id="UserStatus">
+{% if Position == 'B' %}
+<img src={{OtherProfPic}} class="UserImage">
+<h1 class="UserName">{{ Seller.get_username() }}</h1>
+    {% if chatIDx.get_SellerLastOnline() == '' %}
+    <span class="UserOnOff" id="SellerOnOff">Online</span>
+    {% else %}
+    <span class="UserOnOff Offline" id="SellerOnOff">Offline</span>
+    {% endif %}
+{% else %}
+<img src={{OtherProfPic}} class="UserImage">
+<h1 class="UserName">{{ Buyer.get_username() }}</h1>
+    {% if chatIDx.get_BuyerLastOnline() == '' %}
+    <span class="UserOnOff" id="BuyerOnOff">Online</span>
+    {% else %}
+    <span class="UserOnOff Offline" id="BuyerOnOff">Offline</span>
+    {% endif %}
+{% endif %}
+</div>
+<div id="currentChat">
+    <img src={{ListingImage}} id="ListingImage">
+    <h1 id="ListingName">{{ ListingName }}</h1>
+    <span id="ListingPrice">${{ ListingPrice }}</span>
+    {% if Position == 'B' %}
+    {{ render_field(chatofferform.price, id="ListingOfferPrice") }}
+    <button id="ListingOfferSubmit">Offer</button>
+    <button id="OfferCancel" class="Buttons">Cancel</button>
+    {% else %}
+    <button id="OfferDecline" class="Buttons">Decline</button>
+    <button id="OfferAccept" class="Buttons">Accept</button>
+    {% endif %}
+
+    {% if Position == 'B' and Offers != [] %}
+    <p id="OfferParaB" class="Generated">You made an offer of ${{ "{0:.2f}".format(chatIDx.get_offers()[0]) }}</p>
+    {% elif Position == 'S' and Offers != [] %}
+    <p id="OfferParaS" class="Generated">The buyer made an offer of ${{ "{0:.2f}".format(chatIDx.get_offers()[0]) }}</p>
+    {% endif %}
+</div>
+<div id="messages">
+{% for msg in messages %}
+    {% if session['username'] == msg.Username %}
+        <div class="container darker">
+          <img src="{{session['profpic']}}" alt="Avatar" class="right" width="100" height="100">
+          <p>{{ msg.Message }}</p>
+          <span class="time-left">{{ msg.Time }}</span>
+        </div>
+    {% else %}
+        <div class="container">
+          <img src="{{OtherProfPic}}" alt="Avatar" width="100" height="100">
+          <p>{{ msg.Message }}</p>
+          <span class="time-right">{{ msg.Time }}</span>
+        </div>
+    {% endif %}
+{% endfor %}
+</div>
+<form method="POST">
+    <input type="text">
+</form>
+<div id="SendMsg">
+    <input type="text" id="myMessage">
+    <button id="sendbutton">Send</button>
+</div>
+</body>
+</html>
+<style>
+label{
+  display:none;
+}
+
+#messages{
+  margin: auto;
+}
+
+.container {
+  border: 2px solid #dedede;
+  background-color: #f1f1f1;
+  border-radius: 5px;
+  padding: 10px;
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
+.darker {
+  border-color: #ccc;
+  background-color: #ddd;
+}
+
+.container::after {
+  content: "";
+  clear: both;
+  display: table;
+}
+
+.container img {
+  float: left;
+  min-width: 60px;
+  max-width: 60px;
+  min-height: 60px;
+  max-height: 60px;
+  width: 100%;
+  height: 100%;
+  margin-right: 20px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.container img.right {
+  float: right;
+  margin-left: 20px;
+  margin-right:0;
+}
+
+.time-right {
+  float: right;
+  color: #aaa;
+}
+
+.time-left {
+  float: left;
+  color: #999;
+}
+
+#ListingImage {
+  min-width: 130px;
+  max-width: 130px;
+  min-height: 130px;
+  max-height: 130px;
+  width: 100%;
+  height: 100%;
+  border-radius: 10%;
+  object-fit: cover;
+  margin:10px;
+}
+
+#ListingName {
+  color:white;
+  display:inline-block;
+  margin:10px;
+}
+
+#ListingPrice {
+  color:white;
+  position:relative;
+  top:30px;
+  right:50px;
+}
+
+#currentChat {
+  border: 2px solid #dedede;
+  background-color: #312F2F;
+  border-radius: 5px;
+  margin: 10px 0px;
+  height:150px;
+}
+
+#ListingOfferPrice{
+  width:130px;
+  position:absolute;
+  top:330px;
+  right:125px;
+}
+
+#ListingOfferSubmit{
+  position:absolute;
+  top:330px;
+  right:70px;
+}
+
+#SendMsg{
+  text-align:center;
+}
+
+.Generated{
+  position:relative;
+  color:white;
+  text-align:center;
+  bottom:130px;
+  font-weight:bold;
+  font-size:150%;
+}
+
+.Buttons {
+  position:relative;
+  float:right;
+  margin-top:100px;
+  margin-right:20px;
+}
+.UserImage{
+  min-width: 150px;
+  max-width: 150px;
+  min-height: 150px;
+  max-height: 150px;
+  width: 100%;
+  height: 100%;
+  border-radius: 60%;
+  object-fit: cover;
+  margin:10px;
+}
+.UserName {
+  display:inline-block;
+  margin:10px;
+}
+.UserOnOff{
+  width:130px;
+  position:relative;
+  top:50px;
+  right:160px;
+}
+</style>
+{% endblock %}

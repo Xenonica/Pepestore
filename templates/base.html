@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}{% endblock %}</title>
+
+    <!-- Bootstrap 4.3.1 CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+</head>
+<body>
+    {% block navbar %}
+        {% include 'includes/_navbar.html' %}
+    {% endblock %}
+
+    <div class="">
+        {% block content %}
+        {% endblock %}
+    </div>
+
+    {% block scripts %}
+        <!-- jQuery 3.3.1 + Popper.js 1.14.7 + Bootstrap JavaScript Plugins 4.3.1 -->
+        <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+        <script src="https://kit.fontawesome.com/6d70436f6e.js" crossorigin="anonymous"></script>
+    {% endblock %}
+
+
+    <div id="imageCon"><button onclick="showChatbot()" id="btn1"><img src="/static/icons/chatbot.png" width="50px" height="50px"></button></div>
+    <div id="chatbotCon"><button id="x" onclick="hideChatbot()">X</button><iframe id='chatbot' allow="microphone;" src="https://console.dialogflow.com/api-client/demo/embedded/fa8be0b4-b780-4c70-9fc4-44c1b7dcb020"></iframe></div>
+
+</body>
+</html>
+
+<script>
+function showChatbot() {
+  var x = document.getElementById("imageCon");
+  var y = document.getElementById("chatbotCon");
+  x.style.display = "none";
+  y.style.display = 'block';
+}
+function hideChatbot(){
+  var x = document.getElementById("imageCon");
+  var y = document.getElementById("chatbotCon");
+  x.style.display = "block";
+  y.style.display = 'none';
+
+}
+</script>
+
+
+<style>
+
+    #chatbotCon {
+    color: #fff;
+    position: fixed;
+    z-index: 9999;
+    right: 0;
+    bottom: 0;
+    width: 30%;
+    display:none;
+    }
+
+    #x{
+    z-index: 1;
+    right:0;
+    position:absolute;
+    }
+
+    #chatbot{
+    float: right;
+    height: 420px;
+    width: 350px;
+    }
+
+    #imageCon {
+    position: fixed;
+    z-index: 9999;
+    right: 40px;
+    bottom: 40px;
+
+    }
+
+    #btn1{
+    float: right;
+    margin-right: 10px;
+    font-size: 15pt;
+    padding:5px;
+    background-color:#ccffcc;
+    outline:none;
+    border:none;
+    border-radius: 50%;
+    }
+
+
+</style>

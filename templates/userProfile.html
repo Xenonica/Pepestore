@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% block title %}Library Loan System - Home{% endblock %}
+
+{% from "includes/_formHelper.html" import render_field %}
+{% block content %}
+<h1 class="display-4">Update Profile</h1>
+<form method="POST" enctype="multipart/form-data" action="">
+ <img src="{{ProfPic}}" id="ProfPic" height="400" width="400">
+ <div class="form-group">
+ <input type="file" name="file" accept="image/*">
+ </div>
+ <div class="form-group">
+ {{ render_field(Profile.username, class="form-control") }}
+ </div>
+ <div class="form-group">
+ {{ render_field(Profile.address1, class="form-control") }}
+ </div>
+ <div class="form-group">
+ {{ render_field(Profile.address2, class="form-control") }}
+ </div>
+ <div class="form-group">
+ {{ render_field(Profile.zipcode, class="form-control") }}
+ </div>
+ <input type="submit" value="Submit" class="btn btn-primary"/>
+</form>
+
+<style>
+#ProfPic{
+  min-width: 150px;
+  max-width: 150px;
+  min-height: 150px;
+  max-height: 150px;
+  width: 100%;
+  height: 100%;
+  border-radius: 60%;
+  object-fit: cover;
+  margin:10px;
+}
+</style>
+{% endblock %}
