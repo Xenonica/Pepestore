@@ -1,7 +1,7 @@
 import shelve
 
 class Listing :
-    def __init__(self, name, price, description, category ,OP, seller_name, quantity, visits):
+    def __init__(self, name, price, description, category, seller_name, quantity):
         db = shelve.open('storage.db', 'c')
         try :
             listingsDict = db['Listings']
@@ -15,9 +15,8 @@ class Listing :
         self.__price = price
         self.__description = description
         self.__category = category
-        self.__OP = OP
         self.__seller_name = seller_name
-        self.__visits = visits
+        self.__visits = 0
         self.__quantity = quantity
 
     def get_quantity(self):
@@ -57,9 +56,6 @@ class Listing :
     def get_category(self):
         return self.__category
 
-    def get_OP(self):
-        return self.__OP
-
     def get_seller_name(self):
         return self.__seller_name
 
@@ -83,6 +79,15 @@ class Listing :
 
     def set_category(self, category):
         self.__category = category
+
+
+class Phone(Listing):
+    def __init__(self,name, price, description, category, seller_name, quantity, brand, ram, storage):
+        super().__init__(name, price, description, category, seller_name, quantity)
+        self.brand = brand
+        self.ram = ram
+        self.storage = storage
+
 
 
 class User :

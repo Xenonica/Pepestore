@@ -1,0 +1,25 @@
+{% from "includes/_formHelper.html" import render_field %}
+
+<nav id="navbar-flex">
+    <a href="/" id="nav-logo">Pepestore</a>
+    <ul id="nav-links">
+        <li class="nav-items"><a href="">Create Listing</a></li>
+        <li class="nav-items"><a href="">Listings</a></li>
+    </ul>
+</nav>
+
+<style>
+    #navbar-flex{
+        display: flex;
+        background-color:#343a40;
+    }
+    #nav-links{
+    display:flex;
+    justify-content: flex-end;
+    flex-grow:1;
+    }
+    .nav-items{
+    margin-right:10px;
+    list-style-type: none;
+    }
+</style>

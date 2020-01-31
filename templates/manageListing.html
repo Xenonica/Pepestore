@@ -3,9 +3,9 @@
 
 {% block content %}
 <h1 class="display-4">Manage Listings</h1>
-<div>
-  <table class="table table-striped">
-    <thead>
+<div class="table_container">
+  <table class="table table-striped" id="table_listing">
+    <thead class="thead-dark">
       <tr>
         <th>Display Picture</th>
         <th>Name</th>
@@ -13,7 +13,6 @@
         <th>Description</th>
         <th>Quantity</th>
         <th>Category</th>
-        <th></th>
         <th></th>
       </tr>
     </thead>
@@ -23,14 +22,13 @@
       <tr>
         <td> <img src={{listing.get_displaypic()}} height="200" width="200"> </td>
         <td>{{ listing.get_name() }}</td>
-        <td>{{ listing.get_price() }}</td>
+        <td>${{ listing.get_price() }}</td>
         <td>{{ listing.get_description() }}</td>
         <td>{{ listing.get_quantity() }}</td>
         <td>{{ listing.get_category() }}</td>
-        <td><a href="/update/{{listing.get_listingID()}}" class="btn btn-warning">Update</a></td>
-        <td>
+        <td><a href="/update/{{listing.get_listingID()}}"><input type="button" value="Update" id="button_update"></a>
           <form action="{{url_for('deleteListing', id=listing.get_listingID())}}" method="POST">
-            <input type="submit" value="Delete" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete this
+            <input type="submit" value="Delete" id="button_delete" onclick="return confirm('Are you sure you want to delete this
 user?');">
           </form>
         </td>
@@ -40,4 +38,52 @@ user?');">
     </tbody>
   </table>
 </div>
+
+<style>
+  .table_container{
+  display:flex;
+  justify-content: center;
+  }
+
+  #button_delete{
+  margin-bottom: 10px;
+  border-radius: 50px;
+  -moz-border-radius: 50px;
+  -webkit-border-radius: 50px;
+  width: 100px;
+  height: 40px;
+  background-color: red;
+  color: white;
+  border: 0;
+  }
+
+  #button_update{
+  margin-bottom: 10px;
+  border-radius: 50px;
+  -moz-border-radius: 50px;
+  -webkit-border-radius: 50px;
+  width: 100px;
+  height: 40px;
+  background-color: #32CD32;
+  color: white;
+  border: 0;
+  }
+
+  #button_update:hover{
+  background-color:green;
+  }
+
+  #button_delete:hover{
+  background-color:#8b0000 ;
+  }
+
+  #table_listing{
+  width:93%;
+  }
+
+  img{
+  object-fit:cover;
+  }
+</style>
 {% endblock %}
+

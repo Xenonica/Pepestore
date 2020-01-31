@@ -12,7 +12,7 @@
         {% include 'includes/_navbar.html' %}
     {% endblock %}
 
-    <div class="">
+    <div class="margin-container">
         {% block content %}
         {% endblock %}
     </div>
@@ -51,6 +51,9 @@ function hideChatbot(){
 
 
 <style>
+    .margin-container{
+    margin-left: 17px;
+    }
 
     #chatbotCon {
     color: #fff;
@@ -92,6 +95,7 @@ function hideChatbot(){
     border:none;
     border-radius: 50%;
     }
+
 
 
 </style>

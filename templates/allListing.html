@@ -5,7 +5,9 @@
 <style>
 .container{
 display:flex;
-margin-left:0;
+margin-right:0px;
+margin-left:0px;
+padding:0;
 }
 
 .filter_wrapper{
@@ -17,19 +19,26 @@ width:200px;
 }
 
 .listing_container{
-margin:10px;
+margin: 20px 0px 20px 50px;
 }
 
 .listing_wrapper{
 display:inline-block;
-padding-left: 20px;
+padding:10px;
 margin-left: 10px;
 margin-bottom: 15px;
+align: center;
+
+}
+
+.listing_wrapper:hover{
+box-shadow: 0 0 8px grey;
 }
 
 .listing_wrapper img{
 object-fit: cover;
 }
+
 </style>
 <!--  {% if count == 0 %}-->
 <!--  <p>There are no listings.</p>-->
@@ -39,25 +48,24 @@ object-fit: cover;
 <!--  <p>There are {{ count }} listings.</p>-->
 <!--  {% endif %}-->
 <div class="container">
-<div class="filter_wrapper">
-    <form method="POST">
-        {{ render_field(form.filter_type, class="form-control") }}
-        <span>Min($)</span><br> <input style="width:100px" type="number">
-        <br>
-        <span>Max($)</span><br> <input style="width:100px" type="number">
-        <br>
-        <input type="submit" style="margin-top:30px" class="btn btn-warning" value="Go" name="button">
-    </form>
-</div>
-<div class="listing_container">
-{% for id in listingDict %}
-{% if selected_category == 'All' %}
-{{ filter(listingDict[id]) }}
-{% elif listingDict[id].get_category() == selected_category %}
-{{ filter(listingDict[id]) }}
-{% endif %}
-{% endfor %}
-
-</div>
+    <div class="filter_wrapper">
+        <form method="POST">
+            {{ render_field(form.filter_type, class="form-control") }}
+            <span>Min($)</span><br> <input style="width:100px" type="number">
+            <br>
+            <span>Max($)</span><br> <input style="width:100px" type="number">
+            <br>
+            <input type="submit" style="margin-top:30px" class="btn btn-warning" value="Go" name="button">
+        </form>
+    </div>
+    <div class="listing_container">
+        {% for id in listingDict %}
+        {% if selected_category == 'All' %}
+        {{ filter(listingDict[id]) }}
+        {% elif listingDict[id].get_category() == selected_category %}
+        {{ filter(listingDict[id]) }}
+        {% endif %}
+        {% endfor %}
+    </div>
 </div>
 {% endblock %}
