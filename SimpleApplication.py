@@ -87,6 +87,232 @@ def navbar() :
     return [alert,logout,regform,logform]
 
 
+@app.route('/',methods=['GET', 'POST'])
+def home():
+    listingList = []
+    listingDict = {}
+    print(session)
+    if 'userID' not in session :
+        try:
+            folder = os.path.join(APP_ROOT, 'static/tempimages/')
+            for image in os.listdir(folder):
+                image_path = os.path.join(folder, image)
+                if os.path.isfile(image_path):
+                    os.unlink(image_path)
+        except:
+            pass
+    else :
+        pass
+
+    try :
+        db = shelve.open('storage.db', 'r')
+        listingDict = db['Listings']
+        print(listingDict)
+        db.close()
+    except :
+        db = shelve.open('storage.db', 'c')
+        db.close()
+
+
+    for i in listingDict:
+        listing = listingDict.get(i)
+        listingList.append(listing)
+    print(listingList)
+    for key in listingList:
+        if len(listingList) > 5:
+            listingList.remove(key)
+        if len(listingList) == 5:
+            break
+    print(listingList)
+    newestLists = listingList[::-1]
+
+    return render_template('home.html',newestLists =newestLists,alert = navbar()[0] , logout = navbar()[1] , regform = navbar()[2] , logform = navbar()[3])
+
+
+@app.route('/createUserImages',methods=['GET', 'POST'])
+def createUserImages() :
+    if request.method == 'POST':
+        todelete = request.form['todelete']
+        if todelete == '' :
+
+            #Path of where to store images
+            target = os.path.join(APP_ROOT, 'static/tempimages/')
+
+            #Check whether path target exists / creates path if it doesn't.
+            if not os.path.isdir(target) :
+                os.mkdir(target)
+
+            #Go through multiple images
+            count = 0
+            for file in request.files.getlist("file") :
+                if count < 4 :
+                    filename = file.filename
+                    if filename == '' :
+                        break
+                    else :
+                        filename = file.filename
+                        #Make directory for image
+                        destination = '/'.join([target]+[filename])
+                        file.save(destination)
+                        staticdestination = url_for('static', filename='tempimages/'+filename)
+                        count+=1
+                        if staticdestination in tempimagelist :
+                            continue
+                        else:
+                            tempimagelist.append(staticdestination)
+                            tempimagenames.append(filename)
+        else :
+            todeleteplace = int(todelete)-1
+            tempimagelist.remove(tempimagelist[todeleteplace])
+            tempimagenames.remove(tempimagenames[todeleteplace])
+    Class = ['','','','']
+    Img = ['','','','']
+    for i in range(len(tempimagelist)) :
+        Img[i] = tempimagelist[i]
+        Class[i] = 'Img'
+    for i in range(len(tempimagelist),4) :
+        Img[i] = 'https://matthewsenvironmentalsolutions.com/images/com_hikashop/upload/not-available.png'
+        Class[i] = 'NoImg'
+    print(tempimagelist)
+    print(tempimagenames)
+    print('img ', Img)
+    print('class', Class)
+    return render_template('createUserImages.html' ,Img1 = Img[0] , Img2 = Img[1] , Img3 = Img[2] , Img4 = Img[3], Class1 = Class[0] , Class2 = Class[1] , Class3 = Class[2] , Class4 = Class[3], alert = navbar()[0] , logout = navbar()[1] , regform = navbar()[2] , logform = navbar()[3])
+
+
+@app.route('/manageListing', methods=['GET', 'POST'])
+def manageListing():
+    listingDict = {}
+    try :
+        db = shelve.open('storage.db', 'r')
+        listingDict = db['Listings']
+        db.close()
+    except :
+        db = shelve.open('storage.db', 'c')
+        listingDict = []
+        db.close()
+
+    listingList = []
+    for key in listingDict:
+        listing = listingDict.get(key)
+        listingList.append(listing)
+
+    return render_template('manageListing.html', listingList=listingList, count=len(listingList),alert = navbar()[0] , logout = navbar()[1] , regform = navbar()[2] , logform = navbar()[3])
+
+
+@app.route('/createListing', methods=['GET', 'POST'])
+def createListing():
+    createlisting = CreateListing(request.form)
+    listingDict = {}
+
+    if len(tempimagelist) == 0:
+            Image1 = 'https://matthewsenvironmentalsolutions.com/images/com_hikashop/upload/not-available.png'
+    else:
+        Image1 = tempimagelist[0]
+
+    if request.method == 'POST' and createlisting.validate():
+        db = shelve.open('storage.db', 'c')
+        try:
+            listingDict = db['Listings']
+        except:
+            print("Error in retrieving 'Listings' from storage.db.")
+
+        listing = Classes.Listing(createlisting.name.data, createlisting.price.data, createlisting.description.data, createlisting.category.data, session['username'], createlisting.quantity.data)
+        listingDict[listing.get_listingID()] = listing
+        listing.set_visits(0)
+        #Path of where to store images
+        target = os.path.join(APP_ROOT, 'static/listings/', str(listing.get_listingID()))
+        #Check whether path target exists / creates path if it doesn't.
+        if not os.path.isdir(target) :
+            os.mkdir(target)
+        imgnamecount = 0
+        for i in tempimagelist :
+            print(i)
+            olddir = APP_ROOT+i
+            newdir = os.path.join(target,tempimagenames[imgnamecount])
+            newstatic = os.path.join('/static/listings/', str(listing.get_listingID()),tempimagenames[imgnamecount])
+            permimagelist.append(newstatic)
+            imgnamecount += 1
+            print('old', olddir)
+            print('new', newdir)
+            if not os.path.isfile(newdir) :
+                os.rename(olddir,newdir)
+        listing.set_piclist(permimagelist)
+        db['Listings'] = listingDict
+
+        listingDict = db['Listings']
+        listing = listingDict[listing.get_listingID()]
+        print(listing.get_name(), listing.get_price(), "was stored in shelve successfully with listingID =", listing.get_listingID())
+
+        db.close()
+
+        permimagelist.clear()
+        tempimagelist.clear()
+
+
+        return redirect(url_for('home'))
+    return render_template('createListing.html', form=createlisting , Img1=Image1, alert = navbar()[0] , logout = navbar()[1] , regform = navbar()[2] , logform = navbar()[3])
+
+
+@app.route('/listingPage/<int:listingID>/',methods=['GET', 'POST'])
+def listingPage(listingID) :
+    chatform = Chat(request.form)
+    usersDict = {}
+    listingDict = {}
+    chatsDict = {}
+    db = shelve.open('storage.db', 'c')
+
+    try:
+        usersDict = db['Users']
+    except:
+        print("Error Users")
+
+    try:
+        listingDict = db['Listings']
+    except:
+        print("Error Listings")
+
+    try:
+        chatsDict = db['Chats']
+    except:
+        print("Error Chats")
+
+    listingslist = []
+    if request.method == 'POST' and chatform.chat.data :
+        if 'userID' not in session:
+            return redirect(url_for('home'))
+        if usersDict[session['userID']].get_chats() != '[]':
+            for i in usersDict[session['userID']].get_chats() :
+                listingslist.append(chatsDict[i].get_listingID())
+            chat = Classes.Chat(listingDict[listingID].get_OP(),session['userID'],listingDict[listingID].get_listingID())
+            if chat.get_buyerID() != chat.get_sellerID() :
+                if listingDict[listingID].get_listingID() not in listingslist :
+                    chatsDict[chat.get_chatID()] = chat
+                    db['Chats'] = chatsDict
+                    usersDict[listingDict[listingID].get_OP()].set_chats(chat.get_chatID())
+                    usersDict[session['userID']].set_chats(chat.get_chatID())
+                    db['Users'] = usersDict
+                    db['Listings'] = listingDict
+                    db['Chats'] = chatsDict
+                    db.close()
+
+                    return redirect('/UserChats/'+str(chat.get_chatID())+'/')
+                else :
+                    for i in usersDict[session['userID']].get_chats():
+                        if chatsDict[i].get_listingID() == listingDict[listingID].get_listingID():
+                            return redirect('/UserChats/'+str(chatsDict[i].get_chatID())+'/')
+            else:
+                pass
+
+    listingDict[listingID].set_visits(listingDict[listingID].get_visits() + 1)
+    print('Number of visits:', listingDict[listingID].get_visits())
+    piclist = listingDict[listingID].get_piclist()
+    db['Listings'] = listingDict
+    db.close()
+
+    return render_template('listingPage.html',piclist=piclist,chatform=chatform,listingID = listingDict[listingID],alert = navbar()[0] , logout = navbar()[1] , regform = navbar()[2] , logform = navbar()[3])
+
+
 @app.route('/allListing', methods=['GET','POST'])
 def allListing():
     createListing = CreateListing(request.form)
@@ -154,230 +380,6 @@ def deleteListing(id):
      db.close()
      return redirect(url_for('manageListing'))
 
-
-@app.route('/manageListing', methods=['GET', 'POST'])
-def manageListing():
-    listingDict = {}
-    try :
-        db = shelve.open('storage.db', 'r')
-        listingDict = db['Listings']
-        db.close()
-    except :
-        db = shelve.open('storage.db', 'c')
-        listingDict = []
-        db.close()
-
-    listingList = []
-    for key in listingDict:
-        listing = listingDict.get(key)
-        listingList.append(listing)
-
-    return render_template('manageListing.html', listingList=listingList, count=len(listingList),alert = navbar()[0] , logout = navbar()[1] , regform = navbar()[2] , logform = navbar()[3])
-
-
-@app.route('/',methods=['GET', 'POST'])
-def home():
-    listingList = []
-    listingDict = {}
-    print(session)
-    if 'userID' not in session :
-        try:
-            folder = os.path.join(APP_ROOT, 'static/tempimages/')
-            for image in os.listdir(folder):
-                image_path = os.path.join(folder, image)
-                if os.path.isfile(image_path):
-                    os.unlink(image_path)
-        except:
-            pass
-    else :
-        pass
-
-    try :
-        db = shelve.open('storage.db', 'r')
-        listingDict = db['Listings']
-        print(listingDict)
-        db.close()
-    except :
-        db = shelve.open('storage.db', 'c')
-        db.close()
-
-
-    for i in listingDict:
-        listing = listingDict.get(i)
-        listingList.append(listing)
-    count = 1
-    newestLists = []
-    while count != 6:
-        newestLists.append(listingList[-count])
-        count +=1
-
-    return render_template('home.html',newestLists =newestLists,alert = navbar()[0] , logout = navbar()[1] , regform = navbar()[2] , logform = navbar()[3])
-
-
-@app.route('/createUserImages',methods=['GET', 'POST'])
-def createUserImages() :
-    if request.method == 'POST':
-        todelete = request.form['todelete']
-        if todelete == '' :
-
-            #Path of where to store images
-            target = os.path.join(APP_ROOT, 'static/tempimages/')
-
-            #Check whether path target exists / creates path if it doesn't.
-            if not os.path.isdir(target) :
-                os.mkdir(target)
-
-            #Go through multiple images
-            count = 0
-            for file in request.files.getlist("file") :
-                if count < 4 :
-                    filename = file.filename
-                    if filename == '' :
-                        break
-                    else :
-                        filename = file.filename
-                        #Make directory for image
-                        destination = '/'.join([target]+[filename])
-                        file.save(destination)
-                        staticdestination = url_for('static', filename='tempimages/'+filename)
-                        count+=1
-                        if staticdestination in tempimagelist :
-                            continue
-                        else:
-                            tempimagelist.append(staticdestination)
-                            tempimagenames.append(filename)
-        else :
-            todeleteplace = int(todelete)-1
-            tempimagelist.remove(tempimagelist[todeleteplace])
-            tempimagenames.remove(tempimagenames[todeleteplace])
-    Class = ['','','','']
-    Img = ['','','','']
-    for i in range(len(tempimagelist)) :
-        Img[i] = tempimagelist[i]
-        Class[i] = 'Img'
-    for i in range(len(tempimagelist),4) :
-        Img[i] = 'https://matthewsenvironmentalsolutions.com/images/com_hikashop/upload/not-available.png'
-        Class[i] = 'NoImg'
-    print(tempimagelist)
-    print(tempimagenames)
-    print('img ', Img)
-    print('class', Class)
-    return render_template('createUserImages.html' ,Img1 = Img[0] , Img2 = Img[1] , Img3 = Img[2] , Img4 = Img[3], Class1 = Class[0] , Class2 = Class[1] , Class3 = Class[2] , Class4 = Class[3], alert = navbar()[0] , logout = navbar()[1] , regform = navbar()[2] , logform = navbar()[3])
-
-
-@app.route('/createListing', methods=['GET', 'POST'])
-def createListing():
-    createlisting = CreateListing(request.form)
-    listingDict = {}
-    if len(tempimagelist) == 0 :
-            Image1 = 'https://matthewsenvironmentalsolutions.com/images/com_hikashop/upload/not-available.png'
-    else :
-        Image1 = tempimagelist[0]
-    if request.method == 'POST' and createlisting.validate():
-
-        db = shelve.open('storage.db', 'c')
-
-        try:
-            listingDict = db['Listings']
-        except:
-            print("Error in retrieving Users from storage.db.")
-
-        print(tempimagelist)
-        listing = Classes.Listing(createlisting.name.data, createlisting.price.data, createlisting.description.data, createlisting.category.data,session['userID'], session['username'], createlisting.quantity.data, 0)
-        listingDict[listing.get_listingID()] = listing
-        #Path of where to store images
-        target1 = os.path.join(APP_ROOT, 'static/listings/')
-        target = os.path.join(APP_ROOT, 'static/listings/', str(listing.get_listingID()))
-        #Check whether path target exists / creates path if it doesn't.
-        if not os.path.isdir(target1) :
-            os.mkdir(target1)
-        if not os.path.isdir(target) :
-            os.mkdir(target)
-        imgnamecount = 0
-        for i in tempimagelist :
-            print(i)
-            olddir = APP_ROOT+i
-            newdir = os.path.join(target,tempimagenames[imgnamecount])
-            newstatic = os.path.join('/static/listings/', str(listing.get_listingID()),tempimagenames[imgnamecount])
-            permimagelist.append(newstatic)
-            imgnamecount += 1
-            print('old', olddir)
-            print('new', newdir)
-            if not os.path.isfile(newdir) :
-                os.rename(olddir,newdir)
-            print('new',newdir)
-        listing.set_piclist(permimagelist)
-        db['Listings'] = listingDict
-
-        listingDict = db['Listings']
-        listing = listingDict[listing.get_listingID()]
-        print(listing.get_name(), listing.get_price(), "was stored in shelve successfully with listingID =", listing.get_listingID())
-
-        db.close()
-
-        permimagelist.clear()
-        tempimagelist.clear()
-        return redirect(url_for('home'))
-    return render_template('createListing.html', form=createlisting , Img1=Image1, alert = navbar()[0] , logout = navbar()[1] , regform = navbar()[2] , logform = navbar()[3])
-
-
-@app.route('/listingPage/<int:listingID>/',methods=['GET', 'POST'])
-def listingPage(listingID) :
-    chatform = Chat(request.form)
-    usersDict = {}
-    listingDict = {}
-    chatsDict = {}
-    db = shelve.open('storage.db', 'c')
-
-    try:
-        usersDict = db['Users']
-    except:
-        print("Error Users")
-
-    try:
-        listingDict = db['Listings']
-    except:
-        print("Error Listings")
-
-    try:
-        chatsDict = db['Chats']
-    except:
-        print("Error Chats")
-
-    listingslist = []
-    if request.method == 'POST' and chatform.chat.data :
-        if 'userID' not in session:
-            return redirect(url_for('home'))
-        if usersDict[session['userID']].get_chats() != '[]':
-            for i in usersDict[session['userID']].get_chats() :
-                listingslist.append(chatsDict[i].get_listingID())
-            chat = Classes.Chat(listingDict[listingID].get_OP(),session['userID'],listingDict[listingID].get_listingID())
-            if chat.get_buyerID() != chat.get_sellerID() :
-                if listingDict[listingID].get_listingID() not in listingslist :
-                    chatsDict[chat.get_chatID()] = chat
-                    db['Chats'] = chatsDict
-                    usersDict[listingDict[listingID].get_OP()].set_chats(chat.get_chatID())
-                    usersDict[session['userID']].set_chats(chat.get_chatID())
-                    db['Users'] = usersDict
-                    db['Listings'] = listingDict
-                    db['Chats'] = chatsDict
-                    db.close()
-
-                    return redirect('/UserChats/'+str(chat.get_chatID())+'/')
-                else :
-                    for i in usersDict[session['userID']].get_chats() :
-                        if chatsDict[i].get_listingID() == listingDict[listingID].get_listingID():
-                            return redirect('/UserChats/'+str(chatsDict[i].get_chatID())+'/')
-            else:
-                pass
-
-    listingDict[listingID].set_visits(listingDict[listingID].get_visits() + 1)
-    print('Number of visits:', listingDict[listingID].get_visits())
-    piclist = listingDict[listingID].get_piclist()
-    db['Listings'] = listingDict
-    db.close()
-
-    return render_template('listingPage.html',piclist=piclist,chatform=chatform,listingID = listingDict[listingID],alert = navbar()[0] , logout = navbar()[1] , regform = navbar()[2] , logform = navbar()[3])
 
 
 @app.route('/analytics')
@@ -729,7 +731,7 @@ def createDelivery():
 
         delivery = Classes.Delivery(session['username'], createDeliveryForm.product.data, createDeliveryForm.location.data)
         delivery.set_time(datetime.now())
-        randomtime = random.randint(10,30) # Random generate estimated time of delivery
+        randomtime = random.randint(20,35) # Random generate estimated time of delivery
         delivery.set_estimatedTime(datetime.now() + timedelta(seconds = randomtime))
         delivery.set_status('In Delivery')
 

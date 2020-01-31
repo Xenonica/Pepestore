@@ -1,11 +1,11 @@
 {% from "includes/_formHelper.html" import render_field %}
 
+
 <nav class="navbar navbar-expand-sm bg-dark navbar-dark">
   <!-- Brand -->
   <a class="navbar-brand" href="/">Pepestore</a>
-
   <!-- Links -->
-
+    <div style="display:flex;justify-content:center"><input type="text" id="searchbox" class="form-control" style="" placeholder="Search"></div>
   <div class="navbar-collapse collapse order-3 dual-collapse2">
         <ul class="navbar-nav ml-auto">
             {% if 'userID' in session %}
@@ -64,6 +64,7 @@
         </ul>
     </div>
 </nav>
+
 <script>
     function openRegister() {
     document.getElementById("Register").style.display = "flex";
@@ -127,6 +128,7 @@
   </form>
 </div>
 <style>
+
 #logout{
 font-size:14.5px;
 color:black;
