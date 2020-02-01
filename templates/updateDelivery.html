@@ -15,5 +15,13 @@
  <input type="submit" value="Update" class="btn btn-primary"  />
 </form>
 
+{% if invalidlocation == True %}
+<div id="beeg">Please Enter a Valid Singapore Location!</div>
+{% endif %}
+
+<style>
+ #beeg{
+ color:red;}
+</style>
 
 {% endblock %}

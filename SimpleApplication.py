@@ -715,6 +715,27 @@ def retrieveDelivery():
 
     return render_template('retrieveDelivery.html', deliveryList=deliveryList, count=len(deliveryList),alert = navbar()[0] , logout = navbar()[1] , regform = navbar()[2] , logform = navbar()[3])
 
+
+def validateaddress(location):
+    center_point = [{'lat': 1.290270, 'lng': 103.851959}] #center point of singapore coordinates
+    address = geocoder.osm(location)
+    x = address.lat
+    y = address.lng
+    test_point = [{'lat': x, 'lng': y}]
+    radius = 24 # in kilometer
+
+    center_point_tuple = tuple(center_point[0].values())
+    test_point_tuple = tuple(test_point[0].values())
+
+    dis = distance.distance(center_point_tuple, test_point_tuple).km
+    print("Distance: {}".format(dis))
+
+    if dis <= radius: # if the location is in Singapore
+        return True
+    else:            # if the  location is not in Singapore
+        return False
+
+
 @app.route('/createDelivery', methods=['GET', 'POST'])
 def createDelivery():
     createDeliveryForm = CreateDeliveryForm(request.form)
@@ -728,24 +749,28 @@ def createDelivery():
         except:
             print("Error in retrieving delivery from storage")
 
+        if validateaddress(createDeliveryForm.location.data) == True:
+            delivery = Classes.Delivery(session['username'], createDeliveryForm.product.data, createDeliveryForm.location.data)
+            delivery.set_time(datetime.now())
+            randomtime = random.randint(20,35) # Random generate estimated time of delivery
+            delivery.set_estimatedTime(datetime.now() + timedelta(seconds = randomtime))
+            delivery.set_status('In Delivery')
 
-        delivery = Classes.Delivery(session['username'], createDeliveryForm.product.data, createDeliveryForm.location.data)
-        delivery.set_time(datetime.now())
-        randomtime = random.randint(20,35) # Random generate estimated time of delivery
-        delivery.set_estimatedTime(datetime.now() + timedelta(seconds = randomtime))
-        delivery.set_status('In Delivery')
 
+            deliveryDict[delivery.get_deliveryID()] = delivery
+            db['Delivery'] = deliveryDict
+            deliveryDict = db['Delivery']
+            delivery = deliveryDict[delivery.get_deliveryID()]
 
-        deliveryDict[delivery.get_deliveryID()] = delivery
-        db['Delivery'] = deliveryDict
-        deliveryDict = db['Delivery']
-        delivery = deliveryDict[delivery.get_deliveryID()]
+            print(deliveryDict)
+            db.close()
+            print("valid address")
+            return redirect(url_for('manageDelivery'))
+        else:
+            print("Invalid address")
+            invalidlocation = True
+            return render_template('createDelivery.html', form=createDeliveryForm,invalidlocation=invalidlocation,alert = navbar()[0] , logout = navbar()[1] , regform = navbar()[2] , logform = navbar()[3])
 
-        print(deliveryDict)
-
-        db.close()
-
-        return redirect(url_for('manageDelivery'))
     return render_template('createDelivery.html', form=createDeliveryForm,alert = navbar()[0] , logout = navbar()[1] , regform = navbar()[2] , logform = navbar()[3])
 
 
@@ -788,14 +813,19 @@ def updateDelivery(id):
         db = shelve.open('storage.db','w')
         deliveryDict = db['Delivery']
 
-        delivery = deliveryDict.get(id)
-        delivery.set_product(updateDeliveryForm.product.data)
-        delivery.set_location(updateDeliveryForm.location.data)
+        if validateaddress(updateDeliveryForm.location.data) == True:
+            delivery = deliveryDict.get(id)
+            delivery.set_product(updateDeliveryForm.product.data)
+            delivery.set_location(updateDeliveryForm.location.data)
 
-        db['Delivery'] =deliveryDict
-        db.close()
+            db['Delivery'] =deliveryDict
+            db.close()
 
-        return redirect(url_for('manageDelivery'))
+            return redirect(url_for('manageDelivery'))
+
+        else:
+            invalidlocation = True
+            return render_template('updateDelivery.html',invalidlocation=invalidlocation, form=updateDeliveryForm, alert=navbar()[0], logout = navbar()[1] , regform = navbar()[2] , logform = navbar()[3])
 
     else:
         deliveryDict={}
