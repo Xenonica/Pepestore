@@ -54,10 +54,8 @@ class ChatOffer(Form):
 
 
 class ProfileForm(Form):
-    username = StringField('Username', [validators.Length(min=1, max=150), validators.DataRequired()])
-    address1 = StringField('Address Field 1', [validators.Length(min=1, max=150), validators.DataRequired()])
-    address2 = StringField('Address Field 2', [validators.Length(min=1, max=150), validators.DataRequired()])
-    zipcode =  IntegerField('Zip Code', [validators.NumberRange(min=100000,max=999999),validators.DataRequired()])
+    username = StringField('Username', [validators.Length(min=1, max=30), validators.DataRequired()])
+    description = TextAreaField('Description', [validators.Length(min=1, max=300), validators.Optional()])
 
 
 class CreateDeliveryForm(Form):
