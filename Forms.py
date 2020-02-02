@@ -50,6 +50,7 @@ class Chat(Form):
 
 class ChatOffer(Form):
     price = FloatField('State your offer', [validators.NumberRange(min=0,max=9999),validators.DataRequired()],default=0)
+    quantity = IntegerField('Quantity',[validators.DataRequired()],default=1)
 
 
 class ProfileForm(Form):

@@ -1,20 +1,14 @@
 {% from "includes/_formHelper.html" import render_field %}
 
-
 <nav class="navbar navbar-expand-sm bg-dark navbar-dark">
   <!-- Brand -->
   <a class="navbar-brand" href="/">Pepestore</a>
+
   <!-- Links -->
-    <div style="display:flex;justify-content:center"><input type="text" id="searchbox" class="form-control" style="" placeholder="Search"></div>
+
   <div class="navbar-collapse collapse order-3 dual-collapse2">
         <ul class="navbar-nav ml-auto">
             {% if 'userID' in session %}
-            <li class="nav-item">
-                <a class="nav-link" style="color:white" href="/createUserImages">Create Listing</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" style="color:white;" href="/allListing">Listings</a>
-            </li>
              <li class="nav-item">
                 <a class="nav-link"><img src="https://www.campaigntoendloneliness.org/wp-content/uploads/heart-1-1.png" width="28px" height="28px"></a>
             </li>
@@ -26,15 +20,15 @@
                 <a class="nav-link dropdown-toggle" href="#" id="navbardrop" data-toggle="dropdown"><img src="https://premiumbpthemes.com/images/profile-icon-flat-4.png" width="28px" height="28px">{{session['username']}}</a>
                 <div class="dropdown-menu dropdown-menu-right">
                 <a class="dropdown-item" href="/userProfile/{{session['userID']}}/">Profile</a>
+                <a class="dropdown-item" href="/editUser/{{session['userID']}}/">Profile Settings</a>
+                <a class="dropdown-item" href="/createUserImages">Create Listing</a>
                 <a class="dropdown-item" href="/manageListing">Manage Listing</a>
-                {% if session['userID'] == 1 %}
+                <a class="dropdown-item" href="/allListing">Listing</a>
+                {% if session['status'] == 'Admin' or session['status'] == 'Owner' %}
                 <a class="dropdown-item" href="/retrieveUsers">Retrieve Users</a>
                 {% endif %}
                 <a class="dropdown-item" href="/createDelivery">Create Delivery</a>
-                <a class="dropdown-item" href="/manageDelivery">Manage Delivery</a>
-                    {% if session['userID'] == 1 %}
-                <a class="dropdown-item" href="/retrieveDelivery">Retrieve Delivery Records</a>
-                    {% endif %}
+                <a class="dropdown-item" href="/retrieveDelivery">Delivery Records</a>
                 <a class="dropdown-item" href="/Proof">Proof Of Delivery</a>
                 <a class="dropdown-item" href="/analytics">Analytics</a>
                  <a class="dropdown-item">
@@ -64,7 +58,6 @@
         </ul>
     </div>
 </nav>
-
 <script>
     function openRegister() {
     document.getElementById("Register").style.display = "flex";
@@ -128,7 +121,6 @@
   </form>
 </div>
 <style>
-
 #logout{
 font-size:14.5px;
 color:black;

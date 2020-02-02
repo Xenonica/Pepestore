@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+{% block title %}Edit user information{% endblock %}
+
+{% from "includes/_formHelper.html" import render_field %}
+{% block content %}
+<script>
+  function DeleteUser(id){
+    var con = confirm("Are you sure you want to delete this account?");
+    if (con==true){
+      window.location.href = ("/deleteUser/"+id);
+    }
+    else{
+      window.location.reload(false);
+    }
+  }
+</script>
+<h1 class="display-4">Update Profile</h1>
+<form method="POST" enctype="multipart/form-data" action="">
+ <div id="banner"><img src="{{Banner}}" id="bannerpic"></div>
+ <img src="{{ProfPic}}" id="ProfPic" height="400" width="400">
+ <div class="form-group">
+ <label for="file">Update Profile Picture</label>
+ <input type="file" name="file" accept="image/*" class="form-control">
+ </div>
+ <div class="form-group">
+ <label for="banner">Update Banner Picture</label>
+ <input type="file" name="banner" accept="image/*" class="form-control">
+ </div>
+ <div class="form-group">
+ {{ render_field(Profile.username, class="form-control") }}
+  {% if Used == 1 %}
+  <p style="color:red;font-weight:bold;">Username already in use</p>
+  {% endif %}
+ </div>
+ <div class="form-group">
+ {{ render_field(Profile.description, class="form-control") }}
+ </div>
+ <input type="submit" value="Submit" class="btn btn-primary"/>
+</form>
+<input type="submit" value="Delete" class="btn btn-danger" onclick="DeleteUser({{id}})" style="margin-top:10px;">
+<style>
+#ProfPic{
+  position:absolute;
+  min-width: 200px;
+  max-width: 200px;
+  min-height: 200px;
+  max-height: 200px;
+  width: 100%;
+  height: 100%;
+  border-radius: 60%;
+  object-fit: cover;
+  top:255px;
+  left:15px;
+  border-width: 5px;
+  border-style: solid;
+  border-color: white;
+}
+
+#bannerpic{
+  width:100%;
+  height:200px;
+  object-fit:cover;
+  margin-bottom:150px;
+}
+</style>
+{% endblock %}

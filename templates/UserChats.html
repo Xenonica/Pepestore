@@ -11,6 +11,18 @@
 </head>
 <body>
 <script type="text/javascript">
+
+function NoReview(){
+    if ('{{Position}}' == 'S'){
+        document.getElementById('cross').value = 1;
+        document.getElementById("submitButton").onclick();
+    }
+    else{
+        document.getElementById('cross').value = 2;
+        document.getElementById("submitButton").onclick();
+    }
+}
+
 $(document).ready(function() {
     var count = 0
     var start = new Date
@@ -19,11 +31,22 @@ $(document).ready(function() {
     $("#OfferAccept").hide();
     $("#OfferDecline").hide();
 
-    if ({{Offers}}.length !== 0){
+    if ({{BuyerReview}} == 1) {
+    $("#ListingOfferPrice").hide();
+    $("#ListingOfferPriceLabel").hide();
+    $("#ListingOfferQuantity").hide();
+    $("#ListingOfferQuantityLabel").hide();
+    $("#ListingOfferSubmit").hide();
+    }
+
+    if ({{OffersPrice}}.length !== 0){
     $("#OfferCancel").show();
     $("#OfferAccept").show();
     $("#OfferDecline").show();
     $("#ListingOfferPrice").hide();
+    $("#ListingOfferPriceLabel").hide();
+    $("#ListingOfferQuantity").hide();
+    $("#ListingOfferQuantityLabel").hide();
     $("#ListingOfferSubmit").hide();
     }
 
@@ -31,178 +54,13 @@ $(document).ready(function() {
 
     socket.on('connect', function() {
         if ('{{Position}}' == 'S'){
-            socket.send('SellerConnected')
+            socket.send('/SellerConnected')
         }
         else {
-            socket.send('BuyerConnected')
+            socket.send('/BuyerConnected')
         }
     });
-
-	socket.on('message', function(msg) {
-	if (typeof msg == "string" && msg.indexOf('/Offer ') > -1) {
-        if ('{{Position}}' == 'S'){
-            $("#currentChat").append('<p id="OfferParaS" class="Generated">'+'The buyer made an offer of $'+parseFloat(msg.slice(7)).toFixed(2));
-            $("#OfferAccept").show();
-            $("#OfferDecline").show();
-            $("#ResponseParaS").remove();
-            console.log('Received Offer');}
-
-        else {
-            $("#ListingOfferPrice").hide();
-            $("#ListingOfferSubmit").hide();
-            $("#currentChat").append('<p id="OfferParaB" class="Generated">'+'You made an offer of $'+parseFloat(msg.slice(7)).toFixed(2));
-            $("#OfferCancel").show();
-            $("#ResponseParaB").remove();
-            console.log('Received Offer');}
-	}
-	else if (msg === 'SellerConnected') {
-	    $("#SellerOnOff").text('Online');
-	    if ($("#SellerOnOff").hasClass('Offline')){
-            $("#SellerOnOff").removeClass('Offline');
-	    }
-	}
-
-    else if (msg === 'BuyerConnected') {
-	    $("#BuyerOnOff").text('Online');
-	    if ($("#BuyerOnOff").hasClass('Offline')){
-            $("#BuyerOnOff").removeClass('Offline');
-	    }
-	}
-
-    else if (msg === 'SellerDisconnected') {
-	    $("#SellerOnOff").text('Offline');
-	    $("#SellerOnOff").addClass('Offline');
-	}
-
-    else if (msg === 'BuyerDisconnected') {
-	    $("#BuyerOnOff").text('Offline');
-	    $("#BuyerOnOff").addClass('Offline');
-	}
-
-	else if (msg == null) {
-    console.log('Offer already sent');
-	}
-
-	else if (msg === '/CancelOffer') {
-        if ('{{Position}}' == 'S'){
-            $("#OfferParaS").remove();
-            $("#OfferAccept").hide();
-            $("#OfferDecline").hide();
-            $("#currentChat").append('<p id="ResponseParaS" class="Generated">'+'The buyer has cancelled the offer');
-            }
-        else {
-            $("#ListingOfferPrice").show();
-            $("#ListingOfferSubmit").show();
-            $("#OfferParaB").remove();
-            $("#OfferCancel").hide();
-            $("#currentChat").append('<p id="ResponseParaB" class="Generated">'+'You have cancelled your offer');
-            }
-	}
-
-	else if (msg === '/DeclineOffer') {
-        if ('{{Position}}' == 'S'){
-            $("#OfferParaS").remove();
-            $("#OfferAccept").hide();
-            $("#OfferDecline").hide();
-            $("#currentChat").append('<p id="ResponseParaS" class="Generated">'+'You have declined the offer');
-            }
-        else {
-            $("#ListingOfferPrice").show();
-            $("#ListingOfferSubmit").show();
-            $("#OfferParaB").remove();
-            $("#OfferCancel").hide();
-            $("#currentChat").append('<p id="ResponseParaB" class="Generated">'+'The seller has declined your offer');
-            }
-	}
-
-    else if (msg === '/AcceptOffer') {
-        if ('{{Position}}' == 'S'){
-            $("#OfferParaS").remove();
-            $("#OfferAccept").hide();
-            $("#OfferDecline").hide();
-            $("#currentChat").append('<p id="ResponseParaS" class="Generated">'+'You have accepted the offer');
-            }
-        else {
-            $("#ListingOfferPrice").show();
-            $("#ListingOfferSubmit").show();
-            $("#OfferParaB").remove();
-            $("#OfferCancel").hide();
-            $("#currentChat").append('<p id="ResponseParaB" class="Generated">'+'The seller has accepted your offer');
-            }
-	}
-
-	else {
-	    if ('{{session['username']}}' == msg.Username){
-            $("#messages").append('<div class="container darker">'+'<img src="{{session['profpic']}}" alt="Avatar" class="right" width="100" height="100">'+'<p>'+msg.Message+'</p>'+'<span class="time-left">'+msg.Time+'</span>'+'</div>');
-            console.log('Received message');}
-		else if (msg.Username !== undefined){
-            $("#messages").append('<div class="container">'+'<img src="{{OtherProfPic}}" alt="Avatar" width="100" height="100">'+'<p>'+msg.Message+'</p>'+'<span class="time-right">'+msg.Time+'</span>'+'</div>');
-            console.log('Received message');
-            console.log(msg.Username)
-	    }
-	}
-
-	});
-	$('#sendbutton').on('click', function() {
-	    if ($('#myMessage').val() === '/AcceptOffer') {
-	        socket.send($('#myMessage').val()+{{session['userID']}});
-	        $('#myMessage').val('');
-	    }
-	    else {
-	    socket.send($('#myMessage').val());
-		$('#myMessage').val('');
-		console.log($('#myMessage').val())
-	    }
-	});
-	$('#myMessage').on('keypress',function(e) {
-    if(e.which == 13) {
-        socket.send($('#myMessage').val());
-		$('#myMessage').val('');
-        }
-    });
-	$('#ListingOfferSubmit').on('click', function() {
-	    if( isNaN($('#ListingOfferPrice').val()) == false ){
-	    var ListingOfferPrice = parseFloat($('#ListingOfferPrice').val()).toFixed(2);
-		socket.send('/Offer '+ListingOfferPrice);
-		$('#ListingOfferPrice').val(0);
-	    }
-	    else{
-	    $('#ListingOfferPrice').val(0);
-	    socket.send(null);
-	    }
-	});
-	$('#ListingOfferPrice').on('keypress',function(e) {
-    if(e.which == 13) {
-        if( isNaN($('#ListingOfferPrice').val()) == false ){
-	    var ListingOfferPrice = parseFloat($('#ListingOfferPrice').val()).toFixed(2);
-		socket.send('/Offer '+ListingOfferPrice);
-		$('#ListingOfferPrice').val(0);
-	    }
-	    else{
-	    $('#ListingOfferPrice').val(0);
-	    socket.send(null);
-	    }
-        }
-    });
-	$('#OfferAccept').on('click', function() {
-		socket.send('/AcceptOffer'+{{session['userID']}});
-		console.log('/AcceptOffer'+{{session['userID']}});
-	});
-	$('#OfferDecline').on('click', function() {
-	    console.log('Decline offer');
-		socket.send('/DeclineOffer');
-	});
-	$('#OfferCancel').on('click', function() {
-	    console.log('Cancel offer');
-		socket.send('/CancelOffer');
-	});
-	$(window).bind('beforeunload', function(){
-        var dt = new Date();
-	    var date = dt.getFullYear()+'-'+(dt.getMonth()+1)+'-'+dt.getDate();
-        var time = dt.getHours() + ":" + dt.getMinutes() + ":" + dt.getSeconds();
-        socket.send('Pos:{{Position}},'+date+' '+time);
-    });
-     function get_elapsed_time_string(total_seconds) {
+         function get_elapsed_time_string(total_seconds) {
       function pretty_time_string(num) {
         return ( num < 10 ? "0" : "" ) + num;
       }
@@ -261,6 +119,195 @@ $(document).ready(function() {
     }
     }, 1000);
 
+
+	socket.on('message', function(msg) {
+	if (typeof msg == "string" && msg.indexOf('/Offer ') > -1) {
+        if ('{{Position}}' == 'S'){
+            $("#currentChat").append('<p id="OfferParaS" class="Generated">'+'The buyer made an offer of $'+parseFloat(msg.split(' ')[1]).toFixed(2)+' for '+msg.split(' ')[2]+' units');
+            $("#OfferAccept").show();
+            $("#OfferDecline").show();
+            $("#ResponseParaS").remove();
+            console.log('Received Offer');}
+
+        else {
+            $("#ListingOfferPrice").hide();
+            $("#ListingOfferPriceLabel").hide();
+            $("#ListingOfferQuantity").hide();
+            $("#ListingOfferQuantityLabel").hide();
+            $("#ListingOfferSubmit").hide();
+            $("#currentChat").append('<p id="OfferParaB" class="Generated">'+'You made an offer of $'+parseFloat(msg.split(' ')[1]).toFixed(2)+' for '+msg.split(' ')[2]+' units');
+            $("#OfferCancel").show();
+            $("#ResponseParaB").remove();
+            console.log('Received Offer');}
+	}
+	else if (msg === '/SellerConnected') {
+	    $("#SellerOnOff").text('Online');
+	    if ($("#SellerOnOff").hasClass('Offline')){
+            $("#SellerOnOff").removeClass('Offline');
+	    }
+	}
+
+    else if (msg === '/BuyerConnected') {
+	    $("#BuyerOnOff").text('Online');
+	    if ($("#BuyerOnOff").hasClass('Offline')){
+            $("#BuyerOnOff").removeClass('Offline');
+	    }
+	}
+
+    else if (msg === 'SellerDisconnected') {
+	    $("#SellerOnOff").text('Offline');
+	    $("#SellerOnOff").addClass('Offline');
+	}
+
+    else if (msg === 'BuyerDisconnected') {
+	    $("#BuyerOnOff").text('Offline');
+	    $("#BuyerOnOff").addClass('Offline');
+	}
+
+	else if (msg == null) {
+    console.log('Offer already sent');
+	}
+
+	else if (msg === '/CancelOffer') {
+        if ('{{Position}}' == 'S'){
+            $("#OfferParaS").remove();
+            $("#OfferAccept").hide();
+            $("#OfferDecline").hide();
+            $("#currentChat").append('<p id="ResponseParaS" class="Generated">'+'The buyer has cancelled the offer');
+            }
+        else {
+            $("#ListingOfferPrice").show();
+            $("#ListingOfferPriceLabel").show();
+            $("#ListingOfferQuantity").show();
+            $("#ListingOfferQuantityLabel").show();
+            $("#ListingOfferSubmit").show();
+            $("#OfferParaB").remove();
+            $("#OfferCancel").hide();
+            $("#currentChat").append('<p id="ResponseParaB" class="Generated">'+'You have cancelled your offer');
+            }
+	}
+
+	else if (msg === '/DeclineOffer') {
+        if ('{{Position}}' == 'S'){
+            $("#OfferParaS").remove();
+            $("#OfferAccept").hide();
+            $("#OfferDecline").hide();
+            $("#currentChat").append('<p id="ResponseParaS" class="Generated">'+'You have declined the offer');
+            }
+        else {
+            $("#ListingOfferPrice").show();
+            $("#ListingOfferPriceLabel").show();
+            $("#ListingOfferQuantity").show();
+            $("#ListingOfferQuantityLabel").show();
+            $("#ListingOfferSubmit").show();
+            $("#OfferParaB").remove();
+            $("#OfferCancel").hide();
+            $("#currentChat").append('<p id="ResponseParaB" class="Generated">'+'The seller has declined your offer');
+            }
+	}
+
+    else if (msg === '/AcceptOffer') {
+        if ('{{Position}}' == 'S'){
+            $("#OfferParaS").remove();
+            $("#OfferAccept").hide();
+            $("#OfferDecline").hide();
+            $("#currentChat").append('<p id="ResponseParaS" class="Generated">'+'You have accepted the offer');
+            }
+        else {
+            $("#ListingOfferPrice").show();
+            $("#ListingOfferPriceLabel").show();
+            $("#ListingOfferQuantity").show();
+            $("#ListingOfferQuantityLabel").show();
+            $("#ListingOfferSubmit").show();
+            $("#OfferParaB").remove();
+            $("#OfferCancel").hide();
+            $("#currentChat").append('<p id="ResponseParaB" class="Generated">'+'The seller has accepted your offer');
+            }
+	}
+
+	else {
+	    if ('{{session['username']}}' == msg.Username){
+            $("#messages").append('<div class="container darker">'+'<img src="{{session['profpic']}}" alt="Avatar" class="right" width="100" height="100">'+'<p>'+msg.Message+'</p>'+'<span class="time-left">'+msg.Time+'</span>'+'</div>');
+            console.log('Received message');}
+		else if (msg.Username !== undefined){
+            $("#messages").append('<div class="container">'+'<img src="{{OtherProfPic}}" alt="Avatar" width="100" height="100">'+'<p>'+msg.Message+'</p>'+'<span class="time-right">'+msg.Time+'</span>'+'</div>');
+            console.log('Received message');
+            console.log(msg.Username)
+	    }
+	}
+
+	});
+	$('#sendbutton').on('click', function() {
+	    if($('#myMessage').val()[0] == '/'){
+		$('#myMessage').val('');
+	    }
+	    else{
+	    socket.send($('#myMessage').val());
+		$('#myMessage').val('');
+	    }
+	});
+	$('#myMessage').on('keypress',function(e) {
+    if(e.which == 13) {
+            if($('#myMessage').val()[0] == '/'){
+            $('#myMessage').val('');
+	        }
+            else{
+            socket.send($('#myMessage').val());
+            $('#myMessage').val('');
+	        }
+        }
+    });
+	$('#ListingOfferSubmit').on('click', function(e) {
+	    if( isNaN($('#ListingOfferPrice').val()) == false ){
+	    var ListingOfferPrice = parseFloat($('#ListingOfferPrice').val()).toFixed(2);
+	    var ListingOfferQuantity = parseInt($('#ListingOfferQuantity').val(),10)
+		socket.send('/Offer '+ListingOfferPrice+' '+ListingOfferQuantity);
+		$('#ListingOfferPrice').val(0);
+		$('#ListingOfferQuantity').val(1);
+	    }
+	    else{
+	    var ListingOfferPrice = parseFloat(0).toFixed(2);
+	    var ListingOfferQuantity = parseInt($('#ListingOfferQuantity').val(),10)
+		socket.send('/Offer '+ListingOfferPrice+' '+ListingOfferQuantity);
+	    $('#ListingOfferPrice').val(0);
+	    $('#ListingOfferQuantity').val(1);
+	    }
+	});
+	$('#ListingOfferPrice').on('keypress',function(e) {
+    if(e.which == 13) {
+        if( isNaN($('#ListingOfferPrice').val()) == false ){
+	    var ListingOfferPrice = parseFloat($('#ListingOfferPrice').val()).toFixed(2);
+	    var ListingOfferQuantity = parseInt($('#ListingOfferQuantity').val(),10)
+		socket.send('/Offer '+ListingOfferPrice+' '+ListingOfferQuantity);
+		$('#ListingOfferPrice').val(0);
+		$('#ListingOfferQuantity').val(1);
+	    }
+	    else{
+	    $('#ListingOfferPrice').val(0);
+	    $('#ListingOfferQuantity').val(1);
+	    socket.send(null);
+	    }
+        }
+    });
+	$('#OfferAccept').on('click', function() {
+		socket.send('/AcceptOffer');
+		console.log('Accept Offer');
+	});
+	$('#OfferDecline').on('click', function() {
+	    console.log('Decline offer');
+		socket.send('/DeclineOffer');
+	});
+	$('#OfferCancel').on('click', function() {
+	    console.log('Cancel offer');
+		socket.send('/CancelOffer');
+	});
+	$(window).bind('beforeunload', function(){
+        var dt = new Date();
+	    var date = dt.getFullYear()+'-'+(dt.getMonth()+1)+'-'+dt.getDate();
+        var time = dt.getHours() + ":" + dt.getMinutes() + ":" + dt.getSeconds();
+        socket.send('/Pos:{{Position}},'+date+' '+time);
+    });
+
 });
 </script>
 <div id="UserStatus">
@@ -284,10 +331,13 @@ $(document).ready(function() {
 </div>
 <div id="currentChat">
     <img src={{ListingImage}} id="ListingImage">
-    <h1 id="ListingName">{{ ListingName }}</h1>
+    <h3 id="ListingName">{{ ListingName }}</h3>
     <span id="ListingPrice">${{ ListingPrice }}</span>
     {% if Position == 'B' %}
+    <p id="ListingOfferPriceLabel">Price</p>
     {{ render_field(chatofferform.price, id="ListingOfferPrice") }}
+    <p id="ListingOfferQuantityLabel">Quantity</p>
+    {{ render_field(chatofferform.quantity, min=1 , max=ListingQuantity , id="ListingOfferQuantity") }}
     <button id="ListingOfferSubmit">Offer</button>
     <button id="OfferCancel" class="Buttons">Cancel</button>
     {% else %}
@@ -295,10 +345,59 @@ $(document).ready(function() {
     <button id="OfferAccept" class="Buttons">Accept</button>
     {% endif %}
 
-    {% if Position == 'B' and Offers != [] %}
-    <p id="OfferParaB" class="Generated">You made an offer of ${{ "{0:.2f}".format(chatIDx.get_offers()[0]) }}</p>
-    {% elif Position == 'S' and Offers != [] %}
-    <p id="OfferParaS" class="Generated">The buyer made an offer of ${{ "{0:.2f}".format(chatIDx.get_offers()[0]) }}</p>
+    {% if Position == 'B' and OffersPrice != [] %}
+    <p id="OfferParaB" class="Generated">You made an offer of ${{ "{0:.2f}".format(OffersPrice[0]) }} for {{ OffersQuantity }} units</p>
+    {% elif Position == 'S' and OffersPrice != [] %}
+    <p id="OfferParaS" class="Generated">The buyer made an offer of ${{ "{0:.2f}".format(OffersPrice[0]) }} for {{ OffersQuantity }} units</p>
+    {% endif %}
+    {% if Position == 'B' %}
+        {% if BuyerReview == 1 %}
+        <form method="post" id="reviewform">
+            <div id="reviewwrap">
+                <h3 style="color:grey;">Leave a feedback ?</h3>
+                <div class="rating">
+                    <input type="radio" id="star5" name="rating" value="5" required/><label class = "full" for="star5" title="Amazing - 5 stars"></label>
+                    <input type="radio" id="star4half" name="rating" value="4.5" /><label class="half" for="star4half" title="Very good - 4.5 stars"></label>
+                    <input type="radio" id="star4" name="rating" value="4" /><label class = "full" for="star4" title="Good - 4 stars"></label>
+                    <input type="radio" id="star3half" name="rating" value="3.5" /><label class="half" for="star3half" title="Pretty Good - 3.5 stars"></label>
+                    <input type="radio" id="star3" name="rating" value="3" /><label class = "full" for="star3" title="Not Bad - 3 stars"></label>
+                    <input type="radio" id="star2half" name="rating" value="2.5" /><label class="half" for="star2half" title="Decent - 2.5 stars"></label>
+                    <input type="radio" id="star2" name="rating" value="2" /><label class = "full" for="star2" title="Not too bad - 2 stars"></label>
+                    <input type="radio" id="star1half" name="rating" value="1.5" /><label class="half" for="star1half" title="Bad - 1.5 stars"></label>
+                    <input type="radio" id="star1" name="rating" value="1" /><label class = "full" for="star1" title="Very Bad - 1 star"></label>
+                    <input type="radio" id="starhalf" name="rating" value="0.5" /><label class="half" for="starhalf" title="Horrendous - 0.5 stars"></label>
+                </div>
+                    <input type="text" name="Feedback" maxlength="150" id="Feedback">
+                    <input type="hidden" name="cross" value="" id="cross">
+                    <button id="submitButton" onclick="this.form.submit()">Submit</button>
+                <i class="far fa-times-circle fa-lg" style="color:white" onclick="NoReview()" id="x"></i>
+            </div>
+        </form>
+        {% endif %}
+    {% elif Position == 'S' %}
+        {% if SellerReview == 1 %}
+        <form method="post" id="reviewform">
+            <div id="reviewwrap">
+                <h3 style="color:grey;">Leave a feedback ?</h3>
+                <div class="rating">
+                    <input type="radio" id="star5" name="rating" value="5" required/><label class = "full" for="star5" title="Amazing - 5 stars"></label>
+                    <input type="radio" id="star4half" name="rating" value="4.5" /><label class="half" for="star4half" title="Very good - 4.5 stars"></label>
+                    <input type="radio" id="star4" name="rating" value="4" /><label class = "full" for="star4" title="Good - 4 stars"></label>
+                    <input type="radio" id="star3half" name="rating" value="3.5" /><label class="half" for="star3half" title="Pretty Good - 3.5 stars"></label>
+                    <input type="radio" id="star3" name="rating" value="3" /><label class = "full" for="star3" title="Not Bad - 3 stars"></label>
+                    <input type="radio" id="star2half" name="rating" value="2.5" /><label class="half" for="star2half" title="Decent - 2.5 stars"></label>
+                    <input type="radio" id="star2" name="rating" value="2" /><label class = "full" for="star2" title="Not too bad - 2 stars"></label>
+                    <input type="radio" id="star1half" name="rating" value="1.5" /><label class="half" for="star1half" title="Bad - 1.5 stars"></label>
+                    <input type="radio" id="star1" name="rating" value="1" /><label class = "full" for="star1" title="Very Bad - 1 star"></label>
+                    <input type="radio" id="starhalf" name="rating" value="0.5" /><label class="half" for="starhalf" title="Horrendous - 0.5 stars"></label>
+                </div>
+                    <input type="text" name="Feedback" maxlength="150" id="Feedback">
+                    <input type="hidden" name="cross" value="" id="cross">
+                    <button id="submitButton" onclick="this.form.submit()">Submit</button>
+                <i class="far fa-times-circle fa-lg" style="color:white" onclick="NoReview()" id="x"></i>
+            </div>
+        </form>
+        {% endif %}
     {% endif %}
 </div>
 <div id="messages">
@@ -318,9 +417,6 @@ $(document).ready(function() {
     {% endif %}
 {% endfor %}
 </div>
-<form method="POST">
-    <input type="text">
-</form>
 <div id="SendMsg">
     <input type="text" id="myMessage">
     <button id="sendbutton">Send</button>
@@ -328,8 +424,30 @@ $(document).ready(function() {
 </body>
 </html>
 <style>
-label{
-  display:none;
+
+#x{
+  position:absolute;
+  top:50px;
+  right:0px;
+  cursor:pointer;
+}
+
+#reviewwrap{
+  width:80%;
+  position:absolute;
+  top:205px;
+  left:250px;
+  display:flex;
+  flex-direction:column;
+  align-items: center;
+  justify-content: center;
+}
+
+#Feedback{
+  border-radius:10px;
+  padding:5px;
+  width:60%;
+  margin-bottom: 10px;
 }
 
 #messages{
@@ -405,9 +523,9 @@ label{
 
 #ListingPrice {
   color:white;
-  position:relative;
-  top:30px;
-  right:50px;
+  position:absolute;
+  top:333px;
+  left:182px;
 }
 
 #currentChat {
@@ -422,13 +540,34 @@ label{
   width:130px;
   position:absolute;
   top:330px;
+  right:200px;
+}
+
+#ListingOfferQuantity{
+  width:60px;
+  position:absolute;
+  top:330px;
+  right:125px;
+}
+
+#ListingOfferPriceLabel{
+  color:white;
+  position:absolute;
+  top:305px;
+  right:249px;
+}
+
+#ListingOfferQuantityLabel{
+  color:white;
+  position:absolute;
+  top:305px;
   right:125px;
 }
 
 #ListingOfferSubmit{
   position:absolute;
   top:330px;
-  right:70px;
+  right:67px;
 }
 
 #SendMsg{
@@ -466,10 +605,55 @@ label{
   margin:10px;
 }
 .UserOnOff{
-  width:130px;
-  position:relative;
-  top:50px;
-  right:160px;
+  position:absolute;
+  top:170px;
+  left:200px;
 }
+
+
+
+
+
+
+
+/****** Style Star Rating Widget *****/
+
+.rating {
+  margin-top:5px;
+  border: none;
+  float: left;
+  width: 143px;
+}
+
+.rating > input { display: none; }
+.rating > label:before {
+  margin: 5px;
+  font-size: 1.25em;
+  font-family: FontAwesome;
+  display: inline-block;
+  content: "\f005";
+}
+
+.rating > .half:before {
+  content: "\f089";
+  position: absolute;
+}
+
+.rating > label {
+  color: #ddd;
+ float: right;
+}
+
+/***** CSS Magic to Highlight Stars on Hover *****/
+
+.rating > input:checked ~ label, /* show gold star when clicked */
+.rating:not(:checked) > label:hover, /* hover current star */
+.rating:not(:checked) > label:hover ~ label { color: #FFD700;  } /* hover previous stars in list */
+
+.rating > input:checked + label:hover, /* hover current star when changing rating */
+.rating > input:checked ~ label:hover,
+.rating > label:hover ~ input:checked ~ label, /* lighten current selection */
+.rating > input:checked ~ label:hover ~ label { color: #FFED85;  }
+
 </style>
 {% endblock %}

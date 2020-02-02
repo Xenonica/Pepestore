@@ -23,3 +23,128 @@
     <span>Quantity: <b style="color:red">{{ i.get_quantity() }}</b></span>
 </div></a>
 {% endmacro %}
+
+{% macro reviews(i) %}
+<hr>
+<div class="reviews">
+    <div class="reviewstitle">
+        <a href="/userProfile/{{i.get_sender().get_userID()}}/"><img src="{{i.get_sender().get_profpic()}}" class="reviewsprofpic"></a><h4 class="reviewtext" onclick="window.location.href='/userProfile/{{i.get_sender().get_userID()}}/'" style="cursor:pointer">{{ i.get_sender().get_username() }}</h4><p class="reviewtextpara">bought</p><a href="/listingPage/{{i.get_listing().get_listingID()}}"><img src="{{i.get_listing().get_displaypic()}}" class="reviewslistingpic"></a><h4 class="reviewtext" onclick="window.location.href='/listingPage/{{i.get_listing().get_listingID()}}'" style="cursor:pointer">{{ i.get_listing().get_name() }}</h4>
+    </div>
+    <div class="reviewsfeedback">
+        <p>{{ i.get_feedback() }}</p>
+    </div>
+        <div class="rating">
+            {% if i.get_rating() == 5 %}
+                <label class = "full" title="Amazing - 5 stars" style="color: #FFD700"></label>
+                <label class="half"  title="Very good - 4.5 stars" style="color: #FFD700"></label>
+                <label class = "full"  title="Good - 4 stars" style="color: #FFD700"></label>
+                <label class="half"  title="Pretty Good - 3.5 stars" style="color: #FFD700"></label>
+                <label class = "full"  title="Not Bad - 3 stars" style="color: #FFD700"></label>
+                <label class="half"  title="Decent - 2.5 stars" style="color: #FFD700"></label>
+                <label class = "full" title="Not too bad - 2 stars" style="color: #FFD700"></label>
+                <label class="half" title="Bad - 1.5 stars" style="color: #FFD700"></label>
+                <label class = "full" title="Very Bad - 1 star" style="color: #FFD700"></label>
+                <label class="half" title="Horrendous - 0.5 stars" style="color: #FFD700"></label>
+            {% elif i.get_rating() == 4.5 %}
+                <label class = "full" title="Amazing - 5 stars"></label>
+                <label class="half"  title="Very good - 4.5 stars" style="color: #FFD700"></label>
+                <label class = "full"  title="Good - 4 stars" style="color: #FFD700"></label>
+                <label class="half"  title="Pretty Good - 3.5 stars" style="color: #FFD700"></label>
+                <label class = "full"  title="Not Bad - 3 stars" style="color: #FFD700"></label>
+                <label class="half"  title="Decent - 2.5 stars" style="color: #FFD700"></label>
+                <label class = "full" title="Not too bad - 2 stars" style="color: #FFD700"></label>
+                <label class="half" title="Bad - 1.5 stars" style="color: #FFD700"></label>
+                <label class = "full" title="Very Bad - 1 star" style="color: #FFD700"></label>
+                <label class="half" title="Horrendous - 0.5 stars" style="color: #FFD700"></label>
+            {% elif i.get_rating() == 4 %}
+                <label class = "full" title="Amazing - 5 stars"></label>
+                <label class="half"  title="Very good - 4.5 stars"></label>
+                <label class = "full"  title="Good - 4 stars" style="color: #FFD700"></label>
+                <label class="half"  title="Pretty Good - 3.5 stars" style="color: #FFD700"></label>
+                <label class = "full"  title="Not Bad - 3 stars" style="color: #FFD700"></label>
+                <label class="half"  title="Decent - 2.5 stars" style="color: #FFD700"></label>
+                <label class = "full" title="Not too bad - 2 stars" style="color: #FFD700"></label>
+                <label class="half" title="Bad - 1.5 stars" style="color: #FFD700"></label>
+                <label class = "full" title="Very Bad - 1 star" style="color: #FFD700"></label>
+                <label class="half" title="Horrendous - 0.5 stars" style="color: #FFD700"></label>
+            {% elif i.get_rating() == 3.5 %}
+                <label class = "full" title="Amazing - 5 stars"></label>
+                <label class="half"  title="Very good - 4.5 stars"></label>
+                <label class = "full"  title="Good - 4 stars"></label>
+                <label class="half"  title="Pretty Good - 3.5 stars" style="color: #FFD700"></label>
+                <label class = "full"  title="Not Bad - 3 stars" style="color: #FFD700"></label>
+                <label class="half"  title="Decent - 2.5 stars" style="color: #FFD700"></label>
+                <label class = "full" title="Not too bad - 2 stars" style="color: #FFD700"></label>
+                <label class="half" title="Bad - 1.5 stars" style="color: #FFD700"></label>
+                <label class = "full" title="Very Bad - 1 star" style="color: #FFD700"></label>
+                <label class="half" title="Horrendous - 0.5 stars" style="color: #FFD700"></label>
+            {% elif i.get_rating() == 3 %}
+                <label class = "full" title="Amazing - 5 stars"></label>
+                <label class="half"  title="Very good - 4.5 stars"></label>
+                <label class = "full"  title="Good - 4 stars"></label>
+                <label class="half"  title="Pretty Good - 3.5 stars"></label>
+                <label class = "full"  title="Not Bad - 3 stars" style="color: #FFD700"></label>
+                <label class="half"  title="Decent - 2.5 stars" style="color: #FFD700"></label>
+                <label class = "full" title="Not too bad - 2 stars" style="color: #FFD700"></label>
+                <label class="half" title="Bad - 1.5 stars" style="color: #FFD700"></label>
+                <label class = "full" title="Very Bad - 1 star" style="color: #FFD700"></label>
+                <label class="half" title="Horrendous - 0.5 stars" style="color: #FFD700"></label>
+            {% elif i.get_rating() == 2.5 %}
+                <label class = "full" title="Amazing - 5 stars"></label>
+                <label class="half"  title="Very good - 4.5 stars"></label>
+                <label class = "full"  title="Good - 4 stars"></label>
+                <label class="half"  title="Pretty Good - 3.5 stars"></label>
+                <label class = "full"  title="Not Bad - 3 stars"></label>
+                <label class="half"  title="Decent - 2.5 stars" style="color: #FFD700"></label>
+                <label class = "full" title="Not too bad - 2 stars" style="color: #FFD700"></label>
+                <label class="half" title="Bad - 1.5 stars" style="color: #FFD700"></label>
+                <label class = "full" title="Very Bad - 1 star" style="color: #FFD700"></label>
+                <label class="half" title="Horrendous - 0.5 stars" style="color: #FFD700"></label>
+            {% elif i.get_rating() == 2 %}
+                <label class = "full" title="Amazing - 5 stars"></label>
+                <label class="half"  title="Very good - 4.5 stars"></label>
+                <label class = "full"  title="Good - 4 stars"></label>
+                <label class="half"  title="Pretty Good - 3.5 stars"></label>
+                <label class = "full"  title="Not Bad - 3 stars"></label>
+                <label class="half"  title="Decent - 2.5 stars"></label>
+                <label class = "full" title="Not too bad - 2 stars" style="color: #FFD700"></label>
+                <label class="half" title="Bad - 1.5 stars" style="color: #FFD700"></label>
+                <label class = "full" title="Very Bad - 1 star" style="color: #FFD700"></label>
+                <label class="half" title="Horrendous - 0.5 stars" style="color: #FFD700"></label>
+            {% elif i.get_rating() == 1.5 %}
+                <label class = "full" title="Amazing - 5 stars"></label>
+                <label class="half"  title="Very good - 4.5 stars"></label>
+                <label class = "full"  title="Good - 4 stars"></label>
+                <label class="half"  title="Pretty Good - 3.5 stars"></label>
+                <label class = "full"  title="Not Bad - 3 stars"></label>
+                <label class="half"  title="Decent - 2.5 stars"></label>
+                <label class = "full" title="Not too bad - 2 stars"></label>
+                <label class="half" title="Bad - 1.5 stars" style="color: #FFD700"></label>
+                <label class = "full" title="Very Bad - 1 star" style="color: #FFD700"></label>
+                <label class="half" title="Horrendous - 0.5 stars" style="color: #FFD700"></label>
+            {% elif i.get_rating() == 1 %}
+                <label class = "full" title="Amazing - 5 stars"></label>
+                <label class="half"  title="Very good - 4.5 stars"></label>
+                <label class = "full"  title="Good - 4 stars"></label>
+                <label class="half"  title="Pretty Good - 3.5 stars"></label>
+                <label class = "full"  title="Not Bad - 3 stars"></label>
+                <label class="half"  title="Decent - 2.5 stars"></label>
+                <label class = "full" title="Not too bad - 2 stars"></label>
+                <label class="half" title="Bad - 1.5 stars"></label>
+                <label class = "full" title="Very Bad - 1 star" style="color: #FFD700"></label>
+                <label class="half" title="Horrendous - 0.5 stars" style="color: #FFD700"></label>
+            {% elif i.get_rating() == 0.5 %}
+                <label class = "full" title="Amazing - 5 stars"></label>
+                <label class="half"  title="Very good - 4.5 stars"></label>
+                <label class = "full"  title="Good - 4 stars"></label>
+                <label class="half"  title="Pretty Good - 3.5 stars"></label>
+                <label class = "full"  title="Not Bad - 3 stars"></label>
+                <label class="half"  title="Decent - 2.5 stars"></label>
+                <label class = "full" title="Not too bad - 2 stars"></label>
+                <label class="half" title="Bad - 1.5 stars"></label>
+                <label class = "full" title="Very Bad - 1 star"></label>
+                <label class="half" title="Horrendous - 0.5 stars" style="color: #FFD700"></label>
+            {% endif %}
+        </div>
+</div>
+{% endmacro %}

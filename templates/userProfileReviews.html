@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% from "includes/_formHelper.html" import render_field,filter %}
+{% from "includes/_formHelper.html" import render_field,filter,reviews %}
 {% block title %}User Profile{% endblock %}
 
 {% block content %}
@@ -36,11 +36,26 @@
         {% endif %}
         </div>
 
-        <div id="listingsWrapper">
-            <h1>Listings</h1>
-            <div id="listings_container">
-                {% for i in userListings %}
-                {{ filter(i) }}
+        <div id="reviewsWrapper">
+            <h1>Reviews</h1>
+            <span id="select">
+                {% if select == 'all' %}
+                <i class="fas fa-circle fa-lg" style="color:red;margin:10px;cursor:pointer;" onclick="window.location.href='/userProfile/{{id}}/reviews/'"> All</i>
+                <i class="far fa-circle fa-lg" style="margin:10px;cursor:pointer;" onclick="window.location.href='/userProfile/{{id}}/reviews/sellers/'"> Sellers</i>
+                <i class="far fa-circle fa-lg" style="margin:10px;cursor:pointer;" onclick="window.location.href='/userProfile/{{id}}/reviews/buyers/'"> Buyers</i>
+                {% elif select == 'sellers' %}
+                <i class="far fa-circle fa-lg" style="margin:10px;cursor:pointer;" onclick="window.location.href='/userProfile/{{id}}/reviews/'"> All</i>
+                <i class="fas fa-circle fa-lg" style="color:red;margin:10px;cursor:pointer;" onclick="window.location.href='/userProfile/{{id}}/reviews/sellers/'"> Sellers</i>
+                <i class="far fa-circle fa-lg" style="margin:10px;cursor:pointer;" onclick="window.location.href='/userProfile/{{id}}/reviews/buyers/'"> Buyers</i>
+                {% elif select == 'buyers' %}
+                <i class="far fa-circle fa-lg" style="margin:10px;cursor:pointer;" onclick="window.location.href='/userProfile/{{id}}/reviews/'"> All</i>
+                <i class="far fa-circle fa-lg" style="margin:10px;cursor:pointer;" onclick="window.location.href='/userProfile/{{id}}/reviews/sellers/'"> Sellers</i>
+                <i class="fas fa-circle fa-lg" style="color:red;margin:10px;cursor:pointer;" onclick="window.location.href='/userProfile/{{id}}/reviews/buyers/'"> Buyers</i>
+                {% endif %}
+            </span>
+            <div id="reviews_container">
+                {% for i in userReviews %}
+                {{ reviews(i) }}
                 {% endfor %}
             </div>
         </div>
@@ -52,23 +67,79 @@
 width:150px;
 }
 
+#Description{
+word-wrap: break-word;
+max-width: 250px;
+}
+
+#select{
+display:flex;
+flex-direction:column;
+}
+
+.reviewstitle{
+display: flex;
+flex-direction:row;
+}
+
+.reviewsprofpic{
+  min-width: 80px;
+  max-width: 80px;
+  min-height: 80px;
+  max-height: 80px;
+  width: 100%;
+  height: 100%;
+  border-radius: 60%;
+  object-fit: cover;
+}
+
+.reviewslistingpic{
+  min-width: 80px;
+  max-width: 80px;
+  min-height: 80px;
+  max-height: 80px;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.reviewtext{
+  bottom:0;
+  margin-top:50px;
+  margin-left:5px;
+  margin-right:5px;
+  margin-bottom:0px;
+}
+
+.reviewtextpara{
+  font-size:110%;
+  bottom:0;
+  margin-top:53px;
+  margin-left:10px;
+  margin-right:10px;
+  margin-bottom:0px;
+}
+
+.reviewsfeedback{
+  margin-top:10px;
+  flex:1;
+}
+.reviewsfeedback > p{
+  margin:0;
+}
+
 .container{
 display: flex;
 flex-direction:row;
 margin:0;
 }
 
-#Description{
-word-wrap: break-word;
-max-width: 250px;
-}
-
-#listing_container{
-flex-direction:column;
+#reviews_container{
+flex-direction:row;
 margin-right:10px;
 }
 
-#listingsWrapper{
+#reviewsWrapper{
   position: absolute;
   right:30px;
   top:320px;
@@ -78,8 +149,9 @@ margin-right:10px;
   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
 }
 
-.listing_wrapper{
-display:inline-block;
+.reviews{
+display:flex;
+flex-direction:column;
 }
 
 #ProfPic{

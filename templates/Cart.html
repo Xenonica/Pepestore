@@ -2,25 +2,25 @@
 {% block title %}Library Loan System - Home{% endblock %}
 
 {% block content %}
-{% from "includes/_formHelper.html" import render_field %}
 <h1 class="display-4">Orders</h1>
   <div class="row">
     <div class="col-lg-8 mx-auto">
 
       <!-- List group-->
       <ul class="list-group shadow">
-        {% for i in PurchaseList %}
-        <li class="list-group-item" onclick='window.location.href="/listingPage/{{i.get_listingID()}}"'>
+        {% for i in Purchases %}
+        <li class="list-group-item" onclick='window.location.href="/listingPage/{{listingDict[i.get_productID()].get_listingID()}}"'>
           <!-- Custom content-->
           <div class="media align-items-lg-center flex-column flex-lg-row p-3 list">
             <div class="media-body order-2 order-lg-1">
-              <h5 class="mt-0 font-weight-bold mb-2">{{ i.get_name() }}</h5>
-              <p class="font-italic text-muted mb-0 small">{{ i.get_description() }}</p>
+              <h5 class="mt-0 font-weight-bold mb-2">{{ listingDict[i.get_productID()].get_name() }}</h5>
+              <p class="font-italic text-muted mb-0 small">{{ listingDict[i.get_productID()].get_description() }}</p>
               <div class="d-flex align-items-center justify-content-between mt-1">
                 <h6 class="font-weight-bold my-2">${{ i.get_price() }}</h6>
               </div>
-            </div><img src={{i.get_displaypic()}} width="200" height="200" class="ml-lg-5 order-1 order-lg-2 listings">
+            </div><img src={{listingDict[i.get_productID()].get_displaypic()}} width="200" height="200" class="ml-lg-5 order-1 order-lg-2 listings">
           </div>
+          <h7 class="font-weight-bold my-2">Quantity: {{ i.get_quantity() }}</h7>
           <!-- End -->
         </li>
         <!-- End -->
@@ -28,8 +28,10 @@
       </ul>
     </div>
   </div>
-
-</nav>
+<p>Total Price: ${{ TotalPrice }}</p>
+<form method="POST">
+  <button>Purchase</button>
+</form>
 <style>
 .list-group-item {
   cursor:pointer;

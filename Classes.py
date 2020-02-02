@@ -1,7 +1,8 @@
 import shelve
+from datetime import datetime
 
 class Listing :
-    def __init__(self, name, price, description, category, seller_name, quantity):
+    def __init__(self, name, price, description, category,OP, seller_name, quantity):
         db = shelve.open('storage.db', 'c')
         try :
             listingsDict = db['Listings']
@@ -15,6 +16,7 @@ class Listing :
         self.__price = price
         self.__description = description
         self.__category = category
+        self.__OP = OP
         self.__seller_name = seller_name
         self.__visits = 0
         self.__quantity = quantity
@@ -55,6 +57,9 @@ class Listing :
 
     def get_category(self):
         return self.__category
+
+    def get_OP(self):
+        return self.__OP
 
     def get_seller_name(self):
         return self.__seller_name
@@ -105,12 +110,18 @@ class User :
         self.__email = email
         self.__password = password
         self.__chats = []
-        self.__sales = {}
+        self.__sales = []
         self.__purchases = []
         self.__profpic = 'http://s3.amazonaws.com/37assets/svn/765-default-avatar.png'
+        self.__bannerpic = 'https://images.unsplash.com/photo-1523895665936-7bfe172b757d?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&w=1000&q=80'
         self.__address1 = ''
         self.__address2 = ''
         self.__zipcode = ''
+        self.__status = 'Normal'
+        self.__sellerReviews = []
+        self.__buyerReviews = []
+        self.__allReviews = []
+        self.__description = ''
 
 
     def get_userID(self):
@@ -137,6 +148,9 @@ class User :
     def get_profpic(self):
         return self.__profpic
 
+    def get_bannerpic(self):
+        return self.__bannerpic
+
     def get_address1(self):
         return self.__address1
 
@@ -145,6 +159,21 @@ class User :
 
     def get_zipcode(self):
         return self.__zipcode
+
+    def get_status(self):
+        return self.__status
+
+    def get_sellerReviews(self):
+        return self.__sellerReviews
+
+    def get_buyerReviews(self):
+        return self.__buyerReviews
+
+    def get_allReviews(self):
+        return self.__allReviews
+
+    def get_description(self):
+        return self.__description
 
     def set_userID(self, userID):
         self.__userID = userID
@@ -162,13 +191,16 @@ class User :
         self.__chats.append(chatID)
 
     def set_sales(self,sale):
-        self.__sales.update({sale:1})
+        self.__sales.append(sale)
 
     def set_purchases(self,purchases):
         self.__purchases.append(purchases)
 
     def set_profpic(self,profpic):
         self.__profpic = profpic
+
+    def set_bannerpic(self,bannerpic):
+        self.__bannerpic = bannerpic
 
     def set_address1(self,address1):
         self.__address1 = address1
@@ -178,6 +210,29 @@ class User :
 
     def set_zipcode(self,zipcode):
         self.__zipcode = zipcode
+
+    def set_status(self,status):
+        self.__status = status
+
+    def set_sellerReviews(self,review):
+        self.__sellerReviews.append(review)
+
+    def set_buyerReviews(self,review):
+        self.__buyerReviews.append(review)
+
+    def set_allReviews(self,review):
+        self.__allReviews.append(review)
+
+    def set_description(self,description):
+        self.__description = description
+
+class Owner(User):
+    def __init__(self, username, email, password):
+        super().__init__(username, email, password)
+        self.__status = 'Owner'
+
+    def get_status(self):
+        return self.__status
 
 class Chat :
     def __init__(self,sellerID,buyerID,listingID):
@@ -194,9 +249,12 @@ class Chat :
         self.__buyerID = buyerID
         self.__listingID = listingID
         self.__chatLog = []
-        self.__offers = []
-        self.__BuyerLastOnline = ''
-        self.__SellerLastOnline = ''
+        self.__offersprice = []
+        self.__offersquantity = []
+        self.__BuyerLastOnline = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+        self.__SellerLastOnline = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+        self.__buyerreviews = 0
+        self.__sellerreviews = 0
 
     def get_chatID(self):
         return self.__chatID
@@ -213,8 +271,11 @@ class Chat :
     def get_chatLog(self):
         return self.__chatLog
 
-    def get_offers(self):
-        return self.__offers
+    def get_offersprice(self):
+        return self.__offersprice
+
+    def get_offersquantity(self):
+        return self.__offersquantity
 
     def get_BuyerLastOnline(self):
         return self.__BuyerLastOnline
@@ -222,17 +283,32 @@ class Chat :
     def get_SellerLastOnline(self):
         return self.__SellerLastOnline
 
+    def get_buyerreview(self):
+        return self.__buyerreviews
+
+    def get_sellerreview(self):
+        return self.__sellerreviews
+
     def set_chatLog(self,chatLog):
         self.__chatLog = chatLog
 
-    def set_offers(self,offers):
-        self.__offers = offers
+    def set_offersprice(self,offersprice):
+        self.__offersprice = offersprice
+
+    def set_offersquantity(self,offersquantity):
+        self.__offersquantity = offersquantity
 
     def set_BuyerLastOnline(self,lastonline):
         self.__BuyerLastOnline = lastonline
 
     def set_SellerLastOnline(self,lastonline):
         self.__SellerLastOnline = lastonline
+
+    def set_buyerreview(self,review):
+        self.__buyerreviews = review
+
+    def set_sellerreview(self,review):
+        self.__sellerreviews     = review
 
 class Delivery:
     def __init__(self, username, product, location):
@@ -294,3 +370,49 @@ class Delivery:
 
     def set_time(self, time):
         self.__time = time
+
+class Purchase:
+    def __init__(self,productID,price,quantity,chatID):
+        self.__productID = productID
+        self.__price = price
+        self.__quantity = quantity
+        self.__chatID = chatID
+
+    def get_productID(self):
+        return self.__productID
+
+    def get_price(self):
+        return self.__price
+
+    def get_quantity(self):
+        return self.__quantity
+
+    def get_chatID(self):
+        return self.__chatID
+
+class Review:
+    def __init__(self,sender,receiver,listing,rating,feedback,seller):
+        self.__sender = sender
+        self.__receiver = receiver
+        self.__listing = listing
+        self.__rating = rating
+        self.__feedback = feedback
+        self.__seller = seller
+
+    def get_sender(self):
+        return self.__sender
+
+    def get_receiver(self):
+        return self.__receiver
+
+    def get_listing(self):
+        return self.__listing
+
+    def get_rating(self):
+        return self.__rating
+
+    def get_feedback(self):
+        return self.__feedback
+
+    def get_seller(self):
+        return self.__seller

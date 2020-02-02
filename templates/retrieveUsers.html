@@ -2,6 +2,17 @@
 {% block title %}Library Loan System - Retrieve Users{% endblock %}
 
 {% block content %}
+<script>
+  function ChangeStatus(i,id){
+    var con = confirm("Are you sure you want to change this user to a "+i+"?");
+    if (con==true){
+      window.location.href = ("/make"+i+"/"+id);
+    }
+    else{
+      window.location.reload(false);
+    }
+  }
+</script>
 <h1 class="display-4">Retrieve Users</h1>
 <div>
   {% if count == 0 %}
@@ -37,12 +48,35 @@
         <td>{{ i.get_address1() }}</td>
         <td>{{ i.get_address2() }}</td>
         <td>{{ i.get_zipcode() }}</td>
-        <td><a href="/userProfile/{{i.get_userID()}}" class="btn btn-warning">Update</a></td>
+        {% if i.get_status() != 'Owner' or session['status'] == 'Owner' %}
+        <td><a href="/editUser/{{i.get_userID()}}" class="btn btn-warning">Update</a></td>
         <td>
           <form action="{{url_for('deleteUser', id=i.get_userID())}}" method="POST">
             <input type="submit" value="Delete" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete this user?');">
           </form>
         </td>
+        <td>
+          <form action="{{url_for('makeAdmin', id=i.get_userID())}}" method="POST">
+<!--            <input type="submit" value="Admin" class="btn btn-primary" onclick="return confirm('Are you sure you want to make this user an Admin?');">-->
+            <select class="btn btn-primary" onchange="ChangeStatus(this.value,{{i.get_userID()}});">
+              {% if i.get_status() == 'Owner' %}
+              <option style="display:none"></option>
+              <option value="Owner" selected="selected">Owner</option>
+              {% elif i.get_status() == 'Admin' %}
+              <option style="display:none"></option>
+              <option value="Admin" selected="selected">Admin</option>
+              <option value="Normal">Normal</option>
+              {% else %}
+              <option style="display:none"></option>
+              <option value="Admin" >Admin</option>
+              <option value="Normal" selected="selected">Normal</option>
+              {% endif %}
+            </select>
+          </form>
+        </td>
+        {% else %}
+        <td></td><td></td><td></td>
+       {% endif %}
       </tr>
     {% endfor %}
     </tbody>

@@ -35,12 +35,12 @@ def navbar() :
     logout = Logout(request.form)
     regform = CreateAccount(request.form)
     logform = LoginAccount(request.form)
-
-    if request.method == 'POST':
+    if request.method == 'POST' :
         if logout.logout.data :
             session.pop('userID',None)
             session.pop('username',None)
             session.pop('profpic',None)
+            session.pop('status',None)
         if regform.validate() and regform.register.data :
             usedUsernames = []
             usedEmails = []
@@ -59,13 +59,24 @@ def navbar() :
             elif regform.email.data in usedEmails :
                 alert = 'Email already in use.'
             else:
-                user = Classes.User(regform.username.data, regform.email.data, hashlib.md5(regform.password.data.encode()).hexdigest())
+                # user = Classes.User(regform.username.data, regform.email.data, hashlib.md5(regform.password.data.encode()).hexdigest())
+                # if user.get_userID() == 1 :
+                #     user.set_status('Owner')
+                # else:
+                #     pass
+                if usedUsernames == []:
+                    user = Classes.Owner(regform.username.data, regform.email.data, hashlib.md5(regform.password.data.encode()).hexdigest())
+                else:
+                    user = Classes.User(regform.username.data, regform.email.data, hashlib.md5(regform.password.data.encode()).hexdigest())
                 usersDict[user.get_userID()] = user
                 db['Users'] = usersDict
+                alert = 'User successfully registered'
                 # Test codes
                 usersDict = db['Users']
                 user = usersDict[user.get_userID()]
-                print(user.get_username(), user.get_email(),user.get_password(), "was stored in shelve successfully with userID =", user.get_userID())
+                print('A New User Has Been Registered')
+                print("Username:",user.get_username(),'\nEmail:',user.get_email(),'\nPassword:',user.get_password(),'\n', "was stored in shelve successfully with userID =", user.get_userID())
+                print(user.get_userID(),user.get_status())
             db.close()
         if logform.validate() and logform.login.data :
             db = shelve.open('storage.db', 'c')
@@ -78,14 +89,45 @@ def navbar() :
                         session['userID'] = usersDict[i].get_userID()
                         session['username'] = usersDict[i].get_username()
                         session['profpic'] = usersDict[i].get_profpic()
+                        session['status'] = usersDict[i].get_status()
                         alert = 'Login Successful'
-                    elif logform.username.data == usersDict[i].get_username():
+                    elif logform.username.data == usersDict[i].get_username() :
                         alert = 'WPW'
             except :
+                alert = 'Invalid User'
                 pass
             db.close()
     return [alert,logout,regform,logform]
 
+@app.before_request
+def before_request():
+    db = shelve.open('storage.db', 'c')
+    usersDict = {}
+    try :
+        usersDict = db['Users']
+    except:
+        pass
+    try :
+        if int(session['userID']) not in list(usersDict.keys()) :
+            session.pop('userID',None)
+            session.pop('username',None)
+            session.pop('profpic',None)
+            session.pop('status',None)
+            db.close()
+            return
+        session['status'] = usersDict[session['userID']].get_status()
+        session['username'] = usersDict[session['userID']].get_username()
+        session['profpic'] = usersDict[session['userID']].get_profpic()
+    except:
+        pass
+    # except:
+    #     print('Error')
+    #     session.pop('userID',None)
+    #     session.pop('username',None)
+    #     session.pop('profpic',None)
+    #     session.pop('status',None)
+    #     pass
+    db.close()
 
 @app.route('/',methods=['GET', 'POST'])
 def home():
@@ -217,7 +259,7 @@ def createListing():
         except:
             print("Error in retrieving 'Listings' from storage.db.")
 
-        listing = Classes.Listing(createlisting.name.data, createlisting.price.data, createlisting.description.data, createlisting.category.data, session['username'], createlisting.quantity.data)
+        listing = Classes.Listing(createlisting.name.data, createlisting.price.data, createlisting.description.data, createlisting.category.data,session['userID'], session['username'], createlisting.quantity.data)
         listingDict[listing.get_listingID()] = listing
         listing.set_visits(0)
         #Path of where to store images
@@ -398,34 +440,32 @@ def analytics():
     return render_template('analytics.html', values=values, labels=labels, legend=legend,alert = navbar()[0] , logout = navbar()[1] , regform = navbar()[2] , logform = navbar()[3])
 
 
-@app.route('/UserChats/<int:chatID>/', methods=['POST','GET'])
+@app.route('/UserChats/<int:chatID>/',methods=['GET', 'POST'])
 def UserChats(chatID) :
-    if 'userID' in session:
+    usersDict = {}
+    chatsDict = {}
+    listingsDict = {}
+    db = shelve.open('storage.db', 'c')
+    try:
+        chatsDict = db['Chats']
+    except:
+        print("Error Chats")
+
+    try:
+        listingsDict = db['Listings']
+    except:
+        print("Error Listings")
+
+    try:
+        usersDict = db['Users']
+    except:
+        print("Error Users")
+
+
+    if (session['userID'] == chatsDict[chatID].get_sellerID() or session['userID'] == chatsDict[chatID].get_buyerID()):
         tdeltaseconds = 0
         tdeltaseconds2 = 0
         chatofferform = ChatOffer(request.form)
-        usersDict = {}
-        chatsDict = {}
-        listingsDict = {}
-        db = shelve.open('storage.db', 'c')
-        try:
-            chatsDict = db['Chats']
-        except:
-            print("Error Chats")
-
-        try:
-            listingsDict = db['Listings']
-        except:
-            print("Error Listings")
-
-        try:
-            usersDict = db['Users']
-        except:
-            print("Error Users")
-
-        if not (session['userID'] == chatsDict[chatID].get_sellerID() or session['userID'] == chatsDict[chatID].get_buyerID()) :
-            db.close()
-            return redirect(url_for('home'))
 
         if session['userID'] ==  chatsDict[chatID].get_sellerID() :
             OtherProfPic = usersDict[chatsDict[chatID].get_buyerID()].get_profpic()
@@ -433,37 +473,67 @@ def UserChats(chatID) :
         else :
             OtherProfPic = usersDict[chatsDict[chatID].get_sellerID()].get_profpic()
             Position = 'B'
+
         ListingImage = listingsDict[chatsDict[chatID].get_listingID()].get_displaypic()
         ListingName = listingsDict[chatsDict[chatID].get_listingID()].get_name()
         ListingPrice = listingsDict[chatsDict[chatID].get_listingID()].get_price()
+        ListingQuantity = listingsDict[chatsDict[chatID].get_listingID()].get_quantity()
         Buyer = usersDict[chatsDict[chatID].get_buyerID()]
         Seller = usersDict[chatsDict[chatID].get_sellerID()]
+        if request.method == 'POST' :
+            print(request.form['cross'])
+            if request.form['cross'] == '1' :
+                chatsDict[chatID].set_sellerreview(0)
+            elif request.form['cross'] == '2':
+                chatsDict[chatID].set_buyerreview(0)
+            else:
+                if Position == 'S':
+                    review = Classes.Review(Seller,Buyer,listingsDict[chatsDict[chatID].get_listingID()],float(request.form.get("rating", False)),request.form['Feedback'],chatsDict[chatID].get_sellerID())
+                    Buyer.set_sellerReviews(review)
+                    Buyer.set_allReviews(review)
+                    chatsDict[chatID].set_sellerreview(0)
+                else:
+                    review = Classes.Review(Buyer,Seller,listingsDict[chatsDict[chatID].get_listingID()],float(request.form.get("rating", False)),request.form['Feedback'],chatsDict[chatID].get_sellerID())
+                    Seller.set_buyerReviews(review)
+                    Seller.set_allReviews(review)
+                    chatsDict[chatID].set_buyerreview(0)
+
+        BuyerReview = chatsDict[chatID].get_buyerreview()
+        SellerReview = chatsDict[chatID].get_sellerreview()
+        # print('Buyer Review',BuyerReview)
+        # print('Seller Review',SellerReview)
 
         chatlog = chatsDict[chatID].get_chatLog()
-        db.close()
         chatIDx = chatsDict[chatID]
-        Offers = chatsDict[chatID].get_offers()
+        OffersPrice = chatsDict[chatID].get_offersprice()
+        OffersQuantity = chatsDict[chatID].get_offersquantity()
         if chatsDict[chatID].get_SellerLastOnline() != '' :
             T1 = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
             T2 = chatsDict[chatID].get_SellerLastOnline()
             FMT = '%Y-%m-%d %H:%M:%S'
             tdelta = datetime.strptime(T1, FMT) - datetime.strptime(T2, FMT)
             tdeltaseconds = tdelta.total_seconds()
-        elif chatsDict[chatID].get_BuyerLastOnline() != '' :
+        if chatsDict[chatID].get_BuyerLastOnline() != '' :
             T1 = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
             T2 = chatsDict[chatID].get_BuyerLastOnline()
             FMT = '%Y-%m-%d %H:%M:%S'
             tdelta2 = datetime.strptime(T1, FMT) - datetime.strptime(T2, FMT)
             tdeltaseconds2 = tdelta2.total_seconds()
+
     else:
         return redirect(url_for('home'))
+    db['Chats'] = chatsDict
+    db['Users'] = usersDict
+    db.close()
 
-    return render_template('UserChats.html',OtherProfPic = OtherProfPic,SOfflineTime = tdeltaseconds,BOfflineTime = tdeltaseconds2,chatID = chatID ,Buyer = Buyer,Seller = Seller,Offers = Offers,chatIDx = chatIDx,chatofferform = chatofferform,Position=Position,ListingImage = ListingImage,ListingName = ListingName,ListingPrice = ListingPrice,messages = chatlog,alert = navbar()[0] , logout = navbar()[1] , regform = navbar()[2] , logform = navbar()[3])
+    return render_template('UserChats.html',SellerReview=SellerReview,BuyerReview = BuyerReview,OtherProfPic = OtherProfPic,SOfflineTime = tdeltaseconds,BOfflineTime = tdeltaseconds2,chatID = chatID ,Buyer = Buyer,Seller = Seller,OffersPrice = OffersPrice,OffersQuantity=OffersQuantity,chatIDx = chatIDx,chatofferform = chatofferform,Position=Position,ListingImage = ListingImage,ListingName = ListingName,ListingPrice = ListingPrice,ListingQuantity = ListingQuantity,messages = chatlog,alert = navbar()[0] , logout = navbar()[1] , regform = navbar()[2] , logform = navbar()[3])
 
 @socketio.on('message')
 def handleMessage(msg):
         usersDict = {}
         chatsDict = {}
+        listingsDict = {}
+
         db = shelve.open('storage.db', 'c')
         try:
             chatsDict = db['Chats']
@@ -474,59 +544,69 @@ def handleMessage(msg):
             usersDict = db['Users']
         except:
             print("Error Users")
+
+        try:
+            listingsDict = db['Listings']
+        except:
+            print("Error Listings")
+
         chatID = request.headers.get("Referer").split('/')[-2]
+
+        ListingQuantity = listingsDict[chatsDict[int(chatID)].get_listingID()].get_quantity()
         if msg == None :
             pass
 
-        if msg[:4] == 'Pos:' :
-            if msg[4] == 'B' :
-                chatsDict[int(chatID)].set_BuyerLastOnline(msg[6:])
+        if msg[:5] == '/Pos:' :
+            if msg[5] == 'B' :
+                chatsDict[int(chatID)].set_BuyerLastOnline(msg[7:])
                 msg = 'BuyerDisconnected'
-            elif msg[4] == 'S' :
-                chatsDict[int(chatID)].set_SellerLastOnline(msg[6:])
+            elif msg[5] == 'S' :
+                chatsDict[int(chatID)].set_SellerLastOnline(msg[7:])
                 msg = 'SellerDisconnected'
 
-        elif msg == 'SellerConnected' :
+        elif msg == '/SellerConnected' :
             chatsDict[int(chatID)].set_SellerLastOnline('')
-            pass
 
-        elif msg == 'BuyerConnected' :
+        elif msg == '/BuyerConnected' :
             chatsDict[int(chatID)].set_BuyerLastOnline('')
-            pass
 
         elif '/Offer ' in msg :
-            if chatsDict[int(chatID)].get_offers() == [] :
-                Offers = float(msg[7:])
-                Offers = ("%.2f" % Offers)
-                Offers = [float(Offers)]
-                print(Offers)
-                chatsDict[int(chatID)].set_offers(Offers)
+            if chatsDict[int(chatID)].get_offersprice() == [] and session['userID'] == chatsDict[int(chatID)].get_buyerID() and int(msg.split(' ')[2]) <= ListingQuantity:
+                Offers = msg[7:]
+                Offers = str(Offers).split(' ')
+                OffersPrice =  float(Offers[0])
+                OffersPrice = ("%.2f" % OffersPrice)
+                OffersPrice = [float(OffersPrice)]
+                chatsDict[int(chatID)].set_offersprice(OffersPrice)
+                chatsDict[int(chatID)].set_offersquantity(int(Offers[1]))
             else :
                 msg = None
 
         elif msg == '/CancelOffer':
-            if chatsDict[int(chatID)].get_offers() != [] :
-                chatsDict[int(chatID)].set_offers([])
+            if chatsDict[int(chatID)].get_offersprice() != [] and session['userID'] == chatsDict[int(chatID)].get_buyerID():
+                chatsDict[int(chatID)].set_offersprice([])
+                chatsDict[int(chatID)].set_offersquantity([])
             else:
                 msg = None
 
         elif msg == '/DeclineOffer':
-            if chatsDict[int(chatID)].get_offers() != [] :
-                chatsDict[int(chatID)].set_offers([])
+            if chatsDict[int(chatID)].get_offersprice() != [] and session['userID'] == chatsDict[int(chatID)].get_sellerID():
+                chatsDict[int(chatID)].set_offersprice([])
+                chatsDict[int(chatID)].set_offersquantity([])
             else:
                 msg = None
 
-        elif msg == ('/AcceptOffer'+str(chatsDict[int(chatID)].get_sellerID())) :
-            if chatsDict[int(chatID)].get_offers() != [] :
-                usersDict[chatsDict[int(chatID)].get_sellerID()].set_sales(chatsDict[int(chatID)].get_listingID())
-                usersDict[chatsDict[int(chatID)].get_buyerID()].set_purchases(chatsDict[int(chatID)].get_listingID())
-                chatsDict[int(chatID)].set_offers([])
+        elif msg == '/AcceptOffer' :
+            if chatsDict[int(chatID)].get_offersprice() != [] and session['userID'] == chatsDict[int(chatID)].get_sellerID():
+                Purchase = Classes.Purchase(chatsDict[int(chatID)].get_listingID(),float(chatsDict[int(chatID)].get_offersprice()[0]),chatsDict[int(chatID)].get_offersquantity(),int(chatID))
+                usersDict[chatsDict[int(chatID)].get_sellerID()].set_sales(Purchase)
+                usersDict[chatsDict[int(chatID)].get_buyerID()].set_purchases(Purchase)
+                listingsDict[chatsDict[int(chatID)].get_listingID()].set_quantity(ListingQuantity-chatsDict[int(chatID)].get_offersquantity())
+                chatsDict[int(chatID)].set_offersprice([])
+                chatsDict[int(chatID)].set_offersquantity([])
                 msg = '/AcceptOffer'
             else:
                 msg = None
-
-        elif msg == ('/AcceptOffer'+str(chatsDict[int(chatID)].get_buyerID())) :
-            msg = None
 
         else:
             chatlog = chatsDict[int(chatID)].get_chatLog()
@@ -537,67 +617,236 @@ def handleMessage(msg):
             msg = msgdict
             chatlog.append(msg)
             chatsDict[int(chatID)].set_chatLog(chatlog)
+        db['Listings'] = listingsDict
         db['Users'] = usersDict
         db['Chats'] = chatsDict
         db.close()
 
         send(msg,broadcast=True)
 
+@app.route('/editUser/<int:id>/', methods=['GET', 'POST'])
+def editUser(id):
+    if id == 1 and session['status'] != 'Owner' :
+        return redirect(url_for('home'))
+    else:
+        if session['status'] == 'Admin' or session['status'] == 'Owner' or session['userID'] == id:
+            Used = 0
+            Profile = ProfileForm(request.form)
+            db = shelve.open('storage.db', 'r')
+            userDict = db['Users']
+            db.close()
+            user = userDict.get(id)
+            ProfPic = user.get_profpic()
+            Banner = user.get_bannerpic()
+            usedUsernames = []
+            key = list(userDict.keys())
+            for i in key:
+                if userDict[i].get_username() != user.get_username():
+                    usedUsernames.append(userDict[i].get_username())
+            if request.method == 'POST':
+                db = shelve.open('storage.db', 'w')
+                userDict = db['Users']
+                user = userDict.get(id)
+                if Profile.username.data not in usedUsernames :
+                    user.set_username(Profile.username.data)
+                else:
+                    Used=1
+                user.set_description(Profile.description.data)
+                #Path of where to store images
+                target = os.path.join(APP_ROOT, 'static/users/')
+                target1 = os.path.join(APP_ROOT, 'static/users/', str(user.get_userID()))
+                target2 = os.path.join(APP_ROOT, 'static/users/', str(user.get_userID()),'ProfPic')
+                target3 = os.path.join(APP_ROOT, 'static/users/', str(user.get_userID()),'Banner')
+                #Check whether path target exists / creates path if it doesn't.
+                if not os.path.isdir(target) :
+                    os.mkdir(target)
+                if not os.path.isdir(target1) :
+                    os.mkdir(target1)
+                if not os.path.isdir(target2) :
+                    os.mkdir(target2)
+                if not os.path.isdir(target3) :
+                    os.mkdir(target3)
+                try :
+                    newProfPic = request.files.get('file')
+                    filename = newProfPic.filename
+                    if filename != '':
+                        for root, dirs, files in os.walk(target2):
+                            for f in files:
+                                os.unlink(os.path.join(root, f))
+                    #Make directory for image
+                    destination = '/'.join([target2]+[filename])
+                    newProfPic.save(destination)
+                    staticdestination = '/static/users/'+ str(user.get_userID())+'/ProfPic/'+filename+'/'
+                    print(staticdestination)
+                    user.set_profpic(staticdestination)
+                    session['profpic'] = user.get_profpic()
+                    ProfPic = user.get_profpic()
+                except:
+                    pass
+
+                try :
+                    newBanner = request.files.get('banner')
+                    filename = newBanner.filename
+                    if filename != '':
+                        for root, dirs, files in os.walk(target3):
+                            for f in files:
+                                os.unlink(os.path.join(root, f))
+                    #Make directory for image
+                    destination = '/'.join([target3]+[filename])
+                    newBanner.save(destination)
+                    staticdestination = '/static/users/'+ str(user.get_userID())+'/Banner/'+filename+'/'
+                    user.set_bannerpic(staticdestination)
+                    Banner = user.get_bannerpic()
+                except:
+                    pass
+
+                ProfPic = user.get_profpic()
+                db['Users'] = userDict
+                db.close()
+            else:
+                user = userDict.get(id)
+                Profile.username.data = user.get_username()
+                Profile.description.data = user.get_description()
+        else:
+            return redirect(url_for('home'))
+
+    return render_template('editUser.html',id=id,Used=Used,Banner=Banner,ProfPic = ProfPic,Profile = Profile,alert = navbar()[0] , logout = navbar()[1] , regform = navbar()[2] , logform = navbar()[3])
+
 @app.route('/userProfile/<int:id>/', methods=['GET', 'POST'])
 def userProfile(id):
-    Profile = ProfileForm(request.form)
-    ProfPic = 'http://s3.amazonaws.com/37assets/svn/765-default-avatar.png'
-    if request.method == 'POST':
-        userDict = {}
-        db = shelve.open('storage.db', 'w')
-        userDict = db['Users']
-        user = userDict.get(id)
-        user.set_username(Profile.username.data)
-        user.set_address1(Profile.address1.data)
-        user.set_address2(Profile.address2.data)
-        user.set_zipcode(Profile.zipcode.data)
-        #Path of where to store images
-        target1 = os.path.join(APP_ROOT, 'static/users/')
-        target = os.path.join(APP_ROOT, 'static/users/', str(user.get_userID()))
-        #Check whether path target exists / creates path if it doesn't.
-        if not os.path.isdir(target1) :
-            os.mkdir(target1)
-        if not os.path.isdir(target) :
-            os.mkdir(target)
-        try :
-            newProfPic = request.files.get('file')
-            filename = newProfPic.filename
-            #Make directory for image
-            destination = '/'.join([target]+[filename])
-            newProfPic.save(destination)
-            staticdestination = '/static/users/'+ str(user.get_userID())+'/'+filename+'/'
-            print(staticdestination)
-            user.set_profpic(staticdestination)
-            session['profpic'] = user.get_profpic()
-        except:
-            pass
-        ProfPic = user.get_profpic()
-        db['Users'] = userDict
-        db.close()
-    else:
-        userDict = {}
+    db = shelve.open('storage.db', 'w')
+    userDict = db['Users']
+    ProfPic = userDict[id].get_profpic()
+    Banner = userDict[id].get_bannerpic()
+    Username = userDict[id].get_username()
+    Description = userDict[id].get_description()
+    listingDict = {}
+    userListings = []
+    userReviews = userDict[id].get_allReviews()
+    userRating = 0
+    try:
         db = shelve.open('storage.db', 'r')
-        userDict = db['Users']
+        listingDict = db['Listings']
         db.close()
-        user = userDict.get(id)
-        Profile.username.data = user.get_username()
-        Profile.address1.data = user.get_address1()
-        Profile.address2.data = user.get_address2()
-        Profile.zipcode.data = user.get_zipcode()
-        ProfPic = user.get_profpic()
+    except:
+        pass
+    for i in listingDict :
+        if listingDict[i].get_OP() == id :
+            userListings.append(listingDict[i])
 
-    return render_template('userProfile.html',ProfPic = ProfPic,Profile = Profile,alert = navbar()[0] , logout = navbar()[1] , regform = navbar()[2] , logform = navbar()[3])
+    if len(userReviews) != 0 :
+        for i in userReviews:
+            userRating+=i.get_rating()
+        userRating = round((userRating/len(userReviews))*2)/2
 
-@app.route('/Cart')
+    reviewsamt = len(userReviews)
+
+    return render_template('userProfile.html',Description=Description,id=id,reviewsamt=reviewsamt,userRating=userRating,Username=Username,Banner=Banner,ProfPic = ProfPic,userListings = userListings,alert = navbar()[0] , logout = navbar()[1] , regform = navbar()[2] , logform = navbar()[3])
+
+@app.route('/userProfile/<int:id>/reviews/', methods=['GET', 'POST'])
+def userProfileReviews(id):
+    db = shelve.open('storage.db', 'w')
+    userDict = db['Users']
+    Description = userDict[id].get_description()
+    ProfPic = userDict[id].get_profpic()
+    Banner = userDict[id].get_bannerpic()
+    Username = userDict[id].get_username()
+    listingDict = {}
+    userListings = []
+    userReviews = userDict[id].get_allReviews()
+    userRating = 0
+    try:
+        db = shelve.open('storage.db', 'r')
+        listingDict = db['Listings']
+        db.close()
+    except:
+        pass
+
+    for i in listingDict :
+        if listingDict[i].get_OP() == id :
+            userListings.append(listingDict[i])
+
+    if len(userReviews) != 0 :
+        for i in userReviews:
+            userRating+=i.get_rating()
+        userRating = round((userRating/len(userReviews))*2)/2
+
+    reviewsamt = len(userReviews)
+
+    return render_template('userProfileReviews.html',Description=Description,select='all',userReviews=userReviews,id=id,reviewsamt=reviewsamt,userRating=userRating,Username=Username,Banner=Banner,ProfPic = ProfPic,userListings = userListings,alert = navbar()[0] , logout = navbar()[1] , regform = navbar()[2] , logform = navbar()[3])
+
+@app.route('/userProfile/<int:id>/reviews/sellers/', methods=['GET', 'POST'])
+def userProfileReviewsSellers(id):
+    db = shelve.open('storage.db', 'w')
+    userDict = db['Users']
+    Description = userDict[id].get_description()
+    ProfPic = userDict[id].get_profpic()
+    Banner = userDict[id].get_bannerpic()
+    Username = userDict[id].get_username()
+    listingDict = {}
+    userListings = []
+    userReviews = userDict[id].get_allReviews()
+    userSellerReviews = userDict[id].get_sellerReviews()
+    userRating = 0
+    try:
+        db = shelve.open('storage.db', 'r')
+        listingDict = db['Listings']
+        db.close()
+    except:
+        pass
+
+    for i in listingDict :
+        if listingDict[i].get_OP() == id :
+            userListings.append(listingDict[i])
+
+    if len(userReviews) != 0 :
+        for i in userReviews:
+            userRating+=i.get_rating()
+        userRating = round((userRating/len(userReviews))*2)/2
+
+    reviewsamt = len(userReviews)
+
+    return render_template('userProfileReviews.html',Description=Description,select = 'sellers',userReviews=userSellerReviews,id=id,reviewsamt=reviewsamt,userRating=userRating,Username=Username,Banner=Banner,ProfPic = ProfPic,userListings = userListings,alert = navbar()[0] , logout = navbar()[1] , regform = navbar()[2] , logform = navbar()[3])
+
+@app.route('/userProfile/<int:id>/reviews/buyers/', methods=['GET', 'POST'])
+def userProfileReviewsBuyers(id):
+    db = shelve.open('storage.db', 'w')
+    userDict = db['Users']
+    Description = userDict[id].get_description()
+    ProfPic = userDict[id].get_profpic()
+    Banner = userDict[id].get_bannerpic()
+    Username = userDict[id].get_username()
+    listingDict = {}
+    userListings = []
+    userReviews = userDict[id].get_allReviews()
+    userBuyerReviews = userDict[id].get_buyerReviews()
+    userRating = 0
+    try:
+        db = shelve.open('storage.db', 'r')
+        listingDict = db['Listings']
+        db.close()
+    except:
+        pass
+
+    for i in listingDict :
+        if listingDict[i].get_OP() == id :
+            userListings.append(listingDict[i])
+
+    if len(userReviews) != 0 :
+        for i in userReviews:
+            userRating+=i.get_rating()
+        userRating = round((userRating/len(userReviews))*2)/2
+
+    reviewsamt = len(userReviews)
+
+    return render_template('userProfileReviews.html',Description=Description,select = 'buyers',userReviews=userBuyerReviews,id=id,reviewsamt=reviewsamt,userRating=userRating,Username=Username,Banner=Banner,ProfPic = ProfPic,userListings = userListings,alert = navbar()[0] , logout = navbar()[1] , regform = navbar()[2] , logform = navbar()[3])
+
+@app.route('/Cart',methods=['GET', 'POST'])
 def Cart():
     PurchaseList = []
     listingDict = {}
     userDict = {}
+    chatDict = {}
 
     db = shelve.open('storage.db', 'c')
 
@@ -611,16 +860,31 @@ def Cart():
     except:
         print("Error in retrieving Users")
 
+    try:
+        chatDict = db['Chats']
+
+    except:
+        print("Error in retrieving Chats")
+
     Purchases = userDict[session['userID']].get_purchases()
+    TotalPrice = 0
     for i in Purchases :
-        PurchaseList.append(listingDict[i])
+        TotalPrice += i.get_price()*i.get_quantity()
+        # listingDict[i.get_productID()].set_review(1)
 
-    return render_template('Cart.html',PurchaseList = PurchaseList,alert = navbar()[0] , logout = navbar()[1] , regform = navbar()[2] , logform = navbar()[3])
+    if request.method=='POST' :
+        for i in Purchases:
+            chatDict[i.get_chatID()].set_buyerreview(1)
+            chatDict[i.get_chatID()].set_sellerreview(1)
 
+    db['Chats'] = chatDict
+    db.close()
+
+    return render_template('Cart.html',TotalPrice=TotalPrice,Purchases = Purchases,listingDict = listingDict,alert = navbar()[0] , logout = navbar()[1] , regform = navbar()[2] , logform = navbar()[3])
 
 @app.route('/retrieveUsers', methods=['GET', 'POST'])
 def retrieveUsers():
-    if session['userID'] == 1 :
+    if session['status'] == 'Admin' or session['status'] == 'Owner':
         userDict = {}
         try :
             db = shelve.open('storage.db', 'r')
@@ -641,7 +905,7 @@ def retrieveUsers():
 
 
 
-@app.route('/deleteUser/<int:id>', methods=['POST'])
+@app.route('/deleteUser/<int:id>', methods=['GET', 'POST'])
 def deleteUser(id):
     usersDict = {}
     db = shelve.open('storage.db', 'w')
@@ -649,6 +913,31 @@ def deleteUser(id):
     usersDict.pop(id)
     db['Users'] = usersDict
     db.close()
+    if session['userID'] != id:
+        return redirect(url_for('retrieveUsers'))
+    else:
+        return redirect(url_for('home'))
+
+@app.route('/makeAdmin/<int:id>', methods=['GET', 'POST'])
+def makeAdmin(id):
+    if id != 1 :
+        usersDict = {}
+        db = shelve.open('storage.db', 'w')
+        usersDict = db['Users']
+        usersDict[id].set_status('Admin')
+        db['Users'] = usersDict
+        db.close()
+    return redirect(url_for('retrieveUsers'))
+
+@app.route('/makeNormal/<int:id>', methods=['GET', 'POST'])
+def makeNormal(id):
+    if id != 1 :
+        usersDict = {}
+        db = shelve.open('storage.db', 'w')
+        usersDict = db['Users']
+        usersDict[id].set_status('Normal')
+        db['Users'] = usersDict
+        db.close()
     return redirect(url_for('retrieveUsers'))
 
 @app.route('/AllChats')
@@ -682,7 +971,6 @@ def AllChats():
 
 
     return render_template('AllChats.html',userDict = userDict,listingDict = listingDict,ChatList = ChatList,alert = navbar()[0] , logout = navbar()[1] , regform = navbar()[2] , logform = navbar()[3])
-
 
 @app.route('/retrieveDelivery')
 def retrieveDelivery():
