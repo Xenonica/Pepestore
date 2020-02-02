@@ -974,7 +974,7 @@ def AllChats():
 
 @app.route('/retrieveDelivery')
 def retrieveDelivery():
-    if session['userID'] == 1 :
+    if session['status'] == "Owner" or session['status'] == "Admin" :
         deliveryDict = {}
         db = shelve.open('storage.db', 'w')
         try:
