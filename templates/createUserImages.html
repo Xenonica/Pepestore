@@ -10,38 +10,46 @@ function deleteImg(){
     ImgInput.onchange();
 }
 </script>
-<h1>Upload listing images</h1>
+<h1>Upload listing images(Up to 4)</h1>
 
+<form id="upload-image" method="post" enctype="multipart/form-data" name="form" class="uploadimage">
+<div class="input-group w-50" style="z-index:0; padding-top:10px;">
+
+  <div class="custom-file">
+    <input type="file" class="custom-file-input" id="ImgInput" name="file" accept="image/*" multiple onchange="this.form.submit()">
+    <label class="custom-file-label" for="ImgInput">Choose file</label>
+    <input type="hidden" name="todelete" value="" id="todelete" class="uploadimage">
+  </div>
+  <div class="input-group-append">
+    <button id="submitButton" class="btn btn-outline-secondary" type="button" onclick="window.location.href='{{ url_for('createListing') }}';">Submit</button>
+  </div>
+
+</div>
+</form>
 <div id="container">
-
     <div>
         <div class="wrapper">
-            <img class="images" src="{{Img1}}" onerror="this.src='https://matthewsenvironmentalsolutions.com/images/com_hikashop/upload/not-available.png';document.getElementById('1').style.display='none';" height="400" width="400">
+            <img class="images" src="{{Img1}}" onerror="this.src='https://matthewsenvironmentalsolutions.com/images/com_hikashop/upload/not-available.png';document.getElementById('1').style.display='none';" height="350" width="350">
             <img class="deleteSign1" src="https://icons-for-free.com/iconfiles/png/512/delete+deny+no+out+sign+out+x+icon-1320196067039321214.png" onclick="deleteImg()" id="1">
         </div>
         <div class="wrapper">
-            <img class="images" src="{{Img3}}" onerror="this.src='https://matthewsenvironmentalsolutions.com/images/com_hikashop/upload/not-available.png';document.getElementById('3').style.display='none';" height="400" width="400">
+            <img class="images" src="{{Img3}}" onerror="this.src='https://matthewsenvironmentalsolutions.com/images/com_hikashop/upload/not-available.png';document.getElementById('3').style.display='none';" height="350" width="350">
             <img class="deleteSign3" src="https://icons-for-free.com/iconfiles/png/512/delete+deny+no+out+sign+out+x+icon-1320196067039321214.png" onclick="deleteImg()" id="3">
         </div>
     </div>
 
     <div>
         <div class="wrapper">
-            <img class="images" src="{{Img2}}" onerror="this.src='https://matthewsenvironmentalsolutions.com/images/com_hikashop/upload/not-available.png';document.getElementById('2').style.display='none';" height="400" width="400">
+            <img class="images" src="{{Img2}}" onerror="this.src='https://matthewsenvironmentalsolutions.com/images/com_hikashop/upload/not-available.png';document.getElementById('2').style.display='none';" height="350" width="350">
             <img class="deleteSign2" src="https://icons-for-free.com/iconfiles/png/512/delete+deny+no+out+sign+out+x+icon-1320196067039321214.png" onclick="deleteImg()" id="2">
         </div>
         <div class="wrapper">
-            <img class="images" src="{{Img4}} "onerror="this.src='https://matthewsenvironmentalsolutions.com/images/com_hikashop/upload/not-available.png';document.getElementById('4').style.display='none';" height="400" width="400">
+            <img class="images" src="{{Img4}} "onerror="this.src='https://matthewsenvironmentalsolutions.com/images/com_hikashop/upload/not-available.png';document.getElementById('4').style.display='none';" height="350" width="350">
             <img class="deleteSign4" src="https://icons-for-free.com/iconfiles/png/512/delete+deny+no+out+sign+out+x+icon-1320196067039321214.png" onclick="deleteImg()" id="4">
         </div>
     </div>
 
-    <form id="upload-image" method="post" enctype="multipart/form-data" name="form" class="uploadimage">
-    <input type="file" name="file" id="ImgInput" accept="image/*" multiple onchange="this.form.submit()">
-        <br>
-    <button id="submitButton" type='button' onclick="window.location.href='{{ url_for('createListing') }}';">Submit</button>
-    <input type="hidden" name="todelete" value="" id="todelete" class="uploadimage">
-    </form>
+
 
 </div>
 
@@ -70,9 +78,6 @@ function deleteImg(){
     }
 
     #upload-image{
-    display:flex;
-    align-items: center;
-    justify-content: center;
     }
 
 </style>
