@@ -59,6 +59,6 @@ class ProfileForm(Form):
 
 
 class CreateDeliveryForm(Form):
-    product = StringField('product ID', [validators.Length(min=1, max=150), validators.DataRequired()])
+    product = IntegerField('product ID', [validators.Length(min=1, max=150), validators.DataRequired()])
     location = StringField('location', [validators.Length(min=1, max=150), validators.DataRequired()])
 
