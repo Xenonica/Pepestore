@@ -1143,7 +1143,6 @@ def deleteDelivery(id):
         return redirect(url_for('manageDelivery'))
 
 
-
 @app.route('/deleteDeliveryatretrieve/<int:id>', methods = ['POST'])
 def deleteDeliveryatretrieve(id):
     deliveryDict = {}
