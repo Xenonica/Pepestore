@@ -172,10 +172,10 @@ def home():
 
 
 @app.route('/createUserImages',methods=['GET', 'POST'])
-def createUserImages() :
+def createUserImages():
     if request.method == 'POST':
         todelete = request.form['todelete']
-        if todelete == '' :
+        if todelete == '':
 
             #Path of where to store images
             target = os.path.join(APP_ROOT, 'static/tempimages/')
@@ -194,32 +194,38 @@ def createUserImages() :
                     else :
                         filename = file.filename
                         #Make directory for image
-                        destination = '/'.join([target]+[filename])
+                        destination = ''.join([target]+[filename])
                         file.save(destination)
                         staticdestination = url_for('static', filename='tempimages/'+filename)
+                        # print('staticdest', staticdestination)
                         count+=1
-                        if staticdestination in tempimagelist :
+                        if filename in tempimagelist :
                             continue
                         else:
                             tempimagelist.append(staticdestination)
-                            tempimagenames.append(filename)
+                            # tempimagelist.append(filename)
+                            # tempimagenames.append(filename)
         else :
             todeleteplace = int(todelete)-1
-            tempimagelist.remove(tempimagelist[todeleteplace])
-            tempimagenames.remove(tempimagenames[todeleteplace])
-    Class = ['','','','']
+            try:
+                os.remove(tempimagelist[todeleteplace][1:])
+                tempimagelist.remove(tempimagelist[todeleteplace])
+            except IndexError:
+                print('idk why')
+            # tempimagenames.remove(tempimagenames[todeleteplace])
+
     Img = ['','','','']
-    for i in range(len(tempimagelist)) :
-        Img[i] = tempimagelist[i]
-        Class[i] = 'Img'
-    for i in range(len(tempimagelist),4) :
-        Img[i] = 'https://matthewsenvironmentalsolutions.com/images/com_hikashop/upload/not-available.png'
-        Class[i] = 'NoImg'
-    print(tempimagelist)
-    print(tempimagenames)
+    print('temp',tempimagelist)
+    for i in range(len(tempimagelist)):
+        try:
+            Img[i] = tempimagelist[i]
+        except IndexError:
+            print('Max 4 images are allowed')
+            break
+
     print('img ', Img)
-    print('class', Class)
-    return render_template('createUserImages.html' ,Img1 = Img[0] , Img2 = Img[1] , Img3 = Img[2] , Img4 = Img[3], Class1 = Class[0] , Class2 = Class[1] , Class3 = Class[2] , Class4 = Class[3], alert = navbar()[0] , logout = navbar()[1] , regform = navbar()[2] , logform = navbar()[3])
+
+    return render_template('createUserImages.html', Img1=Img[0], Img2=Img[1], Img3=Img[2], Img4=Img[3], alert=navbar()[0], logout=navbar()[1], regform=navbar()[2], logform=navbar()[3])
 
 
 @app.route('/manageListing', methods=['GET', 'POST'])
@@ -248,7 +254,7 @@ def createListing():
     listingDict = {}
 
     if len(tempimagelist) == 0:
-            Image1 = 'https://matthewsenvironmentalsolutions.com/images/com_hikashop/upload/not-available.png'
+        Image1 = 'https://matthewsenvironmentalsolutions.com/images/com_hikashop/upload/not-available.png'
     else:
         Image1 = tempimagelist[0]
 
@@ -259,41 +265,45 @@ def createListing():
         except:
             print("Error in retrieving 'Listings' from storage.db.")
 
-        listing = Classes.Listing(createlisting.name.data, createlisting.price.data, createlisting.description.data, createlisting.category.data,session['userID'], session['username'], createlisting.quantity.data)
+        listing = Classes.Listing(createlisting.name.data, createlisting.price.data, createlisting.description.data,
+                                  createlisting.category.data, session['userID'], session['username'], createlisting.quantity.data)
         listingDict[listing.get_listingID()] = listing
         listing.set_visits(0)
-        #Path of where to store images
-        target = os.path.join(APP_ROOT, 'static/listings/', str(listing.get_listingID()))
-        #Check whether path target exists / creates path if it doesn't.
-        if not os.path.isdir(target) :
+
+        # Path of where to store images
+        target = os.path.join(APP_ROOT, 'static/listings/')
+        target1 = os.path.join(APP_ROOT, 'static/listings/', str(listing.get_listingID()))
+
+        # Check whether path target exists / creates path if it doesn't.
+        if not os.path.isdir(target):
             os.mkdir(target)
+        if not os.path.isdir(target1):
+            os.mkdir(target1)
+
         imgnamecount = 0
-        for i in tempimagelist :
+        for i in tempimagelist:
             print(i)
-            olddir = APP_ROOT+i
-            newdir = os.path.join(target,tempimagenames[imgnamecount])
-            newstatic = os.path.join('/static/listings/', str(listing.get_listingID()),tempimagenames[imgnamecount])
+            olddir = APP_ROOT + i
+            newdir = os.path.join(target1, i[19:])
+            newstatic = os.path.join('/static/listings/', str(listing.get_listingID()), i[19:])
             permimagelist.append(newstatic)
             imgnamecount += 1
             print('old', olddir)
             print('new', newdir)
-            if not os.path.isfile(newdir) :
-                os.rename(olddir,newdir)
+            if not os.path.isfile(newdir):
+                os.rename(olddir, newdir)
         listing.set_piclist(permimagelist)
         db['Listings'] = listingDict
 
         listingDict = db['Listings']
-        listing = listingDict[listing.get_listingID()]
-        print(listing.get_name(), listing.get_price(), "was stored in shelve successfully with listingID =", listing.get_listingID())
-
         db.close()
 
         permimagelist.clear()
         tempimagelist.clear()
 
-
         return redirect(url_for('home'))
-    return render_template('createListing.html', form=createlisting , Img1=Image1, alert = navbar()[0] , logout = navbar()[1] , regform = navbar()[2] , logform = navbar()[3])
+    return render_template('createListing.html', form=createlisting, Img1=Image1, alert=navbar()[0], logout=navbar()[1],
+                           regform=navbar()[2], logform=navbar()[3])
 
 
 @app.route('/listingPage/<int:listingID>/',methods=['GET', 'POST'])
