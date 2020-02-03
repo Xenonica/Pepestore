@@ -75,3 +75,15 @@ class CreatePaymentForm(Form):
     shipping = SelectField('Shipping', [validators.DataRequired()], choices=[('', 'Select'), ('N', 'Normal Mail'), ('R', 'Registered Mail')], default='')
     method = SelectField('Payment Method', [validators.DataRequired()], choices=[('', 'Select'), ('Credit', 'Credit Card'), ('Paypal', 'Paypal')], default='')
     remarks = TextAreaField('Remarks', [validators.Optional()])
+
+
+class CreateFeedbackForm(Form):
+ fullName = StringField('Full Name', [validators.Length(min=1,
+max=150), validators.DataRequired()])
+ contact = StringField('Contact', [validators.Length(min=8,
+max=8), validators.DataRequired()])
+ gender = SelectField('Gender', [validators.DataRequired()],
+choices=[('', 'Select'), ('F', 'Female'), ('M', 'Male')],
+default='')
+ email = EmailField('Email', [validators.Length(min=1,max=150), validators.DataRequired()])
+

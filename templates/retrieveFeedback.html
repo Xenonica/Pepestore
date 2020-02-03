@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% block title %}Library Loan System - Manage Feedback{% endblock %}
+
+{% block content %}
+<h1 class="display-8">Retrieve Feedback</h1>
+<div>
+  {% if count == 0 %}
+  <p>There are no users.</p>
+  {% elif count == 1 %}
+  <p>There is 1 user.</p>
+  {% else %}
+  <p>There are {{ count }} users.</p>
+  {% endif %}
+</div>
+<div>
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th>User ID</th>
+        <th>Full Name</th>
+        <th>Gender</th>
+        <th>Contact</th>
+        <th>Email</th>
+        <th>Question</th>
+        <th></th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+    {% for user in usersList %}
+      <tr>
+        <td>{{ user.get_userID() }}</td>
+        <td>{{ user.get_fullName() }}</td>
+        <td>{{ user.get_gender() }}</td>
+        <td>{{ user.get_contact() }}</td>
+        <td>{{ user.get_email() }}</td>
+        <td><a href="/updateFAQ/{{user.get_userID()}}" class="btn btn-warning">Update</a></td>
+        <td>
+          <form action="{{url_for('deleteFAQ', id=user.get_userID())}}" method="POST">
+            <input type="submit" value="Delete" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete this user?');">
+          </form>
+        </td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}
