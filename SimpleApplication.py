@@ -25,10 +25,10 @@ tempimagelist = []
 tempimagenames = []
 run = 0
 
+#Create static folder if doesn't exist
 target = os.path.join(APP_ROOT, 'static/')
 if not os.path.isdir(target) :
     os.mkdir(target)
-
 
 def navbar() :
     alert = ''
@@ -36,11 +36,13 @@ def navbar() :
     regform = CreateAccount(request.form)
     logform = LoginAccount(request.form)
     if request.method == 'POST' :
+        #If logout form was used
         if logout.logout.data :
             session.pop('userID',None)
             session.pop('username',None)
             session.pop('profpic',None)
             session.pop('status',None)
+        #If register form was used
         if regform.validate() and regform.register.data :
             usedUsernames = []
             usedEmails = []
@@ -59,11 +61,8 @@ def navbar() :
             elif regform.email.data in usedEmails :
                 alert = 'Email already in use.'
             else:
-                # user = Classes.User(regform.username.data, regform.email.data, hashlib.md5(regform.password.data.encode()).hexdigest())
-                # if user.get_userID() == 1 :
-                #     user.set_status('Owner')
-                # else:
-                #     pass
+                #If no used usernames means that its first user ( owner )
+                #Uses MD5 to encrypt the password (hash)
                 if usedUsernames == []:
                     user = Classes.Owner(regform.username.data, regform.email.data, hashlib.md5(regform.password.data.encode()).hexdigest())
                 else:
@@ -78,6 +77,7 @@ def navbar() :
                 print("Username:",user.get_username(),'\nEmail:',user.get_email(),'\nPassword:',user.get_password(),'\n', "was stored in shelve successfully with userID =", user.get_userID())
                 print(user.get_userID(),user.get_status())
             db.close()
+        #If login form is used
         if logform.validate() and logform.login.data :
             db = shelve.open('storage.db', 'c')
             try :
@@ -101,6 +101,7 @@ def navbar() :
 
 @app.before_request
 def before_request():
+    #Make sure that session info is up to date before every request
     db = shelve.open('storage.db', 'c')
     usersDict = {}
     try :
@@ -108,6 +109,7 @@ def before_request():
     except:
         pass
     try :
+        #If the user account is deleted, logout
         if int(session['userID']) not in list(usersDict.keys()) :
             session.pop('userID',None)
             session.pop('username',None)
@@ -120,13 +122,6 @@ def before_request():
         session['profpic'] = usersDict[session['userID']].get_profpic()
     except:
         pass
-    # except:
-    #     print('Error')
-    #     session.pop('userID',None)
-    #     session.pop('username',None)
-    #     session.pop('profpic',None)
-    #     session.pop('status',None)
-    #     pass
     db.close()
 
 @app.route('/',methods=['GET', 'POST'])
@@ -471,7 +466,7 @@ def UserChats(chatID) :
     except:
         print("Error Users")
 
-
+    #Make sure that user is authorized to enter the page
     if (session['userID'] == chatsDict[chatID].get_sellerID() or session['userID'] == chatsDict[chatID].get_buyerID()):
         tdeltaseconds = 0
         tdeltaseconds2 = 0
