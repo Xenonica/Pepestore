@@ -1,5 +1,5 @@
 from flask import Flask, render_template, request, redirect, url_for , session, blueprints
-from Forms import CreateListing , CreateAccount , LoginAccount, Logout , Chat , ChatOffer , ProfileForm , CreateDeliveryForm
+from Forms import CreateListing , CreateAccount , LoginAccount, Logout , Chat , ChatOffer , ProfileForm , CreateDeliveryForm,CreateFeedbackForm
 from flask_socketio import SocketIO , send , disconnect
 from datetime import datetime , timedelta
 import shelve, os , Classes , hashlib,shutil
@@ -1055,6 +1055,7 @@ def createDelivery():
 
         if validateaddress(createDeliveryForm.location.data) == True:
             delivery = Classes.Delivery(session['username'], AllID, createDeliveryForm.location.data, createDeliveryForm.firstName.data,createDeliveryForm.lastName.data,createDeliveryForm.shipping.data,createDeliveryForm.method.data,createDeliveryForm.remarks.data)
+            print('allid',AllID)
             delivery.set_time(datetime.now())
             randomtime = random.randint(20,35) # Random generate estimated time of delivery
             delivery.set_estimatedTime(datetime.now() + timedelta(seconds = randomtime))
@@ -1247,6 +1248,90 @@ def Track(id):
 @app.route('/map')
 def map():
     return render_template("map.html")
+
+
+@app.route('/createFeedback', methods=['GET', 'POST'])
+def createFeedback():
+    createFeedbackForm = CreateFeedbackForm(request.form)
+    if request.method == 'POST' and createFeedbackForm.validate():
+        print('test')
+        usersDict = {}
+        db = shelve.open('storage.db', 'c')
+
+        try:
+            usersDict = db['FAQ']
+        except:
+            print("Error in retrieving Feedback from storage.db.")
+
+        user = Classes.FAQ(createFeedbackForm.fullName.data, createFeedbackForm.gender.data, createFeedbackForm.contact.data, createFeedbackForm.email.data,)
+        usersDict[user.get_userID()] = user
+        db['FAQ'] = usersDict
+
+        # Test codes
+        usersDict = db['FAQ']
+        user = usersDict[user.get_userID()]
+        print(user.get_fullName(),"was stored in shelve successfully with userID =", user.get_userID())
+        db.close()
+
+        return redirect(url_for('retrieveFeedback'))
+    return render_template('createFeedback.html', form=createFeedbackForm,alert = navbar()[0] , logout = navbar()[1] , regform = navbar()[2] , logform = navbar()[3])
+
+
+@app.route('/retrieveFeedback')
+def retrieveFeedback():
+    usersDict = {}
+    db = shelve.open('storage.db', 'r')
+    usersList = []
+    try:
+        usersDict = db['FAQ']
+        db.close()
+    except:
+        print('error in retrieve Feeedback')
+
+    for key in usersDict:
+        user = usersDict.get(key)
+        usersList.append(user)
+
+    return render_template('retrieveFeedback.html',usersList=usersList, count=len(usersList),alert = navbar()[0] , logout = navbar()[1] , regform = navbar()[2] , logform = navbar()[3])
+
+
+@app.route('/updateFAQ/<int:id>/', methods=['GET', 'POST'])
+def updateFAQ(id):
+    updateUserForm = CreateFeedbackForm(request.form)
+    if request.method == 'POST' and updateUserForm.validate():
+        userDict = {}
+        db = shelve.open('storage.db','w')
+        userDict = db['FAQ']
+        user = userDict.get(id)
+        user.set_fullName(updateUserForm.fullName.data)
+        user.set_gender(updateUserForm.gender.data)
+        user.set_contact(updateUserForm.contact.data)
+        user.set_email(updateUserForm.email.data)
+        db['FAQ'] = userDict
+        db.close()
+
+        return redirect(url_for('retrieveFeedback'))
+    else:
+        userDict = {}
+        db = shelve.open('storage.db', 'r')
+        userDict = db['FAQ']
+        db.close()
+        user = userDict.get(id)
+        updateUserForm.fullName.data = user.get_fullName()
+        updateUserForm.gender.data = user.get_gender()
+        updateUserForm.contact.data = user.get_contact()
+        updateUserForm.email.data = user.get_email()
+        return render_template('updateFeedback.html',form=updateUserForm,alert = navbar()[0] , logout = navbar()[1] , regform = navbar()[2] , logform = navbar()[3])
+
+@app.route('/deleteFAQ/<int:id>', methods=['POST'])
+def deleteFAQ(id):
+    usersDict = {}
+    db = shelve.open('storage.db', 'w')
+    usersDict = db['FAQ']
+    usersDict.pop(id)
+    db['FAQ'] = usersDict
+    db.close()
+    return redirect(url_for('retrieveFeedback'))
 
 if __name__ == '__main__':
     socketio.run(app)
