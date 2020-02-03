@@ -433,9 +433,12 @@ def deleteListing(id):
 def analytics():
     labels = []
     values = []
-    db = shelve.open('storage.db')
     listingDict = {}
-    listingDict = db['Listings']
+    try:
+        db = shelve.open('storage.db')
+        listingDict = db['Listings']
+    except:
+        print('db Listing error')
     for listingID in listingDict:
         if session.get('username') == listingDict[listingID].get_seller_name():
             labels.append(listingDict[listingID].get_name())
