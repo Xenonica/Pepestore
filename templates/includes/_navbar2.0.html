@@ -14,6 +14,19 @@
     <div class="navbar-links">
         <ul>
             <li><a href="/">Home</a></li>
+
+            <div class="dropdown">
+            <li><a class="nav-items" href="#">FAQ</a></li>
+
+            <div class="dropdown-content">
+                {% if session['status'] == 'Admin' or session['status'] == 'Owner' %}
+                {% endif %}
+                <li><a href="/createFeedback">Create FAQ</a></li>
+                <li><a href="/retrieveFeedback">Manage FAQ</a></li>
+            </div>
+            </div>
+
+
             {% if 'userID' in session %}
             <li><a href="/createUserImages">Create a Listing</a></li>
             <li><a href="/allListing">Available Listings</a></li>

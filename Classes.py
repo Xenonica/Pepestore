@@ -457,3 +457,45 @@ class Review:
 
     def get_seller(self):
         return self.__seller
+
+
+
+class FAQ:
+    countID=0
+    def __init__(self,fullName,gender,contact,email):
+        FAQ.countID+=1
+        self.__userID=FAQ.countID
+        self.__fullName=fullName
+        self.__gender=gender
+        self.__contact=contact
+        self.__email=email
+    def get_userID(self):
+        return self.__userID
+
+    def get_fullName(self):
+        return self.__fullName
+
+    def get_gender(self):
+        return self.__gender
+
+    def get_contact(self):
+        return self.__contact
+
+    def get_email(self):
+        return self.__email
+
+
+    def set_userID(self, userID):
+        self.__userID = userID
+
+    def set_fullName(self, fullName):
+        self.__fullName = fullName
+
+    def set_contact(self, contact):
+        self.__contact = contact
+
+    def set_gender(self, gender):
+        self.__gender = gender
+
+    def set_email(self, email):
+        self.__email = email
