@@ -21,8 +21,9 @@
             <div class="dropdown-content">
                 {% if session['status'] == 'Admin' or session['status'] == 'Owner' %}
                 {% endif %}
-                <li><a href="/createFeedback">Create FAQ</a></li>
-                <li><a href="/retrieveFeedback">Manage FAQ</a></li>
+                <li><a href="/FAQ">FAQ</a></li>
+                <li><a href="/createFeedback">Create Feedback</a></li>
+                <li><a href="/retrieveFeedback">Manage Feedback</a></li>
             </div>
             </div>
 
@@ -42,7 +43,7 @@
                 {% if session['status'] == 'Admin' or session['status'] == 'Owner' %}
                 <li><a href="/retrieveUsers">Retrieve Users</a></li>
                 {% endif %}
-                <li><a href="/createDelivery">Create Delivery</a></li>
+<!--                <li><a href="/createDelivery">Create Delivery</a></li>-->
                 <li><a href="/manageDelivery">Manage Delivery</a></li>
                 {% if session['status'] == 'Admin' or session['status'] == 'Owner' %}
                 <li><a href="/retrieveDelivery">Retrieve Delivery Records</a></li>
