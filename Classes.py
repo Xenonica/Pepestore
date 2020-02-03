@@ -196,6 +196,9 @@ class User :
     def set_purchases(self,purchases):
         self.__purchases.append(purchases)
 
+    def reset_purchases(self):
+        self.__purchases = []
+
     def set_profpic(self,profpic):
         self.__profpic = profpic
 

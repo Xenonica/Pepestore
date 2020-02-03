@@ -880,9 +880,7 @@ def Cart():
         TotalPrice += i.get_price()*i.get_quantity()
 
     if request.method=='POST' :
-        for i in Purchases:
-            chatDict[i.get_chatID()].set_buyerreview(1)
-            chatDict[i.get_chatID()].set_sellerreview(1)
+        return redirect(url_for('createDelivery'))
 
     db['Chats'] = chatDict
     db.close()
@@ -1048,7 +1046,14 @@ def createDelivery():
         except:
             print("Error in retrieving Users")
 
-        for i in userDict[session['userID']].get_purchases():
+        try:
+            chatDict = db['Chats']
+        except:
+            print("Error in retrieving Chats")
+
+        Purchases = userDict[session['userID']].get_purchases()
+
+        for i in Purchases:
             IDs.append(i.get_productID())
 
         AllID = (''.join(str(IDs))).replace('[','').replace(']','')
@@ -1064,6 +1069,15 @@ def createDelivery():
             db['Delivery'] = deliveryDict
             deliveryDict = db['Delivery']
             delivery = deliveryDict[delivery.get_deliveryID()]
+
+            for i in Purchases:
+                chatDict[i.get_chatID()].set_buyerreview(1)
+                chatDict[i.get_chatID()].set_sellerreview(1)
+
+            userDict[session['userID']].reset_purchases()
+
+            db['Chats'] = chatDict
+            db['Users'] = userDict
 
             print(deliveryDict)
             db.close()
