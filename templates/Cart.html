@@ -29,9 +29,11 @@
     </div>
   </div>
 <p>Total Price: ${{ TotalPrice }}</p>
+{% if Purchases != [] %}
 <form method="POST">
   <button>Purchase</button>
 </form>
+{% endif %}
 <style>
 .list-group-item {
   cursor:pointer;

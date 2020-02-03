@@ -59,6 +59,19 @@ class ProfileForm(Form):
 
 
 class CreateDeliveryForm(Form):
-    product = IntegerField('product ID', [validators.NumberRange(min=1, max=9999), validators.DataRequired()])
-    location = StringField('location', [validators.Length(min=1, max=150), validators.DataRequired()])
+    firstName = StringField('First Name', [validators.Length(min=1, max=150), validators.DataRequired()])
+    lastName = StringField('Last Name', [validators.Length(min=1, max=150), validators.DataRequired()])
+    shipping = SelectField('Shipping', [validators.DataRequired()],
+                           choices=[('', 'Select'), ('N', 'Normal Mail'), ('R', 'Registered Mail')], default='')
+    method = SelectField('Payment Method', [validators.DataRequired()],
+                         choices=[('', 'Select'), ('Credit', 'Credit Card'), ('Paypal', 'Paypal')], default='')
+    remarks = TextAreaField('Remarks', [validators.Optional()])
+    location = StringField('Address', [validators.Length(min=1, max=150), validators.DataRequired()])
 
+class CreatePaymentForm(Form):
+    firstName = StringField('First Name', [validators.Length(min=1, max=150), validators.DataRequired()])
+    lastName = StringField('Last Name', [validators.Length(min=1, max=150), validators.DataRequired()])
+    address = StringField('Address', [validators.Length(min=1, max=150), validators.DataRequired()])
+    shipping = SelectField('Shipping', [validators.DataRequired()], choices=[('', 'Select'), ('N', 'Normal Mail'), ('R', 'Registered Mail')], default='')
+    method = SelectField('Payment Method', [validators.DataRequired()], choices=[('', 'Select'), ('Credit', 'Credit Card'), ('Paypal', 'Paypal')], default='')
+    remarks = TextAreaField('Remarks', [validators.Optional()])

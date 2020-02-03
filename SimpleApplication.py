@@ -880,7 +880,6 @@ def Cart():
     TotalPrice = 0
     for i in Purchases :
         TotalPrice += i.get_price()*i.get_quantity()
-        # listingDict[i.get_productID()].set_review(1)
 
     if request.method=='POST' :
         for i in Purchases:
@@ -911,9 +910,6 @@ def retrieveUsers():
         return redirect(url_for('home'))
 
     return render_template('retrieveUsers.html', userList=userList, count=len(userList),alert = navbar()[0] , logout = navbar()[1] , regform = navbar()[2] , logform = navbar()[3])
-
-
-
 
 @app.route('/deleteUser/<int:id>', methods=['GET', 'POST'])
 def deleteUser(id):
@@ -1038,6 +1034,8 @@ def validateaddress(location):
 def createDelivery():
     createDeliveryForm = CreateDeliveryForm(request.form)
     if request.method == 'POST' and createDeliveryForm.validate():
+        IDs = []
+        userDict = {}
         deliveryDict = {}
         db = shelve.open('storage.db', 'c')
 
@@ -1047,13 +1045,22 @@ def createDelivery():
         except:
             print("Error in retrieving delivery from storage")
 
+        try:
+            userDict = db['Users']
+        except:
+            print("Error in retrieving Users")
+
+        for i in userDict[session['userID']].get_purchases():
+            IDs.append(i.get_productID())
+
+        AllID = (''.join(str(IDs))).replace('[','').replace(']','')
+
         if validateaddress(createDeliveryForm.location.data) == True:
-            delivery = Classes.Delivery(session['username'], createDeliveryForm.product.data, createDeliveryForm.location.data)
+            delivery = Classes.Delivery(session['username'], AllID, createDeliveryForm.location.data, createDeliveryForm.firstName.data,createDeliveryForm.lastName.data,createDeliveryForm.shipping.data,createDeliveryForm.method.data,createDeliveryForm.remarks.data)
             delivery.set_time(datetime.now())
             randomtime = random.randint(20,35) # Random generate estimated time of delivery
             delivery.set_estimatedTime(datetime.now() + timedelta(seconds = randomtime))
             delivery.set_status('In Delivery')
-
 
             deliveryDict[delivery.get_deliveryID()] = delivery
             db['Delivery'] = deliveryDict
@@ -1097,9 +1104,6 @@ def manageDelivery():
                 key.set_status('Delivered')
 
     return render_template('manageDelivery.html', deliveryList=deliveryList, count=len(deliveryList),alert = navbar()[0] , logout = navbar()[1] , regform = navbar()[2] , logform = navbar()[3])
-
-
-
 
 
 @app.route('/updateDelivery/<int:id>',methods = ["GET","POST"])
@@ -1245,8 +1249,6 @@ def Track(id):
 @app.route('/map')
 def map():
     return render_template("map.html")
-
-
 
 if __name__ == '__main__':
     socketio.run(app)
