@@ -1130,7 +1130,6 @@ def updateDelivery(id):
 
         if validateaddress(updateDeliveryForm.location.data) == True:
             delivery = deliveryDict.get(id)
-            delivery.set_product(updateDeliveryForm.product.data)
             delivery.set_location(updateDeliveryForm.location.data)
 
             db['Delivery'] =deliveryDict
@@ -1148,7 +1147,6 @@ def updateDelivery(id):
         deliveryDict = db['Delivery']
         db.close()
         delivery = deliveryDict.get(id)
-        updateDeliveryForm.product.data = delivery.get_product()
         updateDeliveryForm.location.data = delivery.get_location()
 
         return render_template('updateDelivery.html', form=updateDeliveryForm, alert=navbar()[0], logout = navbar()[1] , regform = navbar()[2] , logform = navbar()[3])
