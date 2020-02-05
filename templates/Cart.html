@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% block title %}Library Loan System - Home{% endblock %}
+{% block title %}Pepestore - Cart{% endblock %}
 
 {% block content %}
 <h1 class="display-4">Orders</h1>
@@ -31,7 +31,7 @@
 <p>Total Price: ${{ TotalPrice }}</p>
 {% if Purchases != [] %}
 <form method="POST">
-  <button><a href="/createDelivery">Purchase</a></button>
+  <a href="/createDelivery"><input type="button" value="Purchase" class="purchasebutton"></a>
 </form>
 {% endif %}
 <style>
@@ -48,5 +48,18 @@
   flex-wrap: wrap ;
   padding: 0 15px ;
 }
+
+.purchasebutton{
+  margin-bottom: 10px;
+  border-radius: 50px;
+  -moz-border-radius: 50px;
+  -webkit-border-radius: 50px;
+  width: 100px;
+  height: 40px;
+  background-color: #32CD32;
+  color: white;
+  border: 0;
+}
+
 </style>
 {% endblock %}
