@@ -1075,7 +1075,7 @@ def createDelivery():
             delivery = Classes.Delivery(session['username'],AllSellerNames,AllID, createDeliveryForm.location.data, createDeliveryForm.firstName.data,createDeliveryForm.lastName.data,createDeliveryForm.shipping.data,createDeliveryForm.method.data,createDeliveryForm.remarks.data)
             print('allid',AllID)
             delivery.set_time(datetime.now())
-            randomtime = random.randint(20,35) # Random generate estimated time of delivery
+            randomtime = random.randint(43,60) # Random generate estimated time of delivery
             delivery.set_estimatedTime(datetime.now() + timedelta(seconds = randomtime))
             delivery.set_status('In Delivery')
 
@@ -1143,8 +1143,12 @@ def updateDelivery(id):
 
         if validateaddress(updateDeliveryForm.location.data) == True:
             delivery = deliveryDict.get(id)
+            delivery.set_firstName(updateDeliveryForm.firstName.data)
+            delivery.set_lastName(updateDeliveryForm.lastName.data)
             delivery.set_location(updateDeliveryForm.location.data)
-
+            delivery.set_shipping(updateDeliveryForm.shipping.data)
+            delivery.set_method(updateDeliveryForm.method.data)
+            delivery.set_remarks(updateDeliveryForm.remarks.data)
             db['Delivery'] =deliveryDict
             db.close()
 
@@ -1161,6 +1165,11 @@ def updateDelivery(id):
         db.close()
         delivery = deliveryDict.get(id)
         updateDeliveryForm.location.data = delivery.get_location()
+        updateDeliveryForm.firstName.data = delivery.get_firstName()
+        updateDeliveryForm.lastName.data = delivery.get_lastName()
+        updateDeliveryForm.shipping.data = delivery.get_shipping()
+        updateDeliveryForm.method.data = delivery.get_method()
+        updateDeliveryForm.remarks.data = delivery.get_remarks()
 
         return render_template('updateDelivery.html', form=updateDeliveryForm, alert=navbar()[0], logout = navbar()[1] , regform = navbar()[2] , logform = navbar()[3])
 

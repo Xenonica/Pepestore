@@ -72,7 +72,7 @@ function checkTime(i) {
   {% if delivery.get_status()=='Delivered' or delivery.get_status() == 'Cancelled' %}
  <tr>
  <td>{{ delivery.get_deliveryID() }}</td>
- <td> - </td>
+ <td> {{ delivery.get_sellername()}} </td>
  <td>{{ delivery.get_username() }}</td>
  <td>{{ delivery.get_product() }}</td>
  <td>{{ delivery.get_location() }}</td>

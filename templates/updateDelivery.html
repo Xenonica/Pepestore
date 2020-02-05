@@ -3,13 +3,33 @@
 {% block content %}
 {% from "includes/_formHelper.html" import render_field %}
 
-<h1 class="display-4">Update Delivery</h1>
 <form method="POST" action="">
- <div class="form-group">
+  <div class="form-group">
+    {{ render_field(form.firstName, class="form-control") }}
+  </div>
+
+  <div class="form-group">
+    {{ render_field(form.lastName, class="form-control") }}
+  </div>
+
+  <div class="form-group">
  {{ render_field(form.location, class="form-control") }}
  </div>
 
- <input type="submit" value="Update" class="btn btn-primary"  />
+  <div class="form-group">
+    {{ render_field(form.shipping, class="form-control") }}
+  </div>
+
+  <div class="form-group">
+    {{ render_field(form.method, class="form-control") }}
+  </div>
+
+  <div id="prof">
+    <div class="form-group">
+      {{ render_field(form.remarks, class="form-control") }}
+    </div>
+  </div>
+ <input type="submit" value="Submit" class="btn btn-primary"/>
 </form>
 
 {% if invalidlocation == True %}
