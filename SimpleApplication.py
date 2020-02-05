@@ -1031,8 +1031,10 @@ def createDelivery():
     createDeliveryForm = CreateDeliveryForm(request.form)
     if request.method == 'POST' and createDeliveryForm.validate():
         IDs = []
+        SellerNames = []
         userDict = {}
         deliveryDict = {}
+        listingDict = {}
         db = shelve.open('storage.db', 'c')
 
         try:
@@ -1040,6 +1042,11 @@ def createDelivery():
             print(deliveryDict)
         except:
             print("Error in retrieving delivery from storage")
+
+        try:
+            listingDict = db['Listings']
+        except:
+            print("Error in retrieving listings from storage")
 
         try:
             userDict = db['Users']
@@ -1058,8 +1065,14 @@ def createDelivery():
 
         AllID = (''.join(str(IDs))).replace('[','').replace(']','')
 
+        for i in IDs :
+            SellerNames.append(listingDict[i].get_seller_name())
+
+        AllSellerNames = ((''.join(str(SellerNames))).replace('[','').replace(']','').replace("'",''))
+        print(AllSellerNames)
+
         if validateaddress(createDeliveryForm.location.data) == True:
-            delivery = Classes.Delivery(session['username'], AllID, createDeliveryForm.location.data, createDeliveryForm.firstName.data,createDeliveryForm.lastName.data,createDeliveryForm.shipping.data,createDeliveryForm.method.data,createDeliveryForm.remarks.data)
+            delivery = Classes.Delivery(session['username'],AllSellerNames,AllID, createDeliveryForm.location.data, createDeliveryForm.firstName.data,createDeliveryForm.lastName.data,createDeliveryForm.shipping.data,createDeliveryForm.method.data,createDeliveryForm.remarks.data)
             print('allid',AllID)
             delivery.set_time(datetime.now())
             randomtime = random.randint(20,35) # Random generate estimated time of delivery

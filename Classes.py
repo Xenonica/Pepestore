@@ -314,7 +314,7 @@ class Chat :
         self.__sellerreviews     = review
 
 class Delivery:
-    def __init__(self, username, product, location,firstName,lastName,shipping,method,remarks):
+    def __init__(self, username,sellername,product, location,firstName,lastName,shipping,method,remarks):
         db = shelve.open('storage.db','c')
         try:
             deliveryDict = db['Delivery']
@@ -328,6 +328,7 @@ class Delivery:
         self.__shipping = shipping
         self.__method = method
         self.__remarks = remarks
+        self.__sellername = sellername
 
         self.__deliveryID = count
         self.__username = username
@@ -337,6 +338,9 @@ class Delivery:
         self.__time = ''
         self.__estimatedTime = ''
 
+
+    def get_sellername(self):
+        return self.__sellername
 
     def get_firstName(self):
         return self.__firstName
