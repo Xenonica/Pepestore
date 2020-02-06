@@ -2,27 +2,30 @@
 {% block title %}Pepestore - Update{% endblock %}
 {% block content %}
 {% from "includes/_formHelper.html" import render_field %}
+<style>
+ .updateItem_container{
+ display:flex;
+ flex-direction:column;
+ justify-content:center;
+ align-items:center;
+ }
+ .form-control{
+ margin-bottom:.5rem;
+ }
+</style>
 
-<h1 class="display-4">Update Item</h1>
+<div class="updateItem_container">
 <form method="POST" action="">
- <div class="form-group">
- {{ render_field(form.name, class="form-control") }}
- </div>
- <div class="form-group">
+ <h1 class="display-4">Update Listing Information for {{name}}</h1>
+ <br>
+ {{ render_field(form.name, class= "form-control") }}
  {{ render_field(form.price, class="form-control") }}
- </div>
- <div class="form-group">
  {{ render_field(form.description, class="form-control") }}
- </div>
-  <div class="form-group">
  {{ render_field(form.quantity, class="form-control") }}
- </div>
- <div class="form-group">
  {{ render_field(form.category, class="form-control") }}
- </div>
 
  <input type="submit" value="Update" class="btn btn-primary"  />
 </form>
-
+</div>
 
 {% endblock %}

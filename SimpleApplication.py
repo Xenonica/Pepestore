@@ -377,6 +377,7 @@ def allListing():
 
 @app.route('/update/<int:id>/', methods=['GET', 'POST'])
 def updateItem(id):
+    name = ''
     listingForm = CreateListing(request.form)
     if request.method == 'POST' and listingForm.validate():
         listingDict = {}
@@ -407,13 +408,14 @@ def updateItem(id):
         for list_id in listingDict:
             if list_id == id:
                     listingForm.name.data = listingDict[list_id].get_name()
+                    name = listingDict[list_id].get_name()
                     listingForm.price.data = listingDict[list_id].get_price()
                     listingForm.description.data = listingDict[list_id].get_description()
                     listingForm.quantity.data = listingDict[list_id].get_quantity()
                     listingForm.category.data = listingDict[list_id].get_category()
         print(listingDict)
 
-    return render_template('updateItem.html', form=listingForm,alert = navbar()[0] , logout = navbar()[1] , regform = navbar()[2] , logform = navbar()[3])
+    return render_template('updateItem.html',name=name,form=listingForm,alert = navbar()[0] , logout = navbar()[1] , regform = navbar()[2] , logform = navbar()[3])
 
 
 @app.route('/deleteListing/<int:id>', methods=['POST'])

@@ -3,32 +3,29 @@
 {% block content %}
 {% from "includes/_formHelper.html" import render_field,filter %}
 <style>
-.container{
+.allListing_container{
 display:flex;
-margin-right:0px;
-margin-left:0px;
-padding:0;
+margin-top:1rem;
+margin-left:1rem;
 }
 
 .filter_wrapper{
-margin:10px;
 }
 
 .form-control{
-width:200px;
+width:170px;
 }
 
 .listing_container{
-margin: 20px 0px 20px 50px;
+display:flex;
+flex-wrap:wrap;
+margin-left:5rem;
 }
 
 .listing_wrapper{
-display:inline-block;
-padding:10px;
-margin-left: 10px;
-margin-bottom: 15px;
 align: center;
-
+padding:.5rem;
+margin-right:2rem;
 }
 
 .listing_wrapper:hover{
@@ -37,8 +34,9 @@ box-shadow: 0 0 8px grey;
 
 .listing_wrapper img{
 object-fit: cover;
+max-width:100%;
+height:auto;
 }
-
 </style>
 <!--  {% if count == 0 %}-->
 <!--  <p>There are no listings.</p>-->
@@ -47,7 +45,7 @@ object-fit: cover;
 <!--  {% else %}-->
 <!--  <p>There are {{ count }} listings.</p>-->
 <!--  {% endif %}-->
-<div class="container">
+<div class="allListing_container">
     <div class="filter_wrapper">
         <form method="POST">
             {{ render_field(form.filter_type, class="form-control") }}
@@ -55,7 +53,7 @@ object-fit: cover;
             <br>
             <span>Max($)</span><br> <input style="width:100px" type="number">
             <br>
-            <input type="submit" style="margin-top:30px" class="btn btn-warning" value="Go" name="button">
+            <input type="submit" style="margin-top:10px" class="btn btn-warning" value="Go" name="button">
         </form>
     </div>
     <div class="listing_container">

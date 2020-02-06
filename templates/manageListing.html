@@ -125,9 +125,6 @@
 
 
 
-
-
-
 </style>
 
 <script>
@@ -136,8 +133,6 @@ var btn = document.getElementsByClassName("modal_button");
 var back = document.getElementsByClassName("button_back");
 var i = 0;
 for (i = 0; i < modal.length; i++)(function(i) {
-
-
     btn[i].onclick = function() {
       modal[i].style.display = "block";
       console.log(i)
@@ -147,15 +142,8 @@ for (i = 0; i < modal.length; i++)(function(i) {
         console.log(i);
     }
     }
-
-
 }
-
 })(i);
-
-
-
-
 </script>
 {% endblock %}
 
