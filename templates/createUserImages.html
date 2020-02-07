@@ -3,67 +3,77 @@
 {% from "includes/_formHelper.html" import render_field %}
 
 {% block content %}
-<script>
-function deleteImg(){
-    var imageno = event.target.id;
-    document.getElementById('todelete').value = imageno;
-    ImgInput.onchange();
-}
-</script>
-<h1>Upload listing images(Up to 4)</h1>
+<div class="createListingImage_container">
 
-<form id="upload-image" method="post" enctype="multipart/form-data" name="form" class="uploadimage">
-<div class="input-group w-50" style="z-index:0; padding-top:10px;">
+    <h1 class="display-4">Upload listing images(Up to 4)</h1>
+    <br>
+    <form id="upload-image" method="post" enctype="multipart/form-data" name="form" class="uploadimage">
+        <div class="input-group" style="z-index:0;">
+            <div class="custom-file">
+                <input type="file" class="custom-file-input" name="file" id="ImgInput" accept="image/*" multiple onchange="this.form.submit()" style="cursor:pointer;">
+                <label class="custom-file-label">Choose up to 4 images</label>
+                    <input type="hidden" name="todelete" value="" id="todelete" class="uploadimage">
 
-  <div class="custom-file">
-    <input type="file" class="custom-file-input" id="ImgInput" name="file" accept="image/*" multiple onchange="this.form.submit()">
-    <label class="custom-file-label" for="ImgInput">Choose file</label>
-    <input type="hidden" name="todelete" value="" id="todelete" class="uploadimage">
+            </div>
+            <div class="input-group-append">
+    <button id="submitButton" class="btn btn-outline-secondary" type="button" onclick="window.location.href='{{ url_for('createListing') }}';">Next</button>
   </div>
-  <div class="input-group-append">
-    <button id="submitButton" class="btn btn-outline-secondary" type="button" onclick="window.location.href='{{ url_for('createListing') }}';">Submit</button>
-  </div>
-
-</div>
-</form>
-<div id="container">
-    <div>
-        <div class="wrapper">
-            <img class="images" src="{{Img1}}" onerror="this.src='https://matthewsenvironmentalsolutions.com/images/com_hikashop/upload/not-available.png';document.getElementById('1').style.display='none';" height="350" width="350">
-            <img class="deleteSign1" src="https://icons-for-free.com/iconfiles/png/512/delete+deny+no+out+sign+out+x+icon-1320196067039321214.png" onclick="deleteImg()" id="1">
         </div>
-        <div class="wrapper">
-            <img class="images" src="{{Img3}}" onerror="this.src='https://matthewsenvironmentalsolutions.com/images/com_hikashop/upload/not-available.png';document.getElementById('3').style.display='none';" height="350" width="350">
-            <img class="deleteSign3" src="https://icons-for-free.com/iconfiles/png/512/delete+deny+no+out+sign+out+x+icon-1320196067039321214.png" onclick="deleteImg()" id="3">
+    </form>
+
+<div class="createListingImage_wrapper">
+    <div class="wrapper">
+        <div>
+            <img class="images" src="{{Img1}}"
+                 onerror="this.src='https://matthewsenvironmentalsolutions.com/images/com_hikashop/upload/not-available.png';document.getElementById('1').style.display='none';"
+                 height="350" width="350">
+            <img class="deleteSign1"
+                 src="https://icons-for-free.com/iconfiles/png/512/delete+deny+no+out+sign+out+x+icon-1320196067039321214.png"
+                 onclick="deleteImg()" id="1">
+        </div>
+        <div>
+            <img class="images" src="{{Img3}}"
+                 onerror="this.src='https://matthewsenvironmentalsolutions.com/images/com_hikashop/upload/not-available.png';document.getElementById('3').style.display='none';"
+                 height="350" width="350">
+            <img class="deleteSign3"
+                 src="https://icons-for-free.com/iconfiles/png/512/delete+deny+no+out+sign+out+x+icon-1320196067039321214.png"
+                 onclick="deleteImg()" id="3">
         </div>
     </div>
-
-    <div>
-        <div class="wrapper">
-            <img class="images" src="{{Img2}}" onerror="this.src='https://matthewsenvironmentalsolutions.com/images/com_hikashop/upload/not-available.png';document.getElementById('2').style.display='none';" height="350" width="350">
-            <img class="deleteSign2" src="https://icons-for-free.com/iconfiles/png/512/delete+deny+no+out+sign+out+x+icon-1320196067039321214.png" onclick="deleteImg()" id="2">
+    <div class="wrapper">
+        <div>
+            <img class="images" src="{{Img2}}"
+                 onerror="this.src='https://matthewsenvironmentalsolutions.com/images/com_hikashop/upload/not-available.png';document.getElementById('2').style.display='none';"
+                 height="350" width="350">
+            <img class="deleteSign2"
+                 src="https://icons-for-free.com/iconfiles/png/512/delete+deny+no+out+sign+out+x+icon-1320196067039321214.png"
+                 onclick="deleteImg()" id="2">
         </div>
-        <div class="wrapper">
-            <img class="images" src="{{Img4}} "onerror="this.src='https://matthewsenvironmentalsolutions.com/images/com_hikashop/upload/not-available.png';document.getElementById('4').style.display='none';" height="350" width="350">
-            <img class="deleteSign4" src="https://icons-for-free.com/iconfiles/png/512/delete+deny+no+out+sign+out+x+icon-1320196067039321214.png" onclick="deleteImg()" id="4">
+        <div>
+            <img class="images" src="{{Img4}} "
+                 onerror="this.src='https://matthewsenvironmentalsolutions.com/images/com_hikashop/upload/not-available.png';document.getElementById('4').style.display='none';"
+                 height="350" width="350">
+            <img class="deleteSign4"
+                 src="https://icons-for-free.com/iconfiles/png/512/delete+deny+no+out+sign+out+x+icon-1320196067039321214.png"
+                 onclick="deleteImg()" id="4">
+
         </div>
     </div>
-
-
-
 </div>
-
-
+</div>
 
 <style>
     .images {
     object-fit: cover;
     max-width:100%;
-    height:auto;
     }
 
-    #container{
+    .createListingImage_container{
     display:flex;
+    flex-direction: column;
+    justify-content:center;
+    align-items:center;
+    margin: 0 2vw;
     }
 
     .deleteSign1,.deleteSign2,.deleteSign3,.deleteSign4{
@@ -74,13 +84,31 @@ function deleteImg(){
     cursor: pointer;
     }
 
+    .createListingImage_wrapper{
+    display:flex;
+    margin-top: 2vh;
+    }
+
     .wrapper{
-    position: relative;
-    margin:15px;
+    display:flex;
+    flex-direction:column;
+    }
+
+    .wrapper div{
+    margin: 1vh 1vw;
+    position:relative;
     }
 
     #upload-image{
     }
 
 </style>
+
+<script>
+function deleteImg(){
+    var imageno = event.target.id;
+    document.getElementById('todelete').value = imageno;
+    ImgInput.onchange();
+}
+</script>
 {% endblock %}

@@ -5,7 +5,7 @@
 {% from "includes/_formHelper.html" import render_field %}
 <script>
 </script>
-<h1 class="display-4">Create Listing</h1>
+<h1 class="display-4" style="display:flex; align-items:center;justify-content:center">Create Listing</h1>
 <div class="container">
   <img src="{{Img1}}" height="400" width="400" id="DisplayImg">
 <form method="POST" action="" class="list-info-container">
@@ -24,19 +24,44 @@
   <div class="form-group">
     {{ render_field(form.quantity, class="form-control custom_quantity") }}
   </div>
-  <input type="submit" value="Submit" class="btn btn-primary"/>
+  <input type="submit" value="Submit" class="buttons button_submit"/>
+  <a href="/createUserImages"><input type="button" id="button_back" class="buttons button_back" value="Back"></a>
+
 </form>
   </div>
 <style>
+#button_back{
+  color:black;
+  margin-right:3px
+  }
+
+  .button_submit{
+  background-color:#007bff;
+  }
+
+  .button_submit:hover{
+  background-color:#003e80;
+  }
+
+  .buttons{
+  width: 100px;
+  height: 40px;
+  border: 0;
+  color: white;
+  }
+
+  #button_back:hover{
+  background-color:#b3b3cc
+  }
+
   #DisplayImg {
     object-fit: cover;
     }
 
    .container{
    display:flex;
-   margin-left:0;
-   margin-top:10px;
-   padding:0
+   margin:5vh 2vw 0 2vw;
+   padding:0;
    }
 
    .list-info-container{

@@ -2,8 +2,9 @@
 {% block title %}Pepestore - Manage Listing{% endblock %}
 
 {% block content %}
-<h1 class="display-4">Manage Listings</h1>
 <div class="table_container">
+    <h1 class="display-4">Manage Listings</h1>
+    <br>
     <table class="table table-striped" id="table_listing">
         <thead class="thead-dark">
         <tr>
@@ -55,6 +56,15 @@
 <style>
   .table_container{
   overflow:auto;
+  align-items:center;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  margin: 0 1.5vw;
+  }
+
+  table{
+    border:1px solid black;
   }
 
   .buttons{
@@ -97,6 +107,7 @@
 
   img{
   object-fit:cover;
+  max-width:100%;
   }
 
   /* The Modal (background) */

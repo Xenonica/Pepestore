@@ -8,10 +8,36 @@
  flex-direction:column;
  justify-content:center;
  align-items:center;
+ margin: 0 2vw;
  }
+
  .form-control{
- margin-bottom:.5rem;
+ margin-bottom:2vh;
  }
+
+ #button_back{
+  color:black;
+  margin-right:3px
+  }
+
+  .buttons{
+  width: 100px;
+  height: 40px;
+  border: 0;
+  color: white;
+  }
+  #button_back:hover{
+  background-color:#b3b3cc
+  }
+
+  #button_update{
+  margin-right:3px;
+  background-color: #32CD32;
+  }
+
+  #button_update:hover{
+  background-color:green;
+  }
 </style>
 
 <div class="updateItem_container">
@@ -24,7 +50,8 @@
  {{ render_field(form.quantity, class="form-control") }}
  {{ render_field(form.category, class="form-control") }}
 
- <input type="submit" value="Update" class="btn btn-primary"  />
+ <input type="submit" value="Update" class="buttons" id="button_update"/>
+ <a href="/manageListing"><input type="button" id="button_back" class="buttons button_back" value="Back"></a>
 </form>
 </div>
 

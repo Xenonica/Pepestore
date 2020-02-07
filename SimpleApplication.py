@@ -189,12 +189,12 @@ def createUserImages():
                     else :
                         filename = file.filename
                         #Make directory for image
-                        destination = ''.join([target]+[filename])
+                        destination = '/'.join([target]+[filename])
                         file.save(destination)
                         staticdestination = url_for('static', filename='tempimages/'+filename)
                         # print('staticdest', staticdestination)
                         count+=1
-                        if filename in tempimagelist :
+                        if staticdestination in tempimagelist :
                             continue
                         else:
                             tempimagelist.append(staticdestination)
@@ -211,6 +211,7 @@ def createUserImages():
 
     Img = ['','','','']
     print('temp',tempimagelist)
+
     for i in range(len(tempimagelist)):
         try:
             Img[i] = tempimagelist[i]
