@@ -91,7 +91,7 @@ function checkTime(i) {
   {% else %}
   <td>{{delivery.get_estimatedTime().strftime("%d %B %Y, %I:%M:%S %p") }}</td>
   {% endif %}
-
+  <td><a class="btn btn-primary" data-toggle="modal" data-target="#myOutput{{ delivery.get_deliveryID() }} " style="cursor:pointer"><span id="info">Info</span></a></td>
  <td><a href="/updateDelivery/{{delivery.get_deliveryID()}}" class="btn btn-warning">Update</a></td>
  <td>
  <form action=" {{url_for('deleteDeliveryatretrieve' ,id=delivery.get_deliveryID())}}" method="POST">
@@ -103,4 +103,40 @@ function checkTime(i) {
  </tbody>
  </table>
 </div>
+
+
+{% for delivery in deliveryList %}
+ <!-- Modal -->
+  <div class="modal fade" id="myOutput{{ delivery.get_deliveryID() }}" role="dialog">
+    <div class="modal-dialog modal-lg">
+
+      <!-- Modal content-->
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title">More Information on Delivery ID {{ delivery.get_deliveryID() }}</h4>
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+
+        </div>
+        <div class="modal-body">
+          <p>First Name: {{ delivery.get_firstName() }} </p>
+          <p>Last Name: {{ delivery.get_lastName() }} </p>
+           <p>Payment Method: {{ delivery.get_method() }}</p>
+          <p>Remarks: {{ delivery.get_remarks() }}</p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+{% endfor %}
+
+<style>
+ #info{
+ color:white;
+ }
+
+</style>
+
 {% endblock %}
