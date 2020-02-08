@@ -1,4 +1,4 @@
-#Python Modules used:
+# Python Modules used:
 -Flask
 -Jinja
 -WTForms
@@ -8,7 +8,7 @@
 -geopy (For map)
 -folium (For map)
 
-#How to run
+# How to run
 Run SimpleApplication.py
 Go to google chrome and open 127.0.0.1:5000
 
