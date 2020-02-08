@@ -128,6 +128,8 @@ def before_request():
 def home():
     listingList = []
     listingDict = {}
+    mostViewedList = []
+    a=[]
     print(session)
     if 'userID' not in session :
         try:
@@ -150,20 +152,29 @@ def home():
         db = shelve.open('storage.db', 'c')
         db.close()
 
-
     for i in listingDict:
         listing = listingDict.get(i)
         listingList.append(listing)
-    print(listingList)
+        if listing.get_visits() >= 1:
+            a.append(listing)
+
+    a = sorted(a, key=lambda a:a.get_visits(), reverse=True)
+
     for key in listingList:
         if len(listingList) > 5:
             listingList.remove(key)
         if len(listingList) == 5:
             break
-    print(listingList)
     newestLists = listingList[::-1]
 
-    return render_template('home.html',newestLists =newestLists,alert = navbar()[0] , logout = navbar()[1] , regform = navbar()[2] , logform = navbar()[3])
+    for i in range(0,5):
+        try:
+            mostViewedList.append(a[i])
+        except IndexError:
+            print('IndexError (Most viewed)')
+            break
+
+    return render_template('home.html', popularLists=mostViewedList, newestLists =newestLists,alert = navbar()[0] , logout = navbar()[1] , regform = navbar()[2] , logform = navbar()[3])
 
 
 @app.route('/createUserImages',methods=['GET', 'POST'])

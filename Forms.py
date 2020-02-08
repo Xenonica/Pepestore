@@ -4,9 +4,9 @@ from wtforms.fields.html5 import EmailField , IntegerField
 
 class CreateListing(Form):
     name = StringField('Listing Name', [validators.Length(min=1, max=150), validators.DataRequired()])
-    price = DecimalField('Price', [validators.NumberRange(min=0,max=9999),validators.DataRequired()],default=0)
+    price = DecimalField('Price', [validators.NumberRange(min=0, max=9999),validators.DataRequired()], default=0)
     description = TextAreaField('Description', [validators.Length(min=0, max=200)])
-    quantity = IntegerField('Quantity', [validators.DataRequired()])
+    quantity = IntegerField('Quantity', [validators.DataRequired(), validators.NumberRange(min=1, max=9999)], default=1)
     category = SelectField('Category', [validators.DataRequired()], choices=[('', 'Select'),('Electronics', 'Electronics'), ('Home Appliances', 'Home Appliances'),
                                        ('Sports', 'Sports'),
                                        ('Books/Stationary', 'Books/Stationary'), ('Vehicles', 'Vehicles'),

@@ -3,32 +3,28 @@
 
 {% block content %}
 {% from "includes/_formHelper.html" import render_field %}
-<script>
-</script>
-<h1 class="display-4" style="display:flex; align-items:center;justify-content:center">Create Listing</h1>
-<div class="container">
-  <img src="{{Img1}}" height="400" width="400" id="DisplayImg">
-<form method="POST" action="" class="list-info-container">
-  <div class="form-group">
-    {{ render_field(form.name, class="form-control custom_name" ) }}
-  </div>
-  <div class="form-group">
-    {{ render_field(form.price, class="form-control custom_price") }}
-  </div>
-  <div class="form-group">
-    {{ render_field(form.description, class="form-control custom_description") }}
-  </div>
-  <div class="form-group">
-    {{ render_field(form.category, class="form-control custom_category") }}
-  </div>
-  <div class="form-group">
-    {{ render_field(form.quantity, class="form-control custom_quantity") }}
-  </div>
-  <input type="submit" value="Submit" class="buttons button_submit"/>
-  <a href="/createUserImages"><input type="button" id="button_back" class="buttons button_back" value="Back"></a>
 
-</form>
+<div class="createListing_container">
+  <div style="display:flex; align-items:center; justify-content:center;">
+    <h1 class="display-4">Create Listing</h1>
   </div>
+  <br>
+  <div style="display:flex;">
+    <div>
+      <img src="{{Img1}}" height="400px" width="400px" id="DisplayImg">
+    </div>
+    <form method="POST" action="" class="list-info-container">
+      {{ render_field(form.name, class="form-control") }}
+      {{ render_field(form.price, class="form-control") }}
+      {{ render_field(form.description, class="form-control") }}
+      {{ render_field(form.category, class="form-control") }}
+      {{ render_field(form.quantity, class="form-control") }}
+      <input type="submit" value="Submit" class="buttons button_submit"/>
+      <a href="/createUserImages"><input type="button" id="button_back" class="buttons button_back" value="Back"></a>
+    </form>
+  </div>
+</div>
+
 <style>
 #button_back{
   color:black;
@@ -54,28 +50,23 @@
   background-color:#b3b3cc
   }
 
-  #DisplayImg {
-    object-fit: cover;
+  #DisplayImg{
+    object-fit:cover;
+    max-width:100%;
     }
 
-   .container{
+   .createListing_container{
    display:flex;
-   margin:5vh 2vw 0 2vw;
+   margin:0 2vw;
    padding:0;
+   flex-direction:column;
    }
 
    .list-info-container{
-   margin-left:5%;
-   margin-bottom: 5%;
+   margin-left:3vw;
    }
-
-  .custom_quantity, .custom_price{
-  width: 100px;
-  }
-
-
-  .custom_category, .custom_name, .custom_description{
-  width: 300px;
-  }
+   .form-control{
+   margin-bottom:2vh;
+   }
 </style>
 {% endblock %}

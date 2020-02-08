@@ -2,57 +2,6 @@
 {% block title %}Pepestore - Manage Listing{% endblock %}
 
 {% block content %}
-<div class="table_container">
-    <h1 class="display-4">Manage Listings</h1>
-    <br>
-    <table class="table table-striped" id="table_listing">
-        <thead class="thead-dark">
-        <tr>
-            <th>Display Picture</th>
-            <th>Name</th>
-            <th>Price</th>
-            <th>Description</th>
-            <th>Quantity</th>
-            <th>Category</th>
-            <th></th>
-        </tr>
-        </thead>
-        <tbody>
-        {% for listing in listingList %}
-        {% if listing.get_seller_name() == session['username'] %}
-        <tr>
-            <td><img src={{listing.get_displaypic()}} height="200" width="200"></td>
-            <td>{{ listing.get_name() }}</td>
-            <td>${{ listing.get_price() }}</td>
-            <td>{{ listing.get_description() }}</td>
-            <td>{{ listing.get_quantity() }}</td>
-            <td>{{ listing.get_category() }}</td>
-            <td><a href="/update/{{listing.get_listingID()}}">
-              <input type="button" value="Update" id="button_update" class="buttons"></a>
-              <input type="submit" value="Delete" id="modal_window" class="button_delete buttons modal_button">
-
-                <div id="myModal" class="modal">
-                    <div class="modal-content">
-                        <p>Are you sure you want to delete?</p>
-                        <form action="{{url_for('deleteListing', id=listing.get_listingID())}}" method="POST"
-                              style="display:inline-block;">
-                            <input type="submit" value="Delete" id="button_delete" class="button_delete buttons">
-                            <input type="button" id="button_back" class="buttons button_back" value="Back">
-                        </form>
-                    </div>
-                </div>
-
-            </td>
-        </tr>
-
-        {% endif %}
-        {% endfor %}
-        </tbody>
-    </table>
-
-</div>
-
-
 <style>
   .table_container{
   overflow:auto;
@@ -134,9 +83,57 @@
   width: 80%;
 }
 
-
-
 </style>
+
+<div class="table_container">
+    <h1 class="display-4">Manage Listings</h1>
+    <br>
+    <table class="table table-striped" id="table_listing">
+        <thead class="thead-dark">
+        <tr>
+            <th>Display Picture</th>
+            <th>Name</th>
+            <th>Price</th>
+            <th>Description</th>
+            <th>Quantity</th>
+            <th>Category</th>
+            <th></th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for listing in listingList %}
+        {% if listing.get_seller_name() == session['username'] %}
+        <tr>
+            <td><img src={{listing.get_displaypic()}} height="200" width="200"></td>
+            <td>{{ listing.get_name() }}</td>
+            <td>${{ listing.get_price() }}</td>
+            <td>{{ listing.get_description() }}</td>
+            <td>{{ listing.get_quantity() }}</td>
+            <td>{{ listing.get_category() }}</td>
+            <td><a href="/update/{{listing.get_listingID()}}">
+              <input type="button" value="Update" id="button_update" class="buttons"></a>
+              <input type="submit" value="Delete" id="modal_window" class="button_delete buttons modal_button">
+
+                <div id="myModal" class="modal">
+                    <div class="modal-content">
+                        <p>Are you sure you want to delete?</p>
+                        <form action="{{url_for('deleteListing', id=listing.get_listingID())}}" method="POST"
+                              style="display:inline-block;">
+                            <input type="submit" value="Delete" id="button_delete" class="button_delete buttons">
+                            <input type="button" id="button_back" class="buttons button_back" value="Back">
+                        </form>
+                    </div>
+                </div>
+
+            </td>
+        </tr>
+
+        {% endif %}
+        {% endfor %}
+        </tbody>
+    </table>
+
+</div>
 
 <script>
 var modal = document.getElementsByClassName("modal");

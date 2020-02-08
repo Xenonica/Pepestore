@@ -1,8 +1,17 @@
 {% extends "base.html" %}
 {% block title %}Pepestore - Analytics{% endblock %}
 {% block content %}
+<style>
+  .analytics_container{
+  display:flex;
+  flex-direction:column;
+  margin-left:2vw;
+  }
+</style>
 
-<h1>Analytics</h1>
+<div class="analytics_container">
+<h1 class="display-4" style="display:flex; justify-content:center; align-items:center;">Analytics</h1>
+  <br>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@2.7.3/dist/Chart.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@0.7.0"></script>
 <canvas id="myChart" width="600" height="400"></canvas>
@@ -32,11 +41,16 @@ var myChart = new Chart(ctx, {
                     beginAtZero: true
                 }
             }]
+        },
+        title: {
+            display: true,
+            fontSize: 25,
+            text: 'Traffic per Listing'
         }
 
     }
 });
 </script>
+</div>
 
-
-  {%endblock%}
+{% endblock %}

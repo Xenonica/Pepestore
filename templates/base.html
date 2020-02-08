@@ -31,7 +31,18 @@
     <div id="chatbotCon"><button id="x" onclick="hideChatbot()">&times;</button><iframe id='chatbot' allow="microphone;" src="https://console.dialogflow.com/api-client/demo/embedded/fa8be0b4-b780-4c70-9fc4-44c1b7dcb020"></iframe></div>
 
     <footer class="footer">
-        <p>Lim Fang Jun</p>
+        <div class="about_us-container" style="flex-direction:column; margin-top:3vh;margin-left:2vw;">
+            <h4>Contact Us</h4>
+            <p style="font-size:1rem; margin-bottom:.3rem"><i class="fas fa-map-marker-alt"></i>&nbsp;180 Ang Mo Kio Ave 8, Singapore 569830</p>
+            <p style="font-size:1rem; margin-bottom:.3rem"><i class="fas fa-phone-alt"></i>&nbsp;+65 8888 8888</p>
+            <p style="font-size:1rem; margin-bottom:.3rem"><i class="fas fa-envelope"></i>&nbsp;pepestore@mail.com</p>
+        </div>
+        <div class="socials-container" style="margin-top:3vh;margin-left:2vw;margin-right:25vw;">
+            <h4>Socials</h4>
+            <a href="https://www.facebook.com"><i class="fab fa-facebook fa-3x"></i></a>
+            <a href="https://www.twitter.com"><i class="fab fa-twitter-square fa-3x"></i></a>
+            <a href="https://www.instagram.com"><i class="fab fa-instagram fa-3x"></i></a>
+        </div>
     </footer>
 
 </body>
@@ -55,7 +66,7 @@ function hideChatbot(){
 
 <style>
 .container-fluid{
-  min-height: calc(100vh - 100px);
+  min-height: calc(100vh - 200px);
   padding:0;
   margin:0;
 }
@@ -109,10 +120,16 @@ function hideChatbot(){
 
 .footer{
     background-color:black;
-    height:100px;
+    height:200px;
     color:white;
-    text-align: center;
+    display:flex;
     margin-top:10%;
+    justify-content:space-between;
+    overflow:hidden;
+}
+
+*{
+font-family:geneva avant-garde helvetica ;
 }
 
 </style>

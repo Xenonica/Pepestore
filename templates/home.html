@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% block title %}Pepestore - Home{% endblock %}
 
-{% from "includes/_formHelper.html" import render_field %}
+{% from "includes/_formHelper.html" import render_field,filter %}
 {% block content %}
 <div class="hero-image">
   <div class="hero-text">
@@ -9,50 +9,51 @@
     <p>Welcome to Pepestore. We wish you a happy chinese new year. Give me Distinction pls <3</p>
   </div>
 </div>
-
-  <br>
-    <h2>Newest Listings</h2>
-
 <br>
-  <div class="row">
-    <div class="col-lg-8 mx-auto">
 
-      <!-- List group-->
-      <ul class="list-group shadow">
-        {% for i in newestLists %}
-        <li class="list-group-item" onclick='window.location.href="/listingPage/{{i.get_listingID()}}"'>
-          <!-- Custom content-->
-          <div class="media align-items-lg-center flex-column flex-lg-row p-3 list">
-            <div class="media-body order-2 order-lg-1">
-              <h4>Seller: <b>{{i.get_seller_name()}}</b></h4>
-              <br>
-              <h5 class="mt-0 font-weight-bold mb-2">{{ i.get_name() }}</h5>
-              <p class="font-italic text-muted mb-0 small">{{ i.get_description() }}</p>
-              <div class="d-flex align-items-center justify-content-between mt-1">
-                <h6 class="font-weight-bold my-2">${{ i.get_price() }}</h6>
-                <h7 class="font-weight-bold my-2">Quantity: {{ i.get_quantity() }}</h7>
-              </div>
-            </div><img src={{i.get_displaypic()}} width="200" height="200" class="ml-lg-5 order-1 order-lg-2 listings">
-          </div>
-        </li>
-          {% endfor %}
-      </ul>
-    </div>
+<div class="home_container">
+<br><br>
+        <h1>Newest Listings</h1>
+  <div id="listings_container">
+
+  {% for i in newestLists %}
+        {{ filter(i) }}
+        {% endfor %}
+  </div>
+<br><br><br><br>
+    <h1>Most Visited Listings</h1>
+  <div id="popular-listing_container">
+
+    {% for i in popularLists %}
+        {{ filter(i) }}
+        {% endfor %}
   </div>
 
+</div>
+
 <style>
-.list-group-item {
-  cursor:pointer;
+.home_container{
+margin-left:2vw;
 }
 
-.listings {
-    object-fit: cover;
+#listings_container,#popular-listing_container{
+display:flex;
+}
+.listing_wrapper{
+align: center;
+padding:.5vh .5vw;
+flex-wrap:wrap;
 }
 
-.row{
-margin-left:0;
-margin-right:0;
-margin-bottom: 10%;
+.listing_wrapper:hover{
+box-shadow: 0 0 8px grey;
+}
+
+.listing_wrapper img{
+object-fit: cover;
+max-width:100%;
+width:200px;
+height:200px;
 }
 
 .hero-image {
