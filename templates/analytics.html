@@ -5,18 +5,19 @@
   .analytics_container{
   display:flex;
   flex-direction:column;
-  margin-left:2vw;
+  margin: 0 2vw;
   }
 </style>
 
 <div class="analytics_container">
-<h1 class="display-4" style="display:flex; justify-content:center; align-items:center;">Analytics</h1>
-  <br>
+    <h1 class="display-4" style="display:flex; justify-content:center; align-items:center;">Analytics</h1>
+    <br>
+    <canvas id="myChart"></canvas>
+</div>
+
 <script src="https://cdn.jsdelivr.net/npm/chart.js@2.7.3/dist/Chart.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@0.7.0"></script>
-<canvas id="myChart" width="600" height="400"></canvas>
 <script>
-Chart.defaults.global.responsive = false;
 var ctx = document.getElementById('myChart').getContext('2d');
 var myChart = new Chart(ctx, {
     type: 'bar',
@@ -47,10 +48,9 @@ var myChart = new Chart(ctx, {
             fontSize: 25,
             text: 'Traffic per Listing'
         }
-
     }
+
 });
 </script>
-</div>
 
 {% endblock %}
