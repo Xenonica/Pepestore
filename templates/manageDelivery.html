@@ -76,8 +76,6 @@ function AlertC() {
  <tr>
  <th>Delivery ID</th>
  <th>Username</th>
-  <th>First name</th>
-  <th>Last Name</th>
  <th>Listing ID</th>
   <th>Payment</th>
   <th>Type</th>
@@ -93,8 +91,6 @@ function AlertC() {
  <tr>
  <td>{{ delivery.get_deliveryID() }}</td>
  <td>{{ delivery.get_username() }}</td>
-   <td>{{ delivery.get_firstName() }}</td>
-   <td >{{ delivery.get_lastName() }}</td>
  <td onclick="window.location.href='/listingPage/{{ delivery.get_product() }}/'" style="cursor:pointer">{{ delivery.get_product() }}</td>
    <td>{{ delivery.get_method() }}</td>
    <td>{{ delivery.get_shipping() }}</td>
@@ -119,17 +115,17 @@ function AlertC() {
   {% if delivery.get_status() == "In Delivery" %}
   <td><a href="/Track/{{delivery.get_deliveryID()}} " class="btn btn-info">Track</a></td>
   {% elif delivery.get_status() == "Cancelled" %}
-  <td><a href="#" onclick="AlertC()" class="btn btn-info">Track</a>
+  <td><a href="#" onclick="AlertC()" class="btn btn-info">Track</a></td>
   {% else %}
-  <td><a href="#" onclick="Alert()" class="btn btn-info">Track</a>
+  <td><a href="#" onclick="Alert()" class="btn btn-info">Track</a></td>
   {% endif %}
 
   {% if delivery.get_status() == "In Delivery" %}
   <td><a href="/updateDelivery/{{delivery.get_deliveryID()}}" class="btn btn-warning">Update</a></td>
   {% elif delivery.get_status() == "Cancelled" %}
-   <td><a href="#" onclick="AlertC()" class="btn btn-warning">Update</a>
+  <td><a href="#" onclick="AlertC()" class="btn btn-warning">Update</a></td>
   {% else %}
-  <td><a href="#" onclick="Alert()" class="btn btn-warning">Update</a>
+  <td><a href="#" onclick="Alert()" class="btn btn-warning">Update</a></td>
   {% endif %}
 
   {% if delivery.get_status() == "In Delivery" %}
@@ -146,5 +142,6 @@ function AlertC() {
  </tbody>
  </table>
 </div>
+
 
 {% endblock %}

@@ -93,6 +93,9 @@ function checkTime(i) {
   <td>-</td>
   {% endif %}
   <td>
+<a class="btn btn-warning" data-toggle="modal" data-target="#myOutput{{ delivery.get_deliveryID() }} " style="cursor:pointer">Info</a>
+  </td>
+  <td>
  <form action=" {{url_for('deleteUser',id=delivery.get_deliveryID())}}" method="POST">
  <input type="submit" value="Refund" class="btn btn-danger">
  </form>
@@ -104,4 +107,34 @@ function checkTime(i) {
  </tbody>
  </table>
 </div>
+
+{% for delivery in deliveryList %}
+ <!-- Modal -->
+  <div class="modal fade" id="myOutput{{ delivery.get_deliveryID() }}" role="dialog">
+    <div class="modal-dialog modal-lg">
+
+      <!-- Modal content-->
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title">More Information on Delivery ID {{ delivery.get_deliveryID() }}</h4>
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+
+        </div>
+        <div class="modal-body">
+          <p>First Name: {{ delivery.get_firstName() }} </p>
+          <p>Last Name: {{ delivery.get_lastName() }} </p>
+           <p>Payment Method: {{ delivery.get_method() }}</p>
+          <p>Remarks: {{ delivery.get_remarks() }}</p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+{% endfor %}
+
+
+
 {% endblock %}

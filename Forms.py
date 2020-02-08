@@ -62,9 +62,9 @@ class CreateDeliveryForm(Form):
     firstName = StringField('First Name', [validators.Length(min=1, max=150), validators.DataRequired()])
     lastName = StringField('Last Name', [validators.Length(min=1, max=150), validators.DataRequired()])
     shipping = SelectField('Shipping', [validators.DataRequired()],
-                           choices=[('', 'Select'), ('N', 'Normal Mail'), ('R', 'Registered Mail')], default='')
+                           choices=[('', 'Select'), ('Normal Mail', 'Normal Mail'), ('Registered Mail', 'Registered Mail')], default='')
     method = SelectField('Payment Method', [validators.DataRequired()],
-                         choices=[('', 'Select'), ('Credit', 'Credit Card'), ('Paypal', 'Paypal')], default='')
+                         choices=[('', 'Select'), ('Credit Card', 'Credit Card'), ('Paypal', 'Paypal')], default='')
     remarks = TextAreaField('Remarks', [validators.Optional()])
     location = StringField('Address', [validators.Length(min=1, max=150), validators.DataRequired()])
 
