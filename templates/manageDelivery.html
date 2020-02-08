@@ -94,8 +94,8 @@ function AlertC() {
  <td>{{ delivery.get_deliveryID() }}</td>
  <td>{{ delivery.get_username() }}</td>
    <td>{{ delivery.get_firstName() }}</td>
-   <td>{{ delivery.get_lastName() }}</td>
- <td>{{ delivery.get_product() }}</td>
+   <td >{{ delivery.get_lastName() }}</td>
+ <td onclick="window.location.href='/listingPage/{{ delivery.get_product() }}/'" style="cursor:pointer">{{ delivery.get_product() }}</td>
    <td>{{ delivery.get_method() }}</td>
    <td>{{ delivery.get_shipping() }}</td>
  <td>{{ delivery.get_location() }}</td>

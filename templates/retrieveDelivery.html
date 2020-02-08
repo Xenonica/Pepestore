@@ -59,7 +59,8 @@ function checkTime(i) {
  <thead>
  <tr>
  <th>Delivery ID</th>
- <th>Username</th>
+  <th>Username of Seller</th>
+ <th>Username of Buyer</th>
  <th>Listing ID</th>
  <th>Delivery Address</th>
  <th>Delivery Status</th>
@@ -71,8 +72,9 @@ function checkTime(i) {
  {% for delivery in deliveryList %}
  <tr>
  <td>{{ delivery.get_deliveryID() }}</td>
+  <td>{{ delivery.get_sellername() }}</td>
  <td>{{ delivery.get_username() }}</td>
- <td>{{ delivery.get_product() }}</td>
+ <td onclick="window.location.href='/listingPage/{{ delivery.get_product() }}/'" style="cursor:pointer">{{ delivery.get_product() }}</td>
  <td>{{ delivery.get_location() }}</td>
  <td>{{delivery.get_status()}}
    {% if delivery.get_status() == "In Delivery" %}
