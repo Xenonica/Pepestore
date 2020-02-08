@@ -4,7 +4,7 @@ Flask
 Jinja
 WTForms
 Flask-SocketIO (For chat)
-eventlet (Ansynchronous services, IMPORTANT for the chat to function properly. Better performance/stability than flask built-in Werkzeurg)
+eventlet (Ansynchronous services, IMPORTANT for the chat to function properly. Better performance than flask built-in Werkzeurg)
 geocoder (For map)
 geopy (For map)
 folium (For map)
