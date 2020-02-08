@@ -1300,25 +1300,19 @@ def map():
 
 @app.route('/createFeedback', methods=['GET', 'POST'])
 def createFeedback():
+    faqDict = {}
     createFeedbackForm = CreateFeedbackForm(request.form)
     if request.method == 'POST' and createFeedbackForm.validate():
-        print('test')
-        usersDict = {}
         db = shelve.open('storage.db', 'c')
 
         try:
-            usersDict = db['FAQ']
+            faqDict = db['FAQ']
         except:
             print("Error in retrieving Feedback from storage.db.")
 
-        user = Classes.FAQ(createFeedbackForm.fullName.data, createFeedbackForm.gender.data, createFeedbackForm.contact.data, createFeedbackForm.email.data,)
-        usersDict[user.get_userID()] = user
-        db['FAQ'] = usersDict
-
-        # Test codes
-        usersDict = db['FAQ']
-        user = usersDict[user.get_userID()]
-        print(user.get_fullName(),"was stored in shelve successfully with userID =", user.get_userID())
+        faq = Classes.FAQ(createFeedbackForm.question.data, createFeedbackForm.answer.data)
+        faqDict[faq.get_id()] = faq
+        db['FAQ'] = faqDict
         db.close()
 
         return redirect(url_for('retrieveFeedback'))
@@ -1327,48 +1321,44 @@ def createFeedback():
 
 @app.route('/retrieveFeedback')
 def retrieveFeedback():
-    usersDict = {}
+    faqDict = {}
     db = shelve.open('storage.db', 'r')
-    usersList = []
+    faqList = []
     try:
-        usersDict = db['FAQ']
+        faqDict = db['FAQ']
         db.close()
     except:
         print('error in retrieve Feeedback')
 
-    for key in usersDict:
-        user = usersDict.get(key)
-        usersList.append(user)
+    for key in faqDict:
+        user = faqDict.get(key)
+        faqList.append(user)
 
-    return render_template('retrieveFeedback.html',usersList=usersList, count=len(usersList),alert = navbar()[0] , logout = navbar()[1] , regform = navbar()[2] , logform = navbar()[3])
+    return render_template('retrieveFeedback.html',faqList=faqList, count=len(faqList),alert = navbar()[0] , logout = navbar()[1] , regform = navbar()[2] , logform = navbar()[3])
 
 
 @app.route('/updateFAQ/<int:id>/', methods=['GET', 'POST'])
 def updateFAQ(id):
     updateUserForm = CreateFeedbackForm(request.form)
     if request.method == 'POST' and updateUserForm.validate():
-        userDict = {}
+        faqDict = {}
         db = shelve.open('storage.db','w')
-        userDict = db['FAQ']
-        user = userDict.get(id)
-        user.set_fullName(updateUserForm.fullName.data)
-        user.set_gender(updateUserForm.gender.data)
-        user.set_contact(updateUserForm.contact.data)
-        user.set_email(updateUserForm.email.data)
-        db['FAQ'] = userDict
+        faqDict = db['FAQ']
+        faq = faqDict.get(id)
+        faq.set_question(updateUserForm.question.data)
+        faq.set_answer(updateUserForm.answer.data)
+        db['FAQ'] = faqDict
         db.close()
 
         return redirect(url_for('retrieveFeedback'))
     else:
-        userDict = {}
+        faqDict = {}
         db = shelve.open('storage.db', 'r')
-        userDict = db['FAQ']
+        faqDict = db['FAQ']
         db.close()
-        user = userDict.get(id)
-        updateUserForm.fullName.data = user.get_fullName()
-        updateUserForm.gender.data = user.get_gender()
-        updateUserForm.contact.data = user.get_contact()
-        updateUserForm.email.data = user.get_email()
+        faq = faqDict.get(id)
+        updateUserForm.question.data = faq.get_question()
+        updateUserForm.answer.data = faq.get_answer()
         return render_template('updateFeedback.html',form=updateUserForm,alert = navbar()[0] , logout = navbar()[1] , regform = navbar()[2] , logform = navbar()[3])
 
 
@@ -1385,7 +1375,20 @@ def deleteFAQ(id):
 
 @app.route('/FAQ')
 def FAQ():
-    return render_template('FAQ.html',alert = navbar()[0] , logout = navbar()[1] , regform = navbar()[2] , logform = navbar()[3])
+    faqDict = {}
+    db = shelve.open('storage.db', 'r')
+    faqList = []
+    try:
+        faqDict = db['FAQ']
+        db.close()
+    except:
+        print('error in retrieve Feeedback')
+
+    for key in faqDict:
+        faq = faqDict.get(key)
+        faqList.append(faq)
+
+    return render_template('FAQ.html', faqList=faqList, alert = navbar()[0] , logout = navbar()[1] , regform = navbar()[2] , logform = navbar()[3])
 
 
 if __name__ == '__main__':

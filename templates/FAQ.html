@@ -1,31 +1,31 @@
 {% extends "base.html" %}
-{% block title %}Library Loan System - FAQ{% endblock %}
+{% block title %}Pepestore - FAQ{% endblock %}
 {% block content %}
-<h1 class="display-8">FAQ</h1>
-<p>Help Centre</p>
+<style>
+    .faq_container{
+    display:flex;
+    margin:0 2vw;
+    flex-direction:column;
+    }
 
-<h4 class="display-20">How do i start selling on PepeStore?</h4>
-<p>1. Login/Sign up with your Electrosell account</p>
-<p>2. Click "sell" at the top right hand corner of the page</p>
-<p>3. Take/Upload a picture of the product you are selling</p>
-<p>4. Choose a category (e.g electronics)</p>
-<p>5. State the price, details of product and place for meet-up</p>
-<p>6. Discuss mode of payment with your buyer and shipping/delivery date</p>
+    .faq{
+    margin-bottom:3vh;
+    box-shadow: 0 0 8px grey;
+    padding: 1.5vh 1vw;
+    }
 
-<h5 class="display-20">How do i settle the payment & delivery with the buyer?</h5>
-<p>After confirming the purchase with your buyer, buyers will have the option to choose between normal and registered mail for delivery.
-    Pepestore will be in charge of making the delivery and items will be collected from sellers. If the product is ready to be delivered,
-    Pepestore delivery will collect the product within 3 working days and deliver it to the buyer on the same day. </p>
 
-<h5 class="display-20">How do i cancel my order?</h5>
-<p> If you would like to cancel your order, please contact the seller before the product gets shipped/delivered out.
-    Items that have already been shipped CANNOT be cancelled.</p>
-
-<h5 class="display-20">Damaged/Wrong/Missing products</h5>
-<p>Pepestore will be held accountable for all these problems. A full refund will be issued to the buyer within 7 working days.
-    If no refund is issued during the time peeriod, please contact our customer service.</p>
-
-<h5 class="display-20">Pepe Guarantee</h5>
-<p>After purchasing an item, the estimated arrival date will be given to the buyer. If the item has not been delivered within the given timeframe, buyers can apply for Pepe Guarantee which extends the arrival date by a few days.
-    If the parcel is still not received, a refund will be guven to the buyer.</p>
+</style>
+<div class="faq_container">
+    <h1 class="display-4" style="display:flex; align-items:center; justify-content:center;">FAQ</h1>
+    <br>
+    <div class="faq_wrapper">
+{% for faq in faqList %}
+    <div class="faq">
+        <h3>Q.{{ faq.get_question() }}</h3>
+        <p>A.{{ faq.get_answer() }}</p>
+    </div>
+    {% endfor %}
+        </div>
+</div>
 {% endblock %}

@@ -1,48 +1,145 @@
 {% extends "base.html" %}
-{% block title %}Pepestore{% endblock %}
-
+{% block title %}Pepestore - Manage FAQ{% endblock %}
 {% block content %}
-<h1 class="display-8">Retrieve Feedback</h1>
-<div>
-  {% if count == 0 %}
-  <p>There are no users.</p>
-  {% elif count == 1 %}
-  <p>There is 1 user.</p>
-  {% else %}
-  <p>There are {{ count }} users.</p>
-  {% endif %}
+<style>
+
+  .table_container{
+  overflow:auto;
+  align-items:center;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  margin: 0 1.5vw;
+  }
+
+  table{
+    border:1px solid black;
+  }
+
+  .buttons{
+  width: 100px;
+  height: 40px;
+  border: 0;
+  color: white;
+  }
+
+  .button_delete{
+  background-color: red;
+  }
+
+  #button_delete{
+  float:right;
+  }
+
+  #button_back{
+  color:black;
+  float:right;
+  margin-right:3px
+  }
+
+  #button_back:hover{
+  background-color:#b3b3cc
+  }
+
+  #button_update{
+  margin-right:3px;
+  background-color: #32CD32;
+  }
+
+  #button_update:hover{
+  background-color:green;
+  }
+
+  .button_delete:hover{
+  background-color:#8b0000 ;
+  }
+
+    /* The Modal (background) */
+.modal {
+  display: none; /* Hidden by default */
+  position: fixed; /* Stay in place */
+  z-index: 1; /* Sit on top */
+  padding-top: 100px; /* Location of the box */
+  left: 0;
+  top: 0;
+  width: 100%; /* Full width */
+  height: 100%; /* Full height */
+  overflow: auto; /* Enable scroll if needed */
+  background-color: rgb(0,0,0); /* Fallback color */
+  background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+}
+
+/* Modal Content */
+.modal-content {
+  background-color: #fefefe;
+  margin: auto;
+  padding: 20px;
+  border: 1px solid #888;
+  width: 80%;
+}
+</style>
+
+<div class="table_container">
+    <h1 class="display-8">Manage FAQ</h1>
+    <table class="table table-striped">
+        <thead class="thead-dark">
+        <tr>
+            <th>Question</th>
+            <th>Answer</th>
+            <th></th>
+
+        </tr>
+        </thead>
+        <tbody>
+        {% for faq in faqList %}
+        <tr>
+            <td>{{ faq.get_question() }}</td>
+            <td>{{ faq.get_answer() }}</td>
+            <td>
+
+                <div style="display:flex;"><a href="/updateFAQ/{{faq.get_id()}}">
+                    <input type="button" value="Update" id="button_update" class="buttons"></a>
+                    <input type="submit" value="Delete" id="modal_window" class="button_delete buttons modal_button">
+                </div>
+
+                <div id="myModal" class="modal">
+                    <div class="modal-content">
+                        <p>Are you sure you want to delete?</p>
+                        <form action="{{url_for('deleteFAQ', id=faq.get_id())}}" method="POST"
+                              style="display:inline-block;">
+                            <input type="submit" value="Delete" id="button_delete" class="button_delete buttons">
+                            <input type="button" id="button_back" class="buttons button_back" value="Back">
+                        </form>
+                    </div>
+                </div>
+
+            </td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
 </div>
-<div>
-  <table class="table table-striped">
-    <thead>
-      <tr>
-        <th>User ID</th>
-        <th>Full Name</th>
-        <th>Gender</th>
-        <th>Contact</th>
-        <th>Email</th>
-        <th>Question</th>
-        <th></th>
-        <th></th>
-      </tr>
-    </thead>
-    <tbody>
-    {% for user in usersList %}
-      <tr>
-        <td>{{ user.get_userID() }}</td>
-        <td>{{ user.get_fullName() }}</td>
-        <td>{{ user.get_gender() }}</td>
-        <td>{{ user.get_contact() }}</td>
-        <td>{{ user.get_email() }}</td>
-        <td><a href="/updateFAQ/{{user.get_userID()}}" class="btn btn-warning">Update</a></td>
-        <td>
-          <form action="{{url_for('deleteFAQ', id=user.get_userID())}}" method="POST">
-            <input type="submit" value="Delete" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete this user?');">
-          </form>
-        </td>
-      </tr>
-    {% endfor %}
-    </tbody>
-  </table>
-</div>
+
+<script>
+var modal = document.getElementsByClassName("modal");
+var btn = document.getElementsByClassName("modal_button");
+var back = document.getElementsByClassName("button_back");
+var i = 0;
+for (i = 0; i < modal.length; i++)(function(i) {
+    btn[i].onclick = function() {
+      modal[i].style.display = "block";
+      console.log(i)
+      window.onclick = function(event) {
+    if (event.target == modal[i] || event.target == back[i]) {
+        modal[i].style.display = "none";
+        console.log(i);
+    }
+    }
+}
+})(i);
+
+
+
+
+</script>
 {% endblock %}

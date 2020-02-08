@@ -466,43 +466,34 @@ class Review:
         return self.__seller
 
 
-
 class FAQ:
-    countID=0
-    def __init__(self,fullName,gender,contact,email):
-        FAQ.countID+=1
-        self.__userID=FAQ.countID
-        self.__fullName=fullName
-        self.__gender=gender
-        self.__contact=contact
-        self.__email=email
-    def get_userID(self):
-        return self.__userID
+    def __init__(self,question,answer):
+        db = shelve.open('storage.db', 'c')
+        self.__question = question
+        self.__answer = answer
+        try:
+            faqDict = db['FAQ']
+            key = list(faqDict.keys())
+            count = sorted(key)[-1]
+        except:
+            count = 0
+        count += 1
+        self.__id = count
 
-    def get_fullName(self):
-        return self.__fullName
+    def get_question(self):
+        return self.__question
 
-    def get_gender(self):
-        return self.__gender
+    def get_answer(self):
+        return self.__answer
 
-    def get_contact(self):
-        return self.__contact
+    def get_id(self):
+        return self.__id
 
-    def get_email(self):
-        return self.__email
+    def set_question(self, question):
+        self.__question = question
 
+    def set_answer(self, answer):
+        self.__answer = answer
 
-    def set_userID(self, userID):
-        self.__userID = userID
-
-    def set_fullName(self, fullName):
-        self.__fullName = fullName
-
-    def set_contact(self, contact):
-        self.__contact = contact
-
-    def set_gender(self, gender):
-        self.__gender = gender
-
-    def set_email(self, email):
-        self.__email = email
+    def set_id(self, id):
+        self.__id = id

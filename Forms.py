@@ -68,6 +68,7 @@ class CreateDeliveryForm(Form):
     remarks = TextAreaField('Remarks', [validators.Optional()])
     location = StringField('Address', [validators.Length(min=1, max=150), validators.DataRequired()])
 
+
 class CreatePaymentForm(Form):
     firstName = StringField('First Name', [validators.Length(min=1, max=150), validators.DataRequired()])
     lastName = StringField('Last Name', [validators.Length(min=1, max=150), validators.DataRequired()])
@@ -78,12 +79,6 @@ class CreatePaymentForm(Form):
 
 
 class CreateFeedbackForm(Form):
- fullName = StringField('Full Name', [validators.Length(min=1,
-max=150), validators.DataRequired()])
- contact = StringField('Contact', [validators.Length(min=8,
-max=8), validators.DataRequired()])
- gender = SelectField('Gender', [validators.DataRequired()],
-choices=[('', 'Select'), ('F', 'Female'), ('M', 'Male')],
-default='')
- email = EmailField('Email', [validators.Length(min=1,max=150), validators.DataRequired()])
+ question = StringField('Question', [validators.Length(min=1,max=150), validators.DataRequired()])
+ answer = TextAreaField('Answer', [validators.Length(min=1,max=500), validators.DataRequired()])
 
