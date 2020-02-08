@@ -28,7 +28,7 @@
     {% endblock %}
 
     <div id="imageCon"><button onclick="showChatbot()" id="btn1"><img src="/static/icons/chatbot.png" width="50px" height="50px"></button></div>
-    <div id="chatbotCon"><button id="x" onclick="hideChatbot()">&times;</button><iframe id='chatbot' allow="microphone;" src="https://console.dialogflow.com/api-client/demo/embedded/fa8be0b4-b780-4c70-9fc4-44c1b7dcb020"></iframe></div>
+    <div id="chatbotCon"><button id="x_chat" onclick="hideChatbot()">&times;</button><iframe id='chatbot' allow="microphone;" src="https://console.dialogflow.com/api-client/demo/embedded/fa8be0b4-b780-4c70-9fc4-44c1b7dcb020"></iframe></div>
 
     <footer class="footer">
         <div class="about_us-container" style="flex-direction:column; margin-top:3vh;margin-left:2vw;">
@@ -37,11 +37,11 @@
             <p style="font-size:1rem; margin-bottom:.3rem"><i class="fas fa-phone-alt"></i>&nbsp;+65 8888 8888</p>
             <p style="font-size:1rem; margin-bottom:.3rem"><i class="fas fa-envelope"></i>&nbsp;pepestore@mail.com</p>
         </div>
-        <div class="socials-container" style="margin-top:3vh;margin-left:2vw;margin-right:25vw;">
+        <div class="socials-container" style="margin-top:3vh;margin-right:25vw;">
             <h4>Socials</h4>
-            <a href="https://www.facebook.com"><i class="fab fa-facebook fa-3x"></i></a>
-            <a href="https://www.twitter.com"><i class="fab fa-twitter-square fa-3x"></i></a>
-            <a href="https://www.instagram.com"><i class="fab fa-instagram fa-3x"></i></a>
+            <a href="https://www.facebook.com" style="margin-right:.5vw;"><i class="fab fa-facebook fa-3x"></i></a>
+            <a href="https://www.twitter.com" style="margin-right:.5vw;"><i class="fab fa-twitter-square fa-3x"></i></a>
+            <a href="https://www.instagram.com" style="margin-right:.5vw;"><i class="fab fa-instagram fa-3x"></i></a>
         </div>
     </footer>
 
@@ -81,15 +81,22 @@ function hideChatbot(){
     display:none;
 }
 
-#x{
+#x_chat{
     z-index: 1;
     right:0;
     position:absolute;
     width:30px;
     height:30px;
+    background-color:#3f342b;
+    border:0;
+    color:white;
+    font-weight:bold;
+    font-size:1.5rem;
+    text-align:center;
+    overflow:hidden;
 }
 
-#x:hover{
+#x_chat:hover{
     background-color:red;
     border:none;
 }
@@ -129,7 +136,7 @@ function hideChatbot(){
 }
 
 *{
-font-family:geneva avant-garde helvetica ;
+font-family:arial;
 }
 
 </style>
