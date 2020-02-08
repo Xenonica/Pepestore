@@ -91,7 +91,7 @@ function checkTime(i) {
   {% else %}
   <td>{{delivery.get_estimatedTime().strftime("%d %B %Y, %I:%M:%S %p") }}</td>
   {% endif %}
-  <td><a class="btn btn-primary" data-toggle="modal" data-target="#myOutput{{ delivery.get_deliveryID() }} " style="cursor:pointer"><span id="info">Info</span></a></td>
+  <td><a class="btn btn-primary" data-toggle="modal" data-target="#myOutput{{ delivery.get_deliveryID() }} " style="cursor:pointer" id="listingidx"><span id="info">Info</span></a></td>
  <td><a href="/updateDelivery/{{delivery.get_deliveryID()}}" class="btn btn-warning">Update</a></td>
  <td>
  <form action=" {{url_for('deleteDeliveryatretrieve' ,id=delivery.get_deliveryID())}}" method="POST">
@@ -133,9 +133,14 @@ function checkTime(i) {
 {% endfor %}
 
 <style>
- #info{
- color:white;
- }
+#info{
+color:white;
+}
+
+#listingidx:hover{
+text-decoration:underline;
+color:blue;
+}
 
 </style>
 

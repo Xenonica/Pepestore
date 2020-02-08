@@ -91,7 +91,7 @@ function AlertC() {
  <td>{{ delivery.get_deliveryID() }}</td>
   <td>{{ delivery.get_sellername() }}</td>
  <td>{{ delivery.get_username() }}</td>
- <td onclick="window.location.href='/listingPage/{{ delivery.get_product() }}/'" style="cursor:pointer">{{ delivery.get_product() }}</td>
+ <td onclick="window.location.href='/listingPage/{{ delivery.get_product() }}/'" style="cursor:pointer" id="listingidx">{{ delivery.get_product() }}</td>
  <td>{{ delivery.get_location() }}</td>
  <td id="auto">{{delivery.get_status()}}
      {% if delivery.get_status() == "In Delivery" %}
@@ -140,6 +140,13 @@ function AlertC() {
  </tbody>
  </table>
 </div>
+
+<style>
+#listingidx:hover{
+text-decoration:underline;
+color:blue;
+}
+</style>
 
 
 {% endblock %}
