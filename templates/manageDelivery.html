@@ -2,7 +2,7 @@
 {% block title %}Delivery Records{% endblock %}
 {% block content %}
 <h1 class="display-4"> Manage Delivery </h1>
-<div>
+<div class="beeg">
  {% if count == 0 %}
  <p>There are no deliveries.</p>
  {% elif count == 1 %}
@@ -37,7 +37,7 @@ function checkTime(i) {
 
 <body onload="startTime()">
 
-<div id="txt"></div>
+<div class="beeg" id="txt"></div>
 
 
 <br>
@@ -70,9 +70,9 @@ function AlertC() {
 </script>
 
 
-<div>
+<div class="table_container">
  <table class="table table-striped" id="MyTable">
- <thead>
+ <thead class="thead-dark">
  <tr>
  <th>Delivery ID</th>
  <th>Username of Seller</th>
@@ -82,6 +82,9 @@ function AlertC() {
  <th>Delivery Status</th>
  <th>Order Time</th>
   <th> Estimated Time of Delivery </th>
+  <th></th>
+  <th></th>
+  <th></th>
  </tr>
  </thead>
  <tbody>
@@ -146,6 +149,30 @@ function AlertC() {
 text-decoration:underline;
 color:blue;
 }
+
+.table_container{
+overflow:auto;
+align-items:center;
+display:flex;
+flex-direction:column;
+justify-content:center;
+margin: 0 1.5vw;
+}
+
+.table{
+border:1px solid black;
+margin-bottom:0px
+}
+
+table{
+border:1px solid black;
+}
+
+.beeg,.display-4{
+margin-left:30px;
+}
+
+
 </style>
 
 
