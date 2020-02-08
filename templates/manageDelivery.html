@@ -75,10 +75,9 @@ function AlertC() {
  <thead>
  <tr>
  <th>Delivery ID</th>
- <th>Username</th>
+ <th>Username of Seller</th>
+ <th>Username of Buyer</th>
  <th>Listing ID</th>
-  <th>Payment</th>
-  <th>Type</th>
  <th>Delivery Address</th>
  <th>Delivery Status</th>
  <th>Order Time</th>
@@ -90,10 +89,9 @@ function AlertC() {
  {% if delivery.get_username() == session['username'] %}
  <tr>
  <td>{{ delivery.get_deliveryID() }}</td>
+  <td>{{ delivery.get_sellername() }}</td>
  <td>{{ delivery.get_username() }}</td>
  <td onclick="window.location.href='/listingPage/{{ delivery.get_product() }}/'" style="cursor:pointer">{{ delivery.get_product() }}</td>
-   <td>{{ delivery.get_method() }}</td>
-   <td>{{ delivery.get_shipping() }}</td>
  <td>{{ delivery.get_location() }}</td>
  <td id="auto">{{delivery.get_status()}}
      {% if delivery.get_status() == "In Delivery" %}
