@@ -81,11 +81,11 @@ function checkTime(i) {
  <td>{{ delivery.get_location() }}</td>
  <td>{{delivery.get_status()}}
  {% if delivery.get_status() == "In Delivery" %}
- <img src="/static/icons/indelivery.svg" width="28px" height="28px">
+ <img src="/static/icons/indelivery.svg" width="23px" height="28px">
  {% elif delivery.get_status() == "Delivered" %}
- <img src="/static/icons/delivered.svg" width="28px" height="28px">
+ <img src="/static/icons/delivered.svg" width="23px" height="28px">
  {% else %}
- <img src="/static/icons/cancel.svg" width="28px" height="28px">
+ <img src="/static/icons/cancel.svg" width="23px" height="28px">
  {% endif %}
  </td>
   <td>{{delivery.get_time().strftime("%d %B %Y, %I:%M:%S %p") }}</td>
@@ -98,7 +98,7 @@ function checkTime(i) {
   <td>
 <a class="btn btn-warning" data-toggle="modal" data-target="#myOutput{{ delivery.get_deliveryID() }} " style="cursor:pointer">Info</a>
   </td>
-  <td><a href="/FAQ " class="btn btn-danger">Refund</a></td>
+  <td><a href="/FAQ " class="btn btn-danger">Help</a></td>
  </tr>
   {% endif %}
  {% endif %}
