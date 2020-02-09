@@ -4,6 +4,7 @@
 {% block content %}
 <div class="cart_container">
 <h1 class="display-4">Orders</h1>
+  <br>
   <div class="row">
     <div class="col-lg-8 mx-auto">
 
@@ -27,21 +28,28 @@
         <!-- End -->
           {% endfor %}
       </ul>
+      {% if Purchases != [] %}
+      <div class="checkout_price">
+        <form method="POST">
+          <p style="font-size:1.5rem">Total Price: ${{ TotalPrice }}</p>
+          <a href="/createDelivery"><input type="button" value="Checkout" class="purchasebutton"></a>
+        </form>
+      </div>
+      {% endif %}
     </div>
   </div>
-<p>Total Price: ${{ TotalPrice }}</p>
-{% if Purchases != [] %}
-<form method="POST">
-  <a href="/createDelivery"><input type="button" value="Purchase" class="purchasebutton"></a>
-</form>
-{% endif %}
 </div>
 
 <style>
 .cart_container{
-margin-left:2vw;
+margin:0 2vw;
 }
-
+.checkout_price{
+display:flex;
+flex-direction:column;
+align-items:flex-end;
+margin-top:10vh;
+}
 .list-group-item {
   cursor:pointer;
 }
@@ -56,17 +64,17 @@ margin-left:2vw;
   padding: 0 15px ;
 }
 
+
 .purchasebutton{
-  margin-bottom: 10px;
-  border-radius: 50px;
-  -moz-border-radius: 50px;
-  -webkit-border-radius: 50px;
-  width: 100px;
+  width:200px;
   height: 40px;
   background-color: #32CD32;
   color: white;
   border: 0;
 }
+.purchasebutton:hover{
+  background-color:green;
+  }
 
 </style>
 {% endblock %}

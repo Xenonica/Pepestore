@@ -969,7 +969,7 @@ def Cart():
     db['Chats'] = chatDict
     db.close()
 
-    return render_template('Cart.html',TotalPrice=TotalPrice,Purchases = Purchases,listingDict = listingDict,alert = navbar()[0] , logout = navbar()[1] , regform = navbar()[2] , logform = navbar()[3] , fpwform= navbar()[4])
+    return render_template('Cart.html',TotalPrice=('%.2f'%TotalPrice),Purchases = Purchases,listingDict = listingDict,alert = navbar()[0] , logout = navbar()[1] , regform = navbar()[2] , logform = navbar()[3] , fpwform= navbar()[4])
 
 @app.route('/retrieveUsers', methods=['GET', 'POST'])
 def retrieveUsers():
