@@ -4,7 +4,7 @@
 <h1 class="display-4">Proof Of Delivery</h1>
 <div class="beeg">
 <p> Proof Of Delivery for <strong>{{session['username']}}</strong></p>
- <p>This page only shows deliveries that are delivered or cancelled</p>
+ <p>This page only shows deliveries that are either delivered or cancelled</p>
 </div>
 
 <script>
@@ -126,7 +126,7 @@ function checkTime(i) {
           <p>Remarks: {{ delivery.get_remarks() }}</p>
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
         </div>
       </div>
 
