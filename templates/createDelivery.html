@@ -2,7 +2,7 @@
 {% block title %}PepeStore - Checkout{% endblock %}
 {% block content %}
 {% from "includes/_formHelper.html" import render_field %}
-<h1 class="display-4" style="display:flex; align-items:center; justify-content:center;">Order</h1>
+<h1 class="display-4" style="display:flex; align-items:center; justify-content:center;">Checkout</h1>
 <br>
 <div class="create_delivery-container">
 <form method="POST" action="">
@@ -10,21 +10,22 @@
     {{ render_field(form.firstName, class="form-control") }}
 
     {{ render_field(form.lastName, class="form-control") }}
-        </div>
+    </div>
 
- {{ render_field(form.location, class="form-control") }}
+    {{ render_field(form.location, class="form-control") }}
 
     {{ render_field(form.shipping, class="form-control") }}
 
     {{ render_field(form.method, class="form-control") }}
 
-      {{ render_field(form.remarks, class="form-control") }}
+    {{ render_field(form.remarks, class="form-control") }}
  <input type="submit" value="Submit" class="btn btn-primary"/>
-</form>
-
 {% if invalidlocation == True %}
 <div id="beeg">Please Enter a Valid Singapore Location!</div>
 {% endif %}
+</form>
+
+
 </div>
 
 <style>
@@ -41,6 +42,7 @@ label[for='firstName'],label[for='lastName']{
 white-space:nowrap;
 margin-right:1vw;
 }
+
  #beeg{
  color:red;}
 </style>

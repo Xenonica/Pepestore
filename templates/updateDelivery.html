@@ -2,43 +2,53 @@
 {% block title %}Pepestore - Update{% endblock %}
 {% block content %}
 {% from "includes/_formHelper.html" import render_field %}
-<h1 class="display-4">Update Delivery</h1>
+<h1 class="display-4" style="display:flex; align-items:center; justify-content:center;">Update Delivery</h1>
+<br>
+<div class="create_delivery-container">
 <form method="POST" action="">
-  <div class="form-group">
+    <div style="display:flex;">
     {{ render_field(form.firstName, class="form-control") }}
-  </div>
 
-  <div class="form-group">
     {{ render_field(form.lastName, class="form-control") }}
-  </div>
-
-  <div class="form-group">
- {{ render_field(form.location, class="form-control") }}
- </div>
-
-  <div class="form-group">
-    {{ render_field(form.shipping, class="form-control") }}
-  </div>
-
-  <div class="form-group">
-    {{ render_field(form.method, class="form-control") }}
-  </div>
-
-  <div id="prof">
-    <div class="form-group">
-      {{ render_field(form.remarks, class="form-control") }}
     </div>
-  </div>
+
+    {{ render_field(form.location, class="form-control") }}
+
+    {{ render_field(form.shipping, class="form-control") }}
+
+    {{ render_field(form.method, class="form-control") }}
+
+    {{ render_field(form.remarks, class="form-control") }}
+    <a href="/manageDelivery" class="btn btn-danger ">Back</a>
  <input type="submit" value="Submit" class="btn btn-primary"/>
-</form>
 
 {% if invalidlocation == True %}
 <div id="beeg">Please Enter a Valid Singapore Location!</div>
 {% endif %}
+</form>
+
+</div>
 
 <style>
  #beeg{
  color:red;}
+
+
+ .create_delivery-container{
+display:flex;
+justify-content:center;
+align-items:center;
+}
+.form-control{
+margin-bottom: 1.2vh;
+margin-right:1vw;
+}
+label[for='firstName'],label[for='lastName']{
+white-space:nowrap;
+margin-right:1vw;
+}
+
+
 </style>
 
 {% endblock %}
