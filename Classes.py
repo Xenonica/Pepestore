@@ -338,7 +338,8 @@ class Delivery:
         self.__time = ''
         self.__estimatedTime = ''
 
-
+    def set_sellername(self, sellername):
+        self.__sellername = sellername
     def get_sellername(self):
         return self.__sellername
 

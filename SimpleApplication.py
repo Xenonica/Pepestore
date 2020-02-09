@@ -718,6 +718,9 @@ def handleMessage(msg):
 
 @app.route('/editUser/<int:id>/', methods=['GET', 'POST'])
 def editUser(id):
+    userDict = {}
+    listingDict = {}
+    deliveryDict = {}
     if id == 1 and session['status'] != 'Owner' :
         return redirect(url_for('home'))
     else:
@@ -725,7 +728,12 @@ def editUser(id):
             Used = 0
             Profile = ProfileForm(request.form)
             db = shelve.open('storage.db', 'r')
-            userDict = db['Users']
+            try:
+                userDict = db['Users']
+                listingDict = db['Listings']
+                deliveryDict = db['Delivery']
+            except:
+                print('error loading (profile)')
             db.close()
             user = userDict.get(id)
             ProfPic = user.get_profpic()
@@ -740,7 +748,15 @@ def editUser(id):
                 userDict = db['Users']
                 user = userDict.get(id)
                 if Profile.username.data not in usedUsernames :
+                    for i in deliveryDict:
+                        if deliveryDict[i].get_username() == user.get_username():
+                            deliveryDict[i].set_username(Profile.username.data)
+                    for i in listingDict:
+                        if listingDict[i].get_seller_name() == user.get_username():
+                            listingDict[i].set_seller_name(Profile.username.data)
+
                     user.set_username(Profile.username.data)
+
                 else:
                     Used=1
                 user.set_description(Profile.description.data)
@@ -794,6 +810,8 @@ def editUser(id):
 
                 ProfPic = user.get_profpic()
                 db['Users'] = userDict
+                db['Listings'] = listingDict
+                db['Delivery'] = deliveryDict
                 db.close()
             else:
                 user = userDict.get(id)
