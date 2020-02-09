@@ -125,7 +125,7 @@ def navbar() :
                     if fpwform.forgetemail.data == usersDict[i].get_email():
                         mess = 'Reset your password <a href="http://127.0.0.1:5000/changePassword/'+str(i)+'/">here</a>'
                         changePasswordList.append(i)
-                        msg = Message('Reset Your Password',sender='PepeStoreXD@gmail.com',recipients=['riyev64617@bizcomail.com'])
+                        msg = Message('Reset Your Password',sender='PepeStoreXD@gmail.com',recipients=[usersDict[i].get_email()])
                         msg.html = mess
                         mail.send(msg)
                         alert = 'Password Reset Email Sent'
