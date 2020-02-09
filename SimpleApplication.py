@@ -1,5 +1,5 @@
 from flask import Flask, render_template, request, redirect, url_for , session, blueprints
-from Forms import CreateListing , CreateAccount , LoginAccount, Logout , Chat , ChatOffer , ProfileForm , CreateDeliveryForm,CreateFeedbackForm
+from Forms import CreateListing , CreateAccount , LoginAccount, Logout , Chat , ChatOffer , ProfileForm , CreateDeliveryForm,CreateFeedbackForm,ForgetPassword,ChangePassword
 from flask_socketio import SocketIO , send , disconnect
 from datetime import datetime , timedelta
 import shelve, os , Classes , hashlib,shutil
@@ -7,6 +7,7 @@ import folium
 import geocoder
 from folium import plugins
 from geopy import distance
+from flask_mail import Mail , Message
 import random
 
 # Absolute path of the program
@@ -15,7 +16,17 @@ app = Flask(__name__)
 app.secret_key = 'J'
 app.jinja_env.auto_reload = True
 app.config['TEMPLATES_AUTO_RELOAD'] = True
+app.config.update(
+	DEBUG=True,
+	#EMAIL SETTINGS
+	MAIL_SERVER='smtp.gmail.com',
+	MAIL_PORT=465,
+	MAIL_USE_SSL=True,
+	MAIL_USERNAME = 'PepeStoreXD@gmail.com',
+	MAIL_PASSWORD = 'JustMeat123'
+	)
 
+mail = Mail(app)
 
 
 socketio = SocketIO(app)
@@ -23,7 +34,9 @@ socketio = SocketIO(app)
 permimagelist = []
 tempimagelist = []
 tempimagenames = []
+changePasswordList = []
 run = 0
+counter = 0
 
 #Create static folder if doesn't exist
 target = os.path.join(APP_ROOT, 'static/')
@@ -31,11 +44,15 @@ if not os.path.isdir(target) :
     os.mkdir(target)
 
 def navbar() :
+    global counter
+    global changePasswordList
     alert = ''
     logout = Logout(request.form)
     regform = CreateAccount(request.form)
     logform = LoginAccount(request.form)
-    if request.method == 'POST' :
+    fpwform = ForgetPassword(request.form)
+    if request.method == 'POST' and counter != 1:
+        counter = 1
         #If logout form was used
         if logout.logout.data :
             session.pop('userID',None)
@@ -97,10 +114,36 @@ def navbar() :
                 alert = 'Invalid User'
                 pass
             db.close()
-    return [alert,logout,regform,logform]
+
+        if fpwform.validate() and fpwform.forgetemail.data :
+            db = shelve.open('storage.db', 'c')
+            try :
+                usersDict = db['Users']
+                key = list(usersDict.keys())
+                print(key)
+                for i in key :
+                    if fpwform.forgetemail.data == usersDict[i].get_email():
+                        mess = 'Reset your password <a href="http://127.0.0.1:5000/changePassword/'+str(i)+'/">here</a>'
+                        changePasswordList.append(i)
+                        msg = Message('Reset Your Password',sender='PepeStoreXD@gmail.com',recipients=['riyev64617@bizcomail.com'])
+                        msg.html = mess
+                        mail.send(msg)
+                        alert = 'Password Reset Email Sent'
+                        print('Mail Sent')
+                        db.close()
+                        break
+                    print('XD')
+                    alert = 'WEmail'
+            except :
+                alert = 'WEmail'
+                pass
+            db.close()
+    return [alert,logout,regform,logform,fpwform]
 
 @app.before_request
 def before_request():
+    global counter
+    counter = 0
     #Make sure that session info is up to date before every request
     db = shelve.open('storage.db', 'c')
     usersDict = {}
@@ -174,8 +217,35 @@ def home():
             print('IndexError (Most viewed)')
             break
 
-    return render_template('home.html', popularLists=mostViewedList, newestLists =newestLists,alert = navbar()[0] , logout = navbar()[1] , regform = navbar()[2] , logform = navbar()[3])
+    return render_template('home.html', popularLists=mostViewedList, newestLists =newestLists,alert = navbar()[0] , logout = navbar()[1] , regform = navbar()[2] , logform = navbar()[3] , fpwform= navbar()[4])
 
+@app.route('/changePassword/<int:id>/', methods=['GET', 'POST'])
+def changePassword(id):
+    global changePasswordList
+    if id in changePasswordList:
+        usersDict = {}
+        same = 'Y'
+        cpwform = ChangePassword(request.form)
+        db = shelve.open('storage.db', 'a')
+
+        try:
+            usersDict = db['Users']
+        except:
+            print("Error Users")
+
+        if request.method == 'POST' :
+            if cpwform.changepassword.data == cpwform.confirmpassword.data :
+                print(cpwform.changepassword.data)
+                usersDict[id].set_password(hashlib.md5(cpwform.changepassword.data.encode()).hexdigest())
+                changePasswordList.remove(id)
+                return redirect(url_for('home'))
+            else:
+                same = 'N'
+        db['Users'] = usersDict
+        db.close()
+    else:
+        return redirect(url_for('home'))
+    return render_template('changePassword.html',same=same,cpwform = cpwform,alert = navbar()[0] , logout = navbar()[1] , regform = navbar()[2] , logform = navbar()[3] , fpwform= navbar()[4])
 
 @app.route('/createUserImages',methods=['GET', 'POST'])
 def createUserImages():
@@ -232,7 +302,7 @@ def createUserImages():
 
     print('img ', Img)
 
-    return render_template('createUserImages.html', Img1=Img[0], Img2=Img[1], Img3=Img[2], Img4=Img[3], alert=navbar()[0], logout=navbar()[1], regform=navbar()[2], logform=navbar()[3])
+    return render_template('createUserImages.html', Img1=Img[0], Img2=Img[1], Img3=Img[2], Img4=Img[3], alert=navbar()[0], logout=navbar()[1], regform=navbar()[2], logform=navbar()[3] , fpwform= navbar()[4])
 
 
 @app.route('/manageListing', methods=['GET', 'POST'])
@@ -252,7 +322,7 @@ def manageListing():
         listing = listingDict.get(key)
         listingList.append(listing)
 
-    return render_template('manageListing.html', listingList=listingList, count=len(listingList),alert = navbar()[0] , logout = navbar()[1] , regform = navbar()[2] , logform = navbar()[3])
+    return render_template('manageListing.html', listingList=listingList, count=len(listingList),alert = navbar()[0] , logout = navbar()[1] , regform = navbar()[2] , logform = navbar()[3] , fpwform= navbar()[4])
 
 
 @app.route('/createListing', methods=['GET', 'POST'])
@@ -310,7 +380,7 @@ def createListing():
 
         return redirect(url_for('home'))
     return render_template('createListing.html', form=createlisting, Img1=Image1, alert=navbar()[0], logout=navbar()[1],
-                           regform=navbar()[2], logform=navbar()[3])
+                           regform=navbar()[2], logform=navbar()[3] , fpwform= navbar()[4])
 
 
 @app.route('/listingPage/<int:listingID>/',methods=['GET', 'POST'])
@@ -369,7 +439,7 @@ def listingPage(listingID) :
     db['Listings'] = listingDict
     db.close()
 
-    return render_template('listingPage.html',piclist=piclist,chatform=chatform,listingID = listingDict[listingID],alert = navbar()[0] , logout = navbar()[1] , regform = navbar()[2] , logform = navbar()[3])
+    return render_template('listingPage.html',piclist=piclist,chatform=chatform,listingID = listingDict[listingID],alert = navbar()[0] , logout = navbar()[1] , regform = navbar()[2] , logform = navbar()[3] , fpwform= navbar()[4])
 
 
 @app.route('/allListing', methods=['GET','POST'])
@@ -384,7 +454,7 @@ def allListing():
     except:
         print('???????')
 
-    return render_template('allListing.html',count=len(listingDict),form=createListing,listingDict=listingDict,selected_category=createListing.filter_type.data,alert = navbar()[0] , logout = navbar()[1] , regform = navbar()[2] , logform = navbar()[3])
+    return render_template('allListing.html',count=len(listingDict),form=createListing,listingDict=listingDict,selected_category=createListing.filter_type.data,alert = navbar()[0] , logout = navbar()[1] , regform = navbar()[2] , logform = navbar()[3] , fpwform= navbar()[4])
 
 
 @app.route('/update/<int:id>/', methods=['GET', 'POST'])
@@ -427,7 +497,7 @@ def updateItem(id):
                     listingForm.category.data = listingDict[list_id].get_category()
         print(listingDict)
 
-    return render_template('updateItem.html',name=name,form=listingForm,alert = navbar()[0] , logout = navbar()[1] , regform = navbar()[2] , logform = navbar()[3])
+    return render_template('updateItem.html',name=name,form=listingForm,alert = navbar()[0] , logout = navbar()[1] , regform = navbar()[2] , logform = navbar()[3] , fpwform= navbar()[4])
 
 
 @app.route('/deleteListing/<int:id>', methods=['POST'])
@@ -459,7 +529,7 @@ def analytics():
             values.append(listingDict[listingID].get_visits())
     legend = 'Traffic'
     print(values)
-    return render_template('analytics.html', values=values, labels=labels, legend=legend,alert = navbar()[0] , logout = navbar()[1] , regform = navbar()[2] , logform = navbar()[3])
+    return render_template('analytics.html', values=values, labels=labels, legend=legend,alert = navbar()[0] , logout = navbar()[1] , regform = navbar()[2] , logform = navbar()[3] , fpwform= navbar()[4])
 
 
 @app.route('/UserChats/<int:chatID>/',methods=['GET', 'POST'])
@@ -548,7 +618,7 @@ def UserChats(chatID) :
     db['Users'] = usersDict
     db.close()
 
-    return render_template('UserChats.html',SellerReview=SellerReview,BuyerReview = BuyerReview,OtherProfPic = OtherProfPic,SOfflineTime = tdeltaseconds,BOfflineTime = tdeltaseconds2,chatID = chatID ,Buyer = Buyer,Seller = Seller,OffersPrice = OffersPrice,OffersQuantity=OffersQuantity,chatIDx = chatIDx,chatofferform = chatofferform,Position=Position,ListingImage = ListingImage,ListingName = ListingName,ListingPrice = ListingPrice,ListingQuantity = ListingQuantity,messages = chatlog,alert = navbar()[0] , logout = navbar()[1] , regform = navbar()[2] , logform = navbar()[3])
+    return render_template('UserChats.html',SellerReview=SellerReview,BuyerReview = BuyerReview,OtherProfPic = OtherProfPic,SOfflineTime = tdeltaseconds,BOfflineTime = tdeltaseconds2,chatID = chatID ,Buyer = Buyer,Seller = Seller,OffersPrice = OffersPrice,OffersQuantity=OffersQuantity,chatIDx = chatIDx,chatofferform = chatofferform,Position=Position,ListingImage = ListingImage,ListingName = ListingName,ListingPrice = ListingPrice,ListingQuantity = ListingQuantity,messages = chatlog,alert = navbar()[0] , logout = navbar()[1] , regform = navbar()[2] , logform = navbar()[3] , fpwform= navbar()[4])
 
 @socketio.on('message')
 def handleMessage(msg):
@@ -732,7 +802,7 @@ def editUser(id):
         else:
             return redirect(url_for('home'))
 
-    return render_template('editUser.html',id=id,Used=Used,Banner=Banner,ProfPic = ProfPic,Profile = Profile,alert = navbar()[0] , logout = navbar()[1] , regform = navbar()[2] , logform = navbar()[3])
+    return render_template('editUser.html',id=id,Used=Used,Banner=Banner,ProfPic = ProfPic,Profile = Profile,alert = navbar()[0] , logout = navbar()[1] , regform = navbar()[2] , logform = navbar()[3] , fpwform= navbar()[4])
 
 @app.route('/userProfile/<int:id>/', methods=['GET', 'POST'])
 def userProfile(id):
@@ -763,7 +833,7 @@ def userProfile(id):
 
     reviewsamt = len(userReviews)
 
-    return render_template('userProfile.html',Description=Description,id=id,reviewsamt=reviewsamt,userRating=userRating,Username=Username,Banner=Banner,ProfPic = ProfPic,userListings = userListings,alert = navbar()[0] , logout = navbar()[1] , regform = navbar()[2] , logform = navbar()[3])
+    return render_template('userProfile.html',Description=Description,id=id,reviewsamt=reviewsamt,userRating=userRating,Username=Username,Banner=Banner,ProfPic = ProfPic,userListings = userListings,alert = navbar()[0] , logout = navbar()[1] , regform = navbar()[2] , logform = navbar()[3] , fpwform= navbar()[4])
 
 @app.route('/userProfile/<int:id>/reviews/', methods=['GET', 'POST'])
 def userProfileReviews(id):
@@ -795,7 +865,7 @@ def userProfileReviews(id):
 
     reviewsamt = len(userReviews)
 
-    return render_template('userProfileReviews.html',Description=Description,select='all',userReviews=userReviews,id=id,reviewsamt=reviewsamt,userRating=userRating,Username=Username,Banner=Banner,ProfPic = ProfPic,userListings = userListings,alert = navbar()[0] , logout = navbar()[1] , regform = navbar()[2] , logform = navbar()[3])
+    return render_template('userProfileReviews.html',Description=Description,select='all',userReviews=userReviews,id=id,reviewsamt=reviewsamt,userRating=userRating,Username=Username,Banner=Banner,ProfPic = ProfPic,userListings = userListings,alert = navbar()[0] , logout = navbar()[1] , regform = navbar()[2] , logform = navbar()[3] , fpwform= navbar()[4])
 
 @app.route('/userProfile/<int:id>/reviews/sellers/', methods=['GET', 'POST'])
 def userProfileReviewsSellers(id):
@@ -828,7 +898,7 @@ def userProfileReviewsSellers(id):
 
     reviewsamt = len(userReviews)
 
-    return render_template('userProfileReviews.html',Description=Description,select = 'sellers',userReviews=userSellerReviews,id=id,reviewsamt=reviewsamt,userRating=userRating,Username=Username,Banner=Banner,ProfPic = ProfPic,userListings = userListings,alert = navbar()[0] , logout = navbar()[1] , regform = navbar()[2] , logform = navbar()[3])
+    return render_template('userProfileReviews.html',Description=Description,select = 'sellers',userReviews=userSellerReviews,id=id,reviewsamt=reviewsamt,userRating=userRating,Username=Username,Banner=Banner,ProfPic = ProfPic,userListings = userListings,alert = navbar()[0] , logout = navbar()[1] , regform = navbar()[2] , logform = navbar()[3] , fpwform= navbar()[4])
 
 @app.route('/userProfile/<int:id>/reviews/buyers/', methods=['GET', 'POST'])
 def userProfileReviewsBuyers(id):
@@ -861,7 +931,7 @@ def userProfileReviewsBuyers(id):
 
     reviewsamt = len(userReviews)
 
-    return render_template('userProfileReviews.html',Description=Description,select = 'buyers',userReviews=userBuyerReviews,id=id,reviewsamt=reviewsamt,userRating=userRating,Username=Username,Banner=Banner,ProfPic = ProfPic,userListings = userListings,alert = navbar()[0] , logout = navbar()[1] , regform = navbar()[2] , logform = navbar()[3])
+    return render_template('userProfileReviews.html',Description=Description,select = 'buyers',userReviews=userBuyerReviews,id=id,reviewsamt=reviewsamt,userRating=userRating,Username=Username,Banner=Banner,ProfPic = ProfPic,userListings = userListings,alert = navbar()[0] , logout = navbar()[1] , regform = navbar()[2] , logform = navbar()[3] , fpwform= navbar()[4])
 
 @app.route('/Cart',methods=['GET', 'POST'])
 def Cart():
@@ -899,7 +969,7 @@ def Cart():
     db['Chats'] = chatDict
     db.close()
 
-    return render_template('Cart.html',TotalPrice=TotalPrice,Purchases = Purchases,listingDict = listingDict,alert = navbar()[0] , logout = navbar()[1] , regform = navbar()[2] , logform = navbar()[3])
+    return render_template('Cart.html',TotalPrice=TotalPrice,Purchases = Purchases,listingDict = listingDict,alert = navbar()[0] , logout = navbar()[1] , regform = navbar()[2] , logform = navbar()[3] , fpwform= navbar()[4])
 
 @app.route('/retrieveUsers', methods=['GET', 'POST'])
 def retrieveUsers():
@@ -919,7 +989,7 @@ def retrieveUsers():
     else:
         return redirect(url_for('home'))
 
-    return render_template('retrieveUsers.html', userList=userList, count=len(userList),alert = navbar()[0] , logout = navbar()[1] , regform = navbar()[2] , logform = navbar()[3])
+    return render_template('retrieveUsers.html', userList=userList, count=len(userList),alert = navbar()[0] , logout = navbar()[1] , regform = navbar()[2] , logform = navbar()[3] , fpwform= navbar()[4])
 
 @app.route('/deleteUser/<int:id>', methods=['GET', 'POST'])
 def deleteUser(id):
@@ -986,7 +1056,7 @@ def AllChats():
         ChatList.append(chatDict[i])
 
 
-    return render_template('AllChats.html',userDict = userDict,listingDict = listingDict,ChatList = ChatList,alert = navbar()[0] , logout = navbar()[1] , regform = navbar()[2] , logform = navbar()[3])
+    return render_template('AllChats.html',userDict = userDict,listingDict = listingDict,ChatList = ChatList,alert = navbar()[0] , logout = navbar()[1] , regform = navbar()[2] , logform = navbar()[3] , fpwform= navbar()[4])
 
 @app.route('/retrieveDelivery')
 def retrieveDelivery():
@@ -1017,7 +1087,7 @@ def retrieveDelivery():
     else:
         return redirect(url_for('home'))
 
-    return render_template('retrieveDelivery.html', deliveryList=deliveryList, count=len(deliveryList),alert = navbar()[0] , logout = navbar()[1] , regform = navbar()[2] , logform = navbar()[3])
+    return render_template('retrieveDelivery.html', deliveryList=deliveryList, count=len(deliveryList),alert = navbar()[0] , logout = navbar()[1] , regform = navbar()[2] , logform = navbar()[3] , fpwform= navbar()[4])
 
 
 def validateaddress(location):
@@ -1114,9 +1184,9 @@ def createDelivery():
         else:
             print("Invalid address")
             invalidlocation = True
-            return render_template('createDelivery.html', form=createDeliveryForm,invalidlocation=invalidlocation,alert = navbar()[0] , logout = navbar()[1] , regform = navbar()[2] , logform = navbar()[3])
+            return render_template('createDelivery.html', form=createDeliveryForm,invalidlocation=invalidlocation,alert = navbar()[0] , logout = navbar()[1] , regform = navbar()[2] , logform = navbar()[3] , fpwform= navbar()[4])
 
-    return render_template('createDelivery.html', form=createDeliveryForm,alert = navbar()[0] , logout = navbar()[1] , regform = navbar()[2] , logform = navbar()[3])
+    return render_template('createDelivery.html', form=createDeliveryForm,alert = navbar()[0] , logout = navbar()[1] , regform = navbar()[2] , logform = navbar()[3] , fpwform= navbar()[4])
 
 
 @app.route('/manageDelivery', methods=['GET', 'POST'])
@@ -1143,7 +1213,7 @@ def manageDelivery():
             if datetime.now() > key.get_estimatedTime():
                 key.set_status('Delivered')
 
-    return render_template('manageDelivery.html', deliveryList=deliveryList, count=len(deliveryList),alert = navbar()[0] , logout = navbar()[1] , regform = navbar()[2] , logform = navbar()[3])
+    return render_template('manageDelivery.html', deliveryList=deliveryList, count=len(deliveryList),alert = navbar()[0] , logout = navbar()[1] , regform = navbar()[2] , logform = navbar()[3] , fpwform= navbar()[4])
 
 
 @app.route('/updateDelivery/<int:id>',methods = ["GET","POST"])
@@ -1170,7 +1240,7 @@ def updateDelivery(id):
 
         else:
             invalidlocation = True
-            return render_template('updateDelivery.html',invalidlocation=invalidlocation, form=updateDeliveryForm, alert=navbar()[0], logout = navbar()[1] , regform = navbar()[2] , logform = navbar()[3])
+            return render_template('updateDelivery.html',invalidlocation=invalidlocation, form=updateDeliveryForm, alert=navbar()[0], logout = navbar()[1] , regform = navbar()[2] , logform = navbar()[3] , fpwform= navbar()[4])
 
     else:
         deliveryDict={}
@@ -1185,7 +1255,7 @@ def updateDelivery(id):
         updateDeliveryForm.method.data = delivery.get_method()
         updateDeliveryForm.remarks.data = delivery.get_remarks()
 
-        return render_template('updateDelivery.html', form=updateDeliveryForm, alert=navbar()[0], logout = navbar()[1] , regform = navbar()[2] , logform = navbar()[3])
+        return render_template('updateDelivery.html', form=updateDeliveryForm, alert=navbar()[0], logout = navbar()[1] , regform = navbar()[2] , logform = navbar()[3] , fpwform= navbar()[4])
 
 @app.route('/deleteDelivery/<int:id>', methods = ['POST'])
 def deleteDelivery(id):
@@ -1257,7 +1327,7 @@ def Proof():
 
     db.close()
 
-    return render_template('Proof.html', deliveryList=deliveryList, count=len(deliveryList),alert = navbar()[0] , logout = navbar()[1] , regform = navbar()[2] , logform = navbar()[3])
+    return render_template('Proof.html', deliveryList=deliveryList, count=len(deliveryList),alert = navbar()[0] , logout = navbar()[1] , regform = navbar()[2] , logform = navbar()[3] , fpwform= navbar()[4])
 
 
 @app.route('/Track/<int:id>')
@@ -1291,7 +1361,7 @@ def Track(id):
     db['Delivery'] =deliveryDict
     db.close()
 
-    return render_template('Track.html',delivery=delivery,alert = navbar()[0] , logout = navbar()[1] , regform = navbar()[2] , logform = navbar()[3])
+    return render_template('Track.html',delivery=delivery,alert = navbar()[0] , logout = navbar()[1] , regform = navbar()[2] , logform = navbar()[3] , fpwform= navbar()[4])
 
 @app.route('/map')
 def map():
@@ -1316,7 +1386,7 @@ def createFeedback():
         db.close()
 
         return redirect(url_for('retrieveFeedback'))
-    return render_template('createFeedback.html', form=createFeedbackForm,alert = navbar()[0] , logout = navbar()[1] , regform = navbar()[2] , logform = navbar()[3])
+    return render_template('createFeedback.html', form=createFeedbackForm,alert = navbar()[0] , logout = navbar()[1] , regform = navbar()[2] , logform = navbar()[3] , fpwform= navbar()[4])
 
 
 @app.route('/retrieveFeedback')
@@ -1334,7 +1404,7 @@ def retrieveFeedback():
         user = faqDict.get(key)
         faqList.append(user)
 
-    return render_template('retrieveFeedback.html',faqList=faqList, count=len(faqList),alert = navbar()[0] , logout = navbar()[1] , regform = navbar()[2] , logform = navbar()[3])
+    return render_template('retrieveFeedback.html',faqList=faqList, count=len(faqList),alert = navbar()[0] , logout = navbar()[1] , regform = navbar()[2] , logform = navbar()[3] , fpwform= navbar()[4])
 
 
 @app.route('/updateFAQ/<int:id>/', methods=['GET', 'POST'])
@@ -1359,7 +1429,7 @@ def updateFAQ(id):
         faq = faqDict.get(id)
         updateUserForm.question.data = faq.get_question()
         updateUserForm.answer.data = faq.get_answer()
-        return render_template('updateFeedback.html',form=updateUserForm,alert = navbar()[0] , logout = navbar()[1] , regform = navbar()[2] , logform = navbar()[3])
+        return render_template('updateFeedback.html',form=updateUserForm,alert = navbar()[0] , logout = navbar()[1] , regform = navbar()[2] , logform = navbar()[3] , fpwform= navbar()[4])
 
 
 @app.route('/deleteFAQ/<int:id>', methods=['POST'])
@@ -1388,7 +1458,7 @@ def FAQ():
         faq = faqDict.get(key)
         faqList.append(faq)
 
-    return render_template('FAQ.html', faqList=faqList, alert = navbar()[0] , logout = navbar()[1] , regform = navbar()[2] , logform = navbar()[3])
+    return render_template('FAQ.html', faqList=faqList, alert = navbar()[0] , logout = navbar()[1] , regform = navbar()[2] , logform = navbar()[3] , fpwform= navbar()[4])
 
 
 if __name__ == '__main__':

@@ -43,10 +43,16 @@ class LoginAccount(Form):
 class Logout(Form):
     logout = SubmitField('Logout')
 
+class ForgetPassword(Form):
+    forgetemail = EmailField('Email',[validators.DataRequired(),validators.Email()])
+    submit = SubmitField('Submit')
+
+class ChangePassword(Form):
+    changepassword = PasswordField('Password', [validators.Length(min=1, max=150), validators.DataRequired()])
+    confirmpassword = PasswordField('Confirm Password', [validators.Length(min=1, max=150), validators.DataRequired()])
 
 class Chat(Form):
     chat = SubmitField('Chat')
-
 
 class ChatOffer(Form):
     price = FloatField('State your offer', [validators.NumberRange(min=0,max=9999),validators.DataRequired()],default=0)

@@ -82,6 +82,15 @@
     function closeLogin() {
     document.getElementById("Login").style.display = "none";
     }
+    function openFPW() {
+    document.getElementById("password").value = "";
+    document.getElementById("Login").style.display = "none";
+    document.getElementById("ForgetPassword").style.display = "flex";
+    }
+    function closeFPW() {
+    document.getElementById("ForgetPassword").style.display = "none";
+    document.getElementById("email").value = "";
+    }
     function returnHome() {
     window.location.href='{{ url_for('createListing') }}'
     }
@@ -90,6 +99,12 @@
 {% if alert == "WPW" %}
 <style>
 #Login{
+    display:flex;
+}
+</style>
+{% elif alert == "WEmail" %}
+<style>
+#ForgetPassword{
     display:flex;
 }
 </style>
@@ -127,10 +142,27 @@
     {% if alert == "WPW" %}
       <p style="color:red">Wrong Password</p>
     {% endif %}
-    <div class="form-group">
+    <a onclick="openFPW()" style="color:red;cursor:pointer;">Forgot password</a>
+    <div class="form-group" style="margin-top:10px;">
     {{ logform.login }}
     </div>
     <button type="reset" onclick="closeLogin()" class="closebtn">Close</button>
+  </form>
+</div>
+
+<div class="form-popup" id="ForgetPassword">
+  <form class="form-container" name="login" method="post">
+    <h1>Forget Password</h1>
+    <div class="form-group">
+    {{ render_field(fpwform.forgetemail, class="form-control") }}
+    </div>
+    {% if alert == "WEmail" %}
+      <p style="color:red">Please enter a valid email</p>
+    {% endif %}
+    <div class="form-group">
+    {{ fpwform.submit }}
+    </div>
+    <button type="reset" onclick="closeFPW()" class="closebtn">Close</button>
   </form>
 </div>
 
@@ -287,9 +319,6 @@ background-color:  #ff9999;
     bottom: 0;
     right: 0;
     z-index: 11;
-}
-
-#Login,#Register{
     background-color: rgba(0,0,0,0.5);
 }
 
