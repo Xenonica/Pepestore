@@ -19,36 +19,18 @@
       {{ render_field(form.description, class="form-control") }}
       {{ render_field(form.category, class="form-control") }}
       {{ render_field(form.quantity, class="form-control") }}
-      <input type="submit" value="Submit" class="buttons button_submit"/>
-      <a href="/createUserImages"><input type="button" id="button_back" class="buttons button_back" value="Back"></a>
+      <input type="submit" value="Submit" class="btn btn-primary"/>
+      <a href="/createUserImages"><input type="button" id="button_back" class="btn btn-outline-secondary" value="Back"></a>
     </form>
   </div>
 </div>
 
 <style>
-#button_back{
-  color:black;
-  margin-right:3px
-  }
-
-  .button_submit{
-  background-color:#007bff;
-  }
-
-  .button_submit:hover{
-  background-color:#003e80;
-  }
-
-  .buttons{
-  width: 100px;
-  height: 40px;
-  border: 0;
-  color: white;
-  }
-
-  #button_back:hover{
-  background-color:#b3b3cc
-  }
+.btn{
+width:100px;
+height:40px;
+margin-right:8px;
+}
 
   #DisplayImg{
     object-fit:cover;

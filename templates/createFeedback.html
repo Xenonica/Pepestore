@@ -11,35 +11,11 @@
    margin: 0 2vw;
 }
 
-#button_update{
-  margin-right:3px;
-  background-color: #32CD32;
-  }
-
-.button_submit{
-  background-color:#007bff;
-  }
-
-  .button_submit:hover{
-  background-color:#003e80;
-  }
-
-  .buttons{
-  width: 100px;
-  height: 40px;
-  border: 0;
-  color: white;
-  }
-
- #button_back{
-  color:black;
-  margin-right:3px
-  }
-
-  #button_back:hover{
-  background-color:#b3b3cc
-  }
-
+.btn{
+width:100px;
+height:40px;
+margin-right:8px;
+}
   .form-control{
  margin-bottom:2vh;
  }
@@ -51,8 +27,8 @@
         <br>
         {{ render_field(form.question, class="form-control") }}
         {{ render_field(form.answer, class="form-control") }}
-        <input type="submit" value="Submit" class="buttons button_submit"/>
-        <a href="/"><input type="button" id="button_back" class="buttons button_back" value="Back"></a>
+        <input type="submit" value="Submit" class="btn btn-primary"/>
+        <a href="/"><input type="button" id="button_back" class="btn btn-outline-secondary" value="Back"></a>
     </form>
 </div>
 {% endblock %}

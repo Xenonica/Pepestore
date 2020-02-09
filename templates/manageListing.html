@@ -16,42 +16,15 @@
     border:1px solid black;
   }
 
-  .buttons{
+  .btn{
   width: 100px;
   height: 40px;
-  border: 0;
-  color: white;
+  margin-right:8px;
   }
 
-  .button_delete{
-  background-color: red;
-  }
-
-  #button_delete{
-  float:right;
-  }
-
-  #button_back{
-  color:black;
-  float:right;
-  margin-right:3px
-  }
 
   #button_back:hover{
   background-color:#b3b3cc
-  }
-
-  #button_update{
-  margin-right:3px;
-  background-color: #32CD32;
-  }
-
-  #button_update:hover{
-  background-color:green;
-  }
-
-  .button_delete:hover{
-  background-color:#8b0000 ;
   }
 
   img{
@@ -111,16 +84,16 @@
             <td>{{ listing.get_category() }}</td>
             <td>
                 <div style="display:flex;"><a href="/update/{{listing.get_listingID()}}">
-                    <input type="button" value="Update" id="button_update" class="buttons"></a>
-                    <input type="submit" value="Delete" id="modal_window" class="button_delete buttons modal_button">
+                    <input type="button" value="Update" id="" class="btn btn-success"></a>
+                    <input type="submit" value="Delete" id="modal_window" class="btn btn-danger modal_button">
                 </div>
                 <div id="myModal" class="modal">
                     <div class="modal-content">
                         <p>Are you sure you want to delete?</p>
                         <form action="{{url_for('deleteListing', id=listing.get_listingID())}}" method="POST"
                               style="display:inline-block;">
-                            <input type="submit" value="Delete" id="button_delete" class="button_delete buttons">
-                            <input type="button" id="button_back" class="buttons button_back" value="Back">
+                            <input type="submit" value="Delete" id="button_delete" class="btn btn-danger" style="float:right">
+                            <input type="button" id="button_back" class="btn btn-outline-secondary" value="Back" style="float:right">
                         </form>
                     </div>
                 </div>
@@ -138,7 +111,7 @@
 <script>
 var modal = document.getElementsByClassName("modal");
 var btn = document.getElementsByClassName("modal_button");
-var back = document.getElementsByClassName("button_back");
+var back = document.getElementsByClassName("btn-outline-secondary");
 var i = 0;
 for (i = 0; i < modal.length; i++)(function(i) {
     btn[i].onclick = function() {

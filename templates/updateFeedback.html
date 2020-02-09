@@ -1,14 +1,33 @@
 {% extends "base.html" %}
-{% block title %}Pepestore{% endblock %}
+{% block title %}Pepestore - Update FAQ{% endblock %}
 {% block content %}
 {% from "includes/_formHelper.html" import render_field %}
+<style>
+    .btn{
+    width:100px;
+    height:40px;
+    margin-right:8px;
+    }
+    .updateFAQ_container{
+    margin-left:2vw;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    }
+    .form-control{
+    margin-bottom:2vh;
+    }
+</style>
 
 <div class="updateFAQ_container">
-<h1 class="display-4">Update User</h1>
 <form method="POST" action="">
+    <h1 class="display-4">Update FAQ</h1>
+    <br>
      {{ render_field(form.question, class="form-control") }}
      {{ render_field(form.answer, class="form-control") }}
-    <input type="submit" value="Submit" class="btn btn-primary"/>
+    <input type="submit" value="Update" class="btn btn-success"/>
+    <a href="/retrieveFeedback"><input type="button" value="Back" class="btn btn-outline-secondary"/></a>
 </form>
     </div>
 {% endblock %}

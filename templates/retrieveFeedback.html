@@ -16,43 +16,12 @@
     border:1px solid black;
   }
 
-  .buttons{
-  width: 100px;
-  height: 40px;
-  border: 0;
-  color: white;
+  .btn{
+  width:100px;
+  height:40px;
+  margin-right:8px;
   }
 
-  .button_delete{
-  background-color: red;
-  }
-
-  #button_delete{
-  float:right;
-  }
-
-  #button_back{
-  color:black;
-  float:right;
-  margin-right:3px
-  }
-
-  #button_back:hover{
-  background-color:#b3b3cc
-  }
-
-  #button_update{
-  margin-right:3px;
-  background-color: #32CD32;
-  }
-
-  #button_update:hover{
-  background-color:green;
-  }
-
-  .button_delete:hover{
-  background-color:#8b0000 ;
-  }
 
     /* The Modal (background) */
 .modal {
@@ -98,8 +67,8 @@
             <td>
 
                 <div style="display:flex;"><a href="/updateFAQ/{{faq.get_id()}}">
-                    <input type="button" value="Update" id="button_update" class="buttons"></a>
-                    <input type="submit" value="Delete" id="modal_window" class="button_delete buttons modal_button">
+                    <input type="button" value="Update" id="button_update" class="btn btn-success"></a>
+                    <input type="submit" value="Delete" id="modal_window" class="btn btn-danger modal_button">
                 </div>
 
                 <div id="myModal" class="modal">
@@ -107,8 +76,8 @@
                         <p>Are you sure you want to delete?</p>
                         <form action="{{url_for('deleteFAQ', id=faq.get_id())}}" method="POST"
                               style="display:inline-block;">
-                            <input type="submit" value="Delete" id="button_delete" class="button_delete buttons">
-                            <input type="button" id="button_back" class="buttons button_back" value="Back">
+                            <input type="submit" value="Delete" id="button_delete" class="btn btn-danger" style="float:right">
+                            <input type="button" id="button_back" class="btn btn-outline-secondary button_back" value="Back" style="float:right">
                         </form>
                     </div>
                 </div>

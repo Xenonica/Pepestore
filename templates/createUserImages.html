@@ -3,6 +3,48 @@
 {% from "includes/_formHelper.html" import render_field %}
 
 {% block content %}
+<style>
+    .images {
+    object-fit: cover;
+    max-width:100%;
+    }
+
+    .createListingImage_container{
+    display:flex;
+    flex-direction: column;
+    justify-content:center;
+    align-items:center;
+    margin: 0 2vw;
+    }
+
+    .deleteSign1,.deleteSign2,.deleteSign3,.deleteSign4{
+    position:absolute;
+    height:30px;
+    width:30px;
+    left:0;
+    cursor: pointer;
+    }
+
+    .createListingImage_wrapper{
+    display:flex;
+    margin-top: 2vh;
+    }
+
+    .wrapper{
+    display:flex;
+    flex-direction:column;
+    }
+
+    .wrapper div{
+    margin: 1vh 1vw;
+    position:relative;
+    }
+
+    #upload-image{
+    }
+
+</style>
+
 <div class="createListingImage_container">
     <form id="upload-image" method="post" enctype="multipart/form-data" name="form" class="uploadimage">
         <h1 class="display-4">Upload listing images(Up to 4)</h1>
@@ -15,7 +57,7 @@
 
             </div>
             <div class="input-group-append">
-    <button id="submitButton" class="btn btn-outline-secondary" type="button" onclick="window.location.href='{{ url_for('createListing') }}';">Next</button>
+    <button id="submitButton" class="btn btn-primary" type="button" onclick="window.location.href='{{ url_for('createListing') }}';" style="width:100px; margin-left:8px;">Next</button>
   </div>
         </div>
     </form>
@@ -60,48 +102,6 @@
     </div>
 </div>
 </div>
-
-<style>
-    .images {
-    object-fit: cover;
-    max-width:100%;
-    }
-
-    .createListingImage_container{
-    display:flex;
-    flex-direction: column;
-    justify-content:center;
-    align-items:center;
-    margin: 0 2vw;
-    }
-
-    .deleteSign1,.deleteSign2,.deleteSign3,.deleteSign4{
-    position:absolute;
-    height:30px;
-    width:30px;
-    left:0;
-    cursor: pointer;
-    }
-
-    .createListingImage_wrapper{
-    display:flex;
-    margin-top: 2vh;
-    }
-
-    .wrapper{
-    display:flex;
-    flex-direction:column;
-    }
-
-    .wrapper div{
-    margin: 1vh 1vw;
-    position:relative;
-    }
-
-    #upload-image{
-    }
-
-</style>
 
 <script>
 function deleteImg(){
