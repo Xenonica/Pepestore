@@ -15,17 +15,19 @@
         <ul>
             <li><a href="/">Home</a></li>
 
+            {% if session['status'] == 'Admin' or session['status'] == 'Owner' %}
             <div class="dropdown">
-            <li><a class="nav-items" href="#">FAQ</a></li>
+                <li><a class="nav-items" href="#">FAQ</a></li>
 
-            <div class="dropdown-content">
-                {% if session['status'] == 'Admin' or session['status'] == 'Owner' %}
-                {% endif %}
-                <li><a href="/FAQ">FAQ</a></li>
-                <li><a href="/createFeedback">Create Feedback</a></li>
-                <li><a href="/retrieveFeedback">Manage Feedback</a></li>
+                <div class="dropdown-content">
+                    <li><a href="/FAQ">FAQ</a></li>
+                    <li><a href="/createFeedback">Create Feedback</a></li>
+                    <li><a href="/retrieveFeedback">Manage Feedback</a></li>
+                </div>
             </div>
-            </div>
+            {% else %}
+            <li><a href="/FAQ">FAQ</a></li>
+            {% endif %}
 
 
             {% if 'userID' in session %}

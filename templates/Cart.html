@@ -2,6 +2,7 @@
 {% block title %}Pepestore - Cart{% endblock %}
 
 {% block content %}
+<div class="cart_container">
 <h1 class="display-4">Orders</h1>
   <div class="row">
     <div class="col-lg-8 mx-auto">
@@ -34,7 +35,13 @@
   <a href="/createDelivery"><input type="button" value="Purchase" class="purchasebutton"></a>
 </form>
 {% endif %}
+</div>
+
 <style>
+.cart_container{
+margin-left:2vw;
+}
+
 .list-group-item {
   cursor:pointer;
 }

@@ -2,41 +2,45 @@
 {% block title %}PepeStore - Checkout{% endblock %}
 {% block content %}
 {% from "includes/_formHelper.html" import render_field %}
-<h1 class="display-4">Create Delivery</h1>
+<h1 class="display-4" style="display:flex; align-items:center; justify-content:center;">Order</h1>
+<br>
+<div class="create_delivery-container">
 <form method="POST" action="">
-  <div class="form-group">
+    <div style="display:flex;">
     {{ render_field(form.firstName, class="form-control") }}
-  </div>
 
-  <div class="form-group">
     {{ render_field(form.lastName, class="form-control") }}
-  </div>
+        </div>
 
-  <div class="form-group">
  {{ render_field(form.location, class="form-control") }}
- </div>
 
-  <div class="form-group">
     {{ render_field(form.shipping, class="form-control") }}
-  </div>
 
-  <div class="form-group">
     {{ render_field(form.method, class="form-control") }}
-  </div>
 
-  <div id="prof">
-    <div class="form-group">
       {{ render_field(form.remarks, class="form-control") }}
-    </div>
-  </div>
  <input type="submit" value="Submit" class="btn btn-primary"/>
 </form>
 
 {% if invalidlocation == True %}
 <div id="beeg">Please Enter a Valid Singapore Location!</div>
 {% endif %}
+</div>
 
 <style>
+.create_delivery-container{
+display:flex;
+justify-content:center;
+align-items:center;
+}
+.form-control{
+margin-bottom: 1.2vh;
+margin-right:1vw;
+}
+label[for='firstName'],label[for='lastName']{
+white-space:nowrap;
+margin-right:1vw;
+}
  #beeg{
  color:red;}
 </style>

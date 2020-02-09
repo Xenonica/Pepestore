@@ -4,10 +4,9 @@
 
 {% block content %}
 <div class="createListingImage_container">
-
-    <h1 class="display-4">Upload listing images(Up to 4)</h1>
-    <br>
     <form id="upload-image" method="post" enctype="multipart/form-data" name="form" class="uploadimage">
+        <h1 class="display-4">Upload listing images(Up to 4)</h1>
+        <br>
         <div class="input-group" style="z-index:0;">
             <div class="custom-file">
                 <input type="file" class="custom-file-input" name="file" id="ImgInput" accept="image/*" multiple onchange="this.form.submit()" style="cursor:pointer;">

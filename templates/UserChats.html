@@ -221,7 +221,7 @@ $(document).ready(function() {
             $("#ListingOfferSubmit").show();
             $("#OfferParaB").remove();
             $("#OfferCancel").hide();
-            $("#currentChat").append('<p id="ResponseParaB" class="Generated">'+'The seller has accepted your offer');
+            $("#currentChat").append('<p id="ResponseParaB" class="Generated" style="font-size:1.8vw;">'+'The seller has accepted your offer, please proceed to the'+'<a href="/Cart">'+' Cart '+'</a>'+'for checkout');
             }
 	}
 
@@ -609,8 +609,9 @@ $(document).ready(function() {
   top:170px;
   left:200px;
 }
-
-
+label[for='price'],label[for='quantity']{
+display:none;
+}
 
 
 

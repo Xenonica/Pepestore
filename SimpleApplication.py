@@ -1373,7 +1373,7 @@ def deleteFAQ(id):
     return redirect(url_for('retrieveFeedback'))
 
 
-@app.route('/FAQ')
+@app.route('/FAQ', methods=['POST','GET'])
 def FAQ():
     faqDict = {}
     db = shelve.open('storage.db', 'r')

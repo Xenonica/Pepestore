@@ -13,21 +13,21 @@
 
 <div class="home_container">
 <br><br>
-        <h1>Newest Listings</h1>
-  <div id="listings_container">
+    <h1>Newest Listings</h1>
+    <div id="listings_container">
 
-  {% for i in newestLists %}
+        {% for i in newestLists %}
         {{ filter(i) }}
         {% endfor %}
-  </div>
-<br><br><br><br>
+    </div>
+    <br><br><br><br>
     <h1>Most Visited Listings</h1>
-  <div id="popular-listing_container">
+    <div id="popular-listing_container">
 
-    {% for i in popularLists %}
+        {% for i in popularLists %}
         {{ filter(i) }}
         {% endfor %}
-  </div>
+    </div>
 
 </div>
 
@@ -59,12 +59,13 @@ height:200px;
 .hero-image {
     display: flex;
     flex-direction: column;
-    background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url(static/banner/banner1.jpg);
+    background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url(static/banner/city-4279096_1920.jpg);
     min-height: 20em;
     height: 50%;
     align-self: center;
     background-repeat: no-repeat;
     background-size: cover;
+    background-position:center;
     align-items: center;
     justify-content: center;
 }
