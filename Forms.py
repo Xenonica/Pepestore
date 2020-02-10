@@ -25,6 +25,7 @@ class CreateListing(Form):
                                        ('Entertainment', 'Entertainment'), ('Toys/Games', 'Toys/Games'),
                                        ('Food/Drinks', 'Food/Drinks'),
                                        ('Babies/Kids', 'Babies/Kids'), ('Furniture', 'Furniture')], default='All')
+    search_bar = StringField('')
 
 
 class CreateAccount(Form):

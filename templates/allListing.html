@@ -49,11 +49,7 @@ max-width:100%;
     <div class="filter_wrapper">
         <form method="POST">
             {{ render_field(form.filter_type, class="form-control") }}
-            <span>Min($)</span><br> <input style="width:100px" type="number">
-            <br>
-            <span>Max($)</span><br> <input style="width:100px" type="number">
-            <br>
-            <input type="submit" style="margin-top:10px" class="btn btn-warning" value="Go" name="button">
+            <input type="submit" style="margin-top:10px" class="btn btn-primary" value="Go" name="button">
         </form>
     </div>
     <div class="listing_container">
