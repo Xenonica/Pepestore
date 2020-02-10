@@ -1177,7 +1177,7 @@ def createDelivery():
             delivery = Classes.Delivery(session['username'],AllSellerNames,AllID, createDeliveryForm.location.data, createDeliveryForm.firstName.data,createDeliveryForm.lastName.data,createDeliveryForm.shipping.data,createDeliveryForm.method.data,createDeliveryForm.remarks.data)
             print('allid',AllID)
             delivery.set_time(datetime.now())
-            randomtime = random.randint(110,120) # Random generate estimated time of delivery
+            randomtime = random.randint(70,80) # Random generate estimated time of delivery
             delivery.set_estimatedTime(datetime.now() + timedelta(seconds = randomtime))
             delivery.set_status('In Delivery')
 
