@@ -1,13 +1,19 @@
 {% extends "base.html"%}
 {% block content %}
-<p>Delivery ID = {{ delivery.get_deliveryID() }}</p>
+
+<p id="bong">Delivery ID = {{ delivery.get_deliveryID() }}</p>
 
 <iframe id="iframe" src="{{ url_for('map')}}"></iframe>
 
 <style>
 #iframe{
 width:100%;
-height:650px;
+height:800px;
+}
+
+#bong{
+padding-left:30px;
+padding-top:10px;
 }
 </style>
 {% endblock %}
