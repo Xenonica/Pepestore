@@ -13,19 +13,19 @@
     }
   }
 </script>
-<h1 class="display-4">Retrieve Users</h1>
+<h1 class="display-4" style="margin-left:20px;">Retrieve Users</h1>
 <div>
   {% if count == 0 %}
-  <p>There are no users.</p>
+  <p style="margin-left:20px;">There are no users.</p>
   {% elif count == 1 %}
-  <p>There is 1 user.</p>
+  <p style="margin-left:20px;">There is 1 user.</p>
   {% else %}
-  <p>There are {{ count }} users.</p>
+  <p style="margin-left:20px;">There are {{ count }} users.</p>
   {% endif %}
 </div>
-<div>
-  <table class="table table-striped">
-    <thead>
+<div class="table_container">
+  <table class="table table-striped" id="MyTable">
+  <thead class="thead-dark">
       <tr>
         <th>Profile Picture</th>
         <th>User ID</th>
@@ -34,6 +34,7 @@
         <th>Address 1</th>
         <th>Address 2</th>
         <th>Zip Code</th>
+        <th></th>
         <th></th>
         <th></th>
       </tr>
@@ -93,6 +94,24 @@
   border-radius: 60%;
   object-fit: cover;
   margin:10px;
+}
+
+.table_container{
+overflow:auto;
+align-items:center;
+display:flex;
+flex-direction:column;
+justify-content:center;
+margin: 0 1.5vw;
+}
+
+.table{
+border:1px solid black;
+margin-bottom:0px
+}
+
+table{
+border:1px solid black;
 }
 </style>
 {% endblock %}

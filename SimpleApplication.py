@@ -234,7 +234,7 @@ def changePassword(id):
             print("Error Users")
 
         if request.method == 'POST' :
-            if cpwform.changepassword.data == cpwform.confirmpassword.data :
+            if cpwform.changepassword.data == cpwform.confirmpassword.data and cpwform != '':
                 print(cpwform.changepassword.data)
                 usersDict[id].set_password(hashlib.md5(cpwform.changepassword.data.encode()).hexdigest())
                 changePasswordList.remove(id)

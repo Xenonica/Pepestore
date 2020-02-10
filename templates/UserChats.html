@@ -241,6 +241,9 @@ $(document).ready(function() {
 	    if($('#myMessage').val()[0] == '/'){
 		$('#myMessage').val('');
 	    }
+	    else if($('#myMessage').val() == ''){
+		$('#myMessage').val('');
+	    }
 	    else{
 	    socket.send($('#myMessage').val());
 		$('#myMessage').val('');
@@ -251,6 +254,9 @@ $(document).ready(function() {
             if($('#myMessage').val()[0] == '/'){
             $('#myMessage').val('');
 	        }
+	        else if($('#myMessage').val() == ''){
+            $('#myMessage').val('');
+            }
             else{
             socket.send($('#myMessage').val());
             $('#myMessage').val('');
