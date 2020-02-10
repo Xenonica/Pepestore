@@ -502,15 +502,21 @@ def updateItem(id):
 
 @app.route('/deleteListing/<int:id>', methods=['POST'])
 def deleteListing(id):
-     listingDict = {}
-     db = shelve.open('storage.db', 'w')
-     listingDict = db['Listings']
-     listingDict.pop(id)
-     shutil.rmtree("static/listings/"+str(id))
-     db['Listings'] = listingDict
-     db.close()
-     return redirect(url_for('manageListing'))
-
+    listingDict = {}
+    db = shelve.open('storage.db', 'w')
+    listingDict = db['Listings']
+    if listingDict[id].get_approved() == 1:
+         listingDict.pop(id)
+         shutil.rmtree("static/listings/"+str(id))
+         db['Listings'] = listingDict
+         db.close()
+         return redirect(url_for('manageListing'))
+    else:
+        listingDict.pop(id)
+        shutil.rmtree("static/listings/" + str(id))
+        db['Listings'] = listingDict
+        db.close()
+        return redirect(url_for('pendingListing'))
 
 
 @app.route('/analytics')
@@ -988,6 +994,37 @@ def Cart():
     db.close()
 
     return render_template('Cart.html',TotalPrice=('%.2f'%TotalPrice),Purchases = Purchases,listingDict = listingDict,alert = navbar()[0] , logout = navbar()[1] , regform = navbar()[2] , logform = navbar()[3] , fpwform= navbar()[4])
+
+@app.route('/pendingListing', methods=['GET', 'POST'])
+def pendingListing():
+    if session['status'] == 'Admin' or session['status'] == 'Owner':
+        listingDict = {}
+        try :
+            db = shelve.open('storage.db', 'r')
+            listingDict = db['Listings']
+            db.close()
+        except :
+            print('Error retrieving Listings')
+
+        listingList = []
+        for key in listingDict:
+            if listingDict[key].get_approved() == 0 :
+                listing = listingDict.get(key)
+                listingList.append(listing)
+    else:
+        return redirect(url_for('home'))
+
+    return render_template('pendingListing.html', listingList = listingList,alert = navbar()[0] , logout = navbar()[1] , regform = navbar()[2] , logform = navbar()[3] , fpwform= navbar()[4])
+
+@app.route('/approveListing/<int:id>', methods=['GET', 'POST'])
+def approveListing(id):
+    listingsDict = {}
+    db = shelve.open('storage.db', 'w')
+    listingsDict = db['Listings']
+    listingsDict[id].approve()
+    db['Listings'] = listingsDict
+    db.close()
+    return redirect(url_for('pendingListing'))
 
 @app.route('/retrieveUsers', methods=['GET', 'POST'])
 def retrieveUsers():

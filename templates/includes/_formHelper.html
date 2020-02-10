@@ -9,7 +9,7 @@
 {% endmacro %}
 
 {% macro filter(i) %}
-
+{% if i.get_approved() != 0 %}
 <a href="/listingPage/{{i.get_listingID()}}" style="color:black; text-decoration:none">
 <div class="listing_wrapper">
     <span>Seller: <b>{{ i.get_seller_name() }}</b></span>
@@ -22,6 +22,7 @@
     <br>
     <span>Quantity: <b style="color:red">{{ i.get_quantity() }}</b></span>
 </div></a>
+{% endif %}
 {% endmacro %}
 
 {% macro reviews(i) %}

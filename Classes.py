@@ -20,6 +20,10 @@ class Listing :
         self.__seller_name = seller_name
         self.__visits = 0
         self.__quantity = quantity
+        self.__approved = 0
+
+    def get_approved(self):
+        return self.__approved
 
     def get_quantity(self):
         return self.__quantity
@@ -85,6 +89,8 @@ class Listing :
     def set_category(self, category):
         self.__category = category
 
+    def approve(self):
+        self.__approved = 1
 
 class Phone(Listing):
     def __init__(self,name, price, description, category, seller_name, quantity, brand, ram, storage):

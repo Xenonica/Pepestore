@@ -43,6 +43,7 @@
                 <li><a href="/editUser/{{session['userID']}}/">Profile Settings</a></li>
                 <li><a href="/manageListing">Manage your Listing</a></li>
                 {% if session['status'] == 'Admin' or session['status'] == 'Owner' %}
+                <li><a href="/pendingListing">Pending Listings</a></li>
                 <li><a href="/retrieveUsers">Retrieve Users</a></li>
                 {% endif %}
 <!--                <li><a href="/createDelivery">Create Delivery</a></li>-->

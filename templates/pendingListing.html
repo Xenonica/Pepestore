@@ -1,0 +1,128 @@
+{% extends "base.html" %}
+{% block title %}Pepestore - Manage Listing{% endblock %}
+
+{% block content %}
+<style>
+  .table_container{
+  overflow:auto;
+  align-items:center;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  margin: 0 1.5vw;
+  }
+
+  table{
+    border:1px solid black;
+  }
+
+  .btn{
+  width: 100px;
+  height: 40px;
+  margin-right:8px;
+  }
+
+
+  #button_back:hover{
+  background-color:#b3b3cc
+  }
+
+  img{
+  object-fit:cover;
+  max-width:100%;
+  }
+
+  /* The Modal (background) */
+.modal {
+  display: none; /* Hidden by default */
+  position: fixed; /* Stay in place */
+  z-index: 1; /* Sit on top */
+  padding-top: 100px; /* Location of the box */
+  left: 0;
+  top: 0;
+  width: 100%; /* Full width */
+  height: 100%; /* Full height */
+  overflow: auto; /* Enable scroll if needed */
+  background-color: rgb(0,0,0); /* Fallback color */
+  background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+}
+
+/* Modal Content */
+.modal-content {
+  background-color: #fefefe;
+  margin: auto;
+  padding: 20px;
+  border: 1px solid #888;
+  width: 80%;
+}
+</style>
+
+<div class="table_container">
+    <h1 class="display-4">Pending Listings</h1>
+    <br>
+    <table class="table table-striped" id="table_listing">
+        <thead class="thead-dark">
+        <tr>
+            <th>Display Picture</th>
+            <th>Name</th>
+            <th>Price</th>
+            <th>Description</th>
+            <th>Quantity</th>
+            <th>Category</th>
+            <th></th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for listing in listingList %}
+        <tr>
+            <td><img src={{listing.get_displaypic()}} height="200" width="200"></td>
+            <td>{{ listing.get_name() }}</td>
+            <td>${{ listing.get_price() }}</td>
+            <td>{{ listing.get_description() }}</td>
+            <td>{{ listing.get_quantity() }}</td>
+            <td>{{ listing.get_category() }}</td>
+            <td>
+                <div style="display:flex;"><a href="/approveListing/{{listing.get_listingID()}}">
+                    <input type="button" value="Approve" id="" class="btn btn-success"></a>
+                    <input type="submit" value="Delete" id="modal_window" class="btn btn-danger modal_button">
+                </div>
+                <div id="myModal" class="modal">
+                    <div class="modal-content">
+                        <p>Are you sure you want to delete?</p>
+                        <form action="{{url_for('deleteListing', id=listing.get_listingID())}}" method="POST"
+                              style="display:inline-block;">
+                            <input type="submit" value="Delete" id="button_delete" class="btn btn-danger" style="float:right">
+                            <input type="button" id="button_back" class="btn btn-outline-secondary" value="Back" style="float:right">
+                        </form>
+                    </div>
+                </div>
+
+            </td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+</div>
+
+<script>
+var modal = document.getElementsByClassName("modal");
+var btn = document.getElementsByClassName("modal_button");
+var back = document.getElementsByClassName("btn-outline-secondary");
+var i = 0;
+for (i = 0; i < modal.length; i++)(function(i) {
+    btn[i].onclick = function() {
+      modal[i].style.display = "block";
+      console.log(i)
+      window.onclick = function(event) {
+    if (event.target == modal[i] || event.target == back[i]) {
+        modal[i].style.display = "none";
+        console.log(i);
+    }
+    }
+}
+})(i);
+
+</script>
+{% endblock %}
+
