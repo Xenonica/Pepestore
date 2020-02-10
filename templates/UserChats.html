@@ -344,7 +344,7 @@ $(document).ready(function() {
     {{ render_field(chatofferform.price, id="ListingOfferPrice") }}
     <p id="ListingOfferQuantityLabel">Quantity</p>
     {{ render_field(chatofferform.quantity, min=1 , max=ListingQuantity , id="ListingOfferQuantity") }}
-    <button id="ListingOfferSubmit">Offer</button>
+    <button id="ListingOfferSubmit" class="btn btn-primary btn-sm">Offer</button>
     <button id="OfferCancel" class="Buttons">Cancel</button>
     {% else %}
     <button id="OfferDecline" class="Buttons">Decline</button>
@@ -399,7 +399,7 @@ $(document).ready(function() {
                 </div>
                     <input type="text" name="Feedback" maxlength="150" id="Feedback">
                     <input type="hidden" name="cross" value="" id="cross">
-                    <button id="submitButton" onclick="this.form.submit()">Submit</button>
+                    <button id="submitButton" onclick="this.form.submit()" class="btn btn-primary">Submit</button>
                 <i class="far fa-times-circle fa-lg" style="color:white" onclick="NoReview()" id="x"></i>
             </div>
         </form>
@@ -425,7 +425,7 @@ $(document).ready(function() {
 </div>
 <div id="SendMsg">
     <input type="text" id="myMessage">
-    <button id="sendbutton">Send</button>
+    <button id="sendbutton" class="btn btn-primary">Send</button>
 </div>
 </body>
 </html>
@@ -434,7 +434,7 @@ $(document).ready(function() {
 #x{
   position:absolute;
   top:50px;
-  right:0px;
+  right:2vw;
   cursor:pointer;
 }
 

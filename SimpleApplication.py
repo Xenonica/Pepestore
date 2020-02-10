@@ -433,8 +433,10 @@ def listingPage(listingID) :
             else:
                 pass
 
-    listingDict[listingID].set_visits(listingDict[listingID].get_visits() + 1)
-    print('Number of visits:', listingDict[listingID].get_visits())
+    if listingDict[listingID].get_OP() != session['userID']:
+        listingDict[listingID].set_visits(listingDict[listingID].get_visits() + 1)
+        print('Number of visits: for ', listingDict[listingID].get_name(),'is',listingDict[listingID].get_visits())
+
     piclist = listingDict[listingID].get_piclist()
     db['Listings'] = listingDict
     db.close()
@@ -442,7 +444,7 @@ def listingPage(listingID) :
     return render_template('listingPage.html',piclist=piclist,chatform=chatform,listingID = listingDict[listingID],alert = navbar()[0] , logout = navbar()[1] , regform = navbar()[2] , logform = navbar()[3] , fpwform= navbar()[4])
 
 
-@app.route('/allListing', methods=['GET','POST'])
+@app.route('/allListing', methods=['POST','GET'])
 def allListing():
     createListing = CreateListing(request.form)
     listingDict = {}
@@ -454,7 +456,8 @@ def allListing():
     except:
         print('???????')
 
-    return render_template('allListing.html',count=len(listingDict),form=createListing,listingDict=listingDict,selected_category=createListing.filter_type.data,alert = navbar()[0] , logout = navbar()[1] , regform = navbar()[2] , logform = navbar()[3] , fpwform= navbar()[4])
+
+    return render_template('allListing.html',count=len(listingDict),form=createListing,listingDict=listingDict,selected_category=createListing.filter_type.data, alert = navbar()[0] , logout = navbar()[1] , regform = navbar()[2] , logform = navbar()[3] , fpwform= navbar()[4])
 
 
 @app.route('/update/<int:id>/', methods=['GET', 'POST'])
@@ -529,7 +532,7 @@ def analytics():
             values.append(listingDict[listingID].get_visits())
     legend = 'Traffic'
     print(values)
-    return render_template('analytics.html', values=values, labels=labels, legend=legend,alert = navbar()[0] , logout = navbar()[1] , regform = navbar()[2] , logform = navbar()[3] , fpwform= navbar()[4])
+    return render_template('analytics.html',count=len(labels), values=values, labels=labels, legend=legend,alert = navbar()[0] , logout = navbar()[1] , regform = navbar()[2] , logform = navbar()[3] , fpwform= navbar()[4])
 
 
 @app.route('/UserChats/<int:chatID>/',methods=['GET', 'POST'])

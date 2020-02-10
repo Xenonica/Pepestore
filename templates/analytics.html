@@ -20,7 +20,11 @@
 <script>
 var ctx = document.getElementById('myChart').getContext('2d');
 var myChart = new Chart(ctx, {
+    {% if count >=7  %}
+    type: 'horizontalBar',
+    {% else %}
     type: 'bar',
+    {% endif %}
     data: {
         labels : [{% for item in labels %}
                    "{{item}}",

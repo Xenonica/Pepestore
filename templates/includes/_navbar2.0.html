@@ -15,24 +15,25 @@
         <ul>
             <li><a href="/">Home</a></li>
 
-            {% if session['status'] == 'Admin' or session['status'] == 'Owner' %}
-            <div class="dropdown">
-                <li><a class="nav-items" href="#">FAQ</a></li>
-
-                <div class="dropdown-content">
-                    <li><a href="/FAQ">FAQ</a></li>
-                    <li><a href="/createFeedback">Create Feedback</a></li>
-                    <li><a href="/retrieveFeedback">Manage Feedback</a></li>
-                </div>
-            </div>
-            {% else %}
             <li><a href="/FAQ">FAQ</a></li>
-            {% endif %}
-
 
             {% if 'userID' in session %}
             <li><a href="/createUserImages">Create a Listing</a></li>
             <li><a href="/allListing">Available Listings</a></li>
+
+            {% if session['status'] == 'Admin' or session['status'] == 'Owner' %}
+            <div class="dropdown">
+                <li><a class="nav-items" href="#">Admin</a></li>
+
+                <div class="dropdown-content">
+                    <li><a href="/createFeedback">Create FAQ</a></li>
+                    <li><a href="/retrieveFeedback">Manage FAQ</a></li>
+                    <li><a href="/retrieveUsers">Retrieve Users</a></li>
+                    <li><a href="/retrieveDelivery">Retrieve Delivery Records</a></li>
+                </div>
+            </div>
+            {% endif %}
+
             <li><a href="/AllChats"><i class="fas fa-comment fa-lg"></i></a></li>
 
             <div class="dropdown">
@@ -42,14 +43,8 @@
                 <li><a href="/userProfile/{{session['userID']}}/">Profile</a></li>
                 <li><a href="/editUser/{{session['userID']}}/">Profile Settings</a></li>
                 <li><a href="/manageListing">Manage your Listing</a></li>
-                {% if session['status'] == 'Admin' or session['status'] == 'Owner' %}
-                <li><a href="/retrieveUsers">Retrieve Users</a></li>
-                {% endif %}
 <!--                <li><a href="/createDelivery">Create Delivery</a></li>-->
                 <li><a href="/manageDelivery">Manage Delivery</a></li>
-                {% if session['status'] == 'Admin' or session['status'] == 'Owner' %}
-                <li><a href="/retrieveDelivery">Retrieve Delivery Records</a></li>
-                {% endif %}
                 <li><a href="/Proof">Proof Of Delivery</a></li>
                 <li><a href="/analytics">Analytics</a></li>
                 <form name="logout" method="POST" action="{{ url_for('home') }}">

@@ -3,7 +3,9 @@
 
 {% block content %}
 {% from "includes/_formHelper.html" import render_field %}
+<div class="allChats_container">
 <h1 class="display-4">All Chats</h1>
+  <br>
   <div class="row">
     <div class="col-lg-8 mx-auto">
 
@@ -32,8 +34,14 @@
     </div>
   </div>
 
-</nav>
+</div>
 <style>
+.allChats_container{
+margin-left:2vw;
+}
+.row{
+margin:0;
+}
 .list-group-item {
   cursor:pointer;
 }
