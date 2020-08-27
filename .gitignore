@@ -144,4 +144,9 @@ storage.db.bak
 storage.db.dat
 storage.db.dir
 
+#User files
+static/listings
+static/tempimages
+static/users
+
 # End of https://www.toptal.com/developers/gitignore/api/python
