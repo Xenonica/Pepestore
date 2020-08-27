@@ -87,5 +87,5 @@ class CreatePaymentForm(Form):
 
 class CreateFeedbackForm(Form):
  question = StringField('Question', [validators.Length(min=1,max=150), validators.DataRequired()])
- answer = TextAreaField('Answer', [validators.Length(min=1,max=500), validators.DataRequired()])
+ answer = TextAreaField('Answer', [validators.Length(min=1,max=1000), validators.DataRequired()])
 

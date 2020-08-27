@@ -18,16 +18,17 @@
             <li><a href="/FAQ">FAQ</a></li>
 
             {% if 'userID' in session %}
-            <li><a href="/createUserImages">Create a Listing</a></li>
+            <li><a href="/createUserImages">Request a Listing</a></li>
             <li><a href="/allListing">Available Listings</a></li>
 
             {% if session['status'] == 'Admin' or session['status'] == 'Owner' %}
             <div class="dropdown">
-                <li><a class="nav-items" href="#">Admin</a></li>
+                <li><a class="nav-items" href="#">Admin&nbsp;<i class="fa fa-caret-down"></i></a></li>
 
                 <div class="dropdown-content">
-                    <li><a href="/createFeedback">Create FAQ</a></li>
-                    <li><a href="/retrieveFeedback">Manage FAQ</a></li>
+                    <li><a href="/pendingListing">Pending Listing</a></li>
+                    <li><a href="/createFAQ">Create FAQ</a></li>
+                    <li><a href="/manageFAQ">Manage FAQ</a></li>
                     <li><a href="/retrieveUsers">Retrieve Users</a></li>
                     <li><a href="/retrieveDelivery">Retrieve Delivery Records</a></li>
                 </div>
@@ -37,15 +38,14 @@
             <li><a href="/AllChats"><i class="fas fa-comment fa-lg"></i></a></li>
 
             <div class="dropdown">
-            <li><a class="nav-items" href="#"><i class="fas fa-user fa-lg"></i>&nbsp;{{session['username']}}&nbsp;<i class="fa fa-caret-down"></i></a></li>
+            <li><a class="nav-items" href="#"><img style="width:27px; height:27px;" src="{{session['profpic']}}">&nbsp;{{session['username']}}&nbsp;<i class="fa fa-caret-down"></i></a></li>
 
             <div class="dropdown-content">
                 <li><a href="/userProfile/{{session['userID']}}/">Profile</a></li>
                 <li><a href="/editUser/{{session['userID']}}/">Profile Settings</a></li>
                 <li><a href="/manageListing">Manage your Listing</a></li>
-<!--                <li><a href="/createDelivery">Create Delivery</a></li>-->
                 <li><a href="/manageDelivery">Manage Delivery</a></li>
-                <li><a href="/Proof">Order History</a></li>
+                <li><a href="/OrderHistory">Order History</a></li>
                 <li><a href="/analytics">Analytics</a></li>
                 <form name="logout" method="POST" action="{{ url_for('home') }}">
                     {{ logout.logout(class="logout_btn") }}

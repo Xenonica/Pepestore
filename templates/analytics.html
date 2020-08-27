@@ -7,17 +7,27 @@
   flex-direction:column;
   margin: 0 2vw;
   }
+  .chart{
+  margin-right:5vw;
+  }
 </style>
 
 <div class="analytics_container">
     <h1 class="display-4" style="display:flex; justify-content:center; align-items:center;">Analytics</h1>
-    <br>
-    <canvas id="myChart"></canvas>
+    <div style="margin-top:4vh; display:flex; flex-direction:column; justify-content:center; align-items:center;">
+        <h3>So far, you have earned a total of <span style="color:green; font-weight:bold;">${{sales}}</span></h3>
+        <br>
+        <div style="display:flex;">
+            <canvas id="myChart" class="chart" width="600" height="400"></canvas>
+            <canvas id="salesChart" class="chart" width="600" height="400"></canvas>
+        </div>
+    </div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js@2.7.3/dist/Chart.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@0.7.0"></script>
 <script>
+Chart.defaults.global.responsive = false;
 var ctx = document.getElementById('myChart').getContext('2d');
 var myChart = new Chart(ctx, {
     {% if count >=7  %}
@@ -30,8 +40,47 @@ var myChart = new Chart(ctx, {
                    "{{item}}",
                   {% endfor %}],
         datasets: [{
-            label: '{{ legend }}',
+            label: 'Traffic',
             data : [{% for item in values %}
+                      {{item}},
+                    {% endfor %}],
+            backgroundColor: "rgba(123, 239, 178, 1)",
+            borderColor: "rgba(123, 239, 178, 1)",
+            borderWidth: 1
+        }]
+    },
+    options: {
+        scales: {
+            yAxes: [{
+                ticks: {
+                    stepSize: 1,
+                    beginAtZero: true
+                }
+            }]
+        },
+        title: {
+            display: true,
+            fontSize: 25,
+            text: 'Traffic for each product'
+        }
+    }
+
+});
+
+var ctx1 = document.getElementById('salesChart').getContext('2d');
+var myChart1 = new Chart(ctx1, {
+    {% if count >=7  %}
+    type: 'horizontalBar',
+    {% else %}
+    type: 'bar',
+    {% endif %}
+    data: {
+        labels : [{% for item in sales_labels %}
+                   "{{item}}",
+                  {% endfor %}],
+        datasets: [{
+            label: 'Income($)',
+            data : [{% for item in sales_values %}
                       {{item}},
                     {% endfor %}],
             backgroundColor: "rgba(123, 239, 178, 1)",
@@ -50,11 +99,12 @@ var myChart = new Chart(ctx, {
         title: {
             display: true,
             fontSize: 25,
-            text: 'Traffic per Listing'
+            text: 'Income earned for each product($)'
         }
     }
 
 });
+
 </script>
 
 {% endblock %}

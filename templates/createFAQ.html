@@ -23,10 +23,10 @@ margin-right:8px;
 
 <div class="createFAQ_container">
     <form method="POST" action="">
-        <h1 class="display-4">Create Feedback</h1>
+        <h1 class="display-4">Create FAQ</h1>
         <br>
         {{ render_field(form.question, class="form-control") }}
-        {{ render_field(form.answer, class="form-control") }}
+        {{ render_field(form.answer, class="form-control" ,style='height:400px;') }}
         <input type="submit" value="Submit" class="btn btn-primary"/>
         <a href="/"><input type="button" id="button_back" class="btn btn-outline-secondary" value="Back"></a>
     </form>

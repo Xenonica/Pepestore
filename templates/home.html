@@ -3,37 +3,10 @@
 
 {% from "includes/_formHelper.html" import render_field,filter %}
 {% block content %}
-<div class="hero-image">
-  <div class="hero-text">
-    <h1 class="hero-header">Pepestore</h1>
-    <p>Welcome to Pepestore. Have fun.</p>
-  </div>
-</div>
-<br>
-
-<div class="home_container">
-<br><br>
-    <h1>Newest Listings</h1>
-    <div id="listings_container">
-
-        {% for i in newestLists %}
-        {{ filter(i) }}
-        {% endfor %}
-    </div>
-    <br><br><br><br>
-    <h1>Most Visited Listings</h1>
-    <div id="popular-listing_container">
-
-        {% for i in popularLists %}
-        {{ filter(i) }}
-        {% endfor %}
-    </div>
-
-</div>
-
 <style>
 .home_container{
 margin-left:2vw;
+margin-right:2vw;
 }
 
 #listings_container,#popular-listing_container{
@@ -81,4 +54,49 @@ height:200px;
 }
 
 </style>
+
+<div class="hero-image">
+  <div class="hero-text">
+    <h1 class="hero-header">Pepestore</h1>
+    <p>Welcome to Pepestore. Have fun.</p>
+  </div>
+</div>
+<br>
+
+<div class="home_container">
+<!--    <h5 style="color:red">*All requested listings will be sent to the admin account for approval. Once approved, your listing will be in the 'Available Listings' page.</h5>-->
+<!--    <br><br>-->
+<!--    <h1>About Pepestore</h1>-->
+<!--    <p>Pepestore is an ecommerce site similar to Carousell. However, Carousell has many problems such as scammers and sellers cancelling orders after they have been made.-->
+<!--        Hence, Pepestore aims to solve these issues by acting as a 3rd party ‘middleman’. This will allow Pepestore to manage and assure that all the products sold are legitimate and that the product will be delivered.-->
+<!--        This is achieved through a system whereby the seller will send his/her product that is to be sold to the company warehouse and send a request for the listing to be approved.-->
+<!--        Once an admin approves of the listing , users can chat among themselves to discuss prices and send offers.</p>-->
+<!--    <br><br><br>-->
+<!--    <h1>How do i start selling on Pepestore?</h1>-->
+<!--    <p>1. Register and login.<br>-->
+<!--        2. Click on 'Reuqest a Listing' on navbar.<br>-->
+<!--        3. Upload a picture of the product you are selling,<br>-->
+<!--        4. Enter your product details.<br>-->
+<!--        5. Once submitted, your requested listing will be sent to the admin for approval.<br>-->
+<!--        6. Once the admin has approve the listing, the listing will be seen by everyone at 'Available Listings' on-->
+<!--        navbar.</p>-->
+    <br><br><br>
+    <h1>Latest Listings</h1>
+    <div id="listings_container">
+
+        {% for i in newestLists %}
+        {{ filter(i) }}
+        {% endfor %}
+    </div>
+    <br><br><br><br>
+    <h1>Most Visited Listings</h1>
+    <div id="popular-listing_container">
+
+        {% for i in popularLists %}
+        {{ filter(i) }}
+        {% endfor %}
+    </div>
+
+</div>
+
 {% endblock %}

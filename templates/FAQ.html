@@ -23,7 +23,7 @@
 {% for faq in faqList %}
     <div class="faq">
         <h3>Q.{{ faq.get_question() }}</h3>
-        <p>A.{{ faq.get_answer() }}</p>
+        <p style="white-space: pre-wrap;">A.{{ faq.get_answer() }}</p>
     </div>
     {% endfor %}
         </div>

@@ -43,6 +43,7 @@ target = os.path.join(APP_ROOT, 'static/')
 if not os.path.isdir(target) :
     os.mkdir(target)
 
+
 def navbar() :
     global counter
     global changePasswordList
@@ -140,6 +141,7 @@ def navbar() :
             db.close()
     return [alert,logout,regform,logform,fpwform]
 
+
 @app.before_request
 def before_request():
     global counter
@@ -166,8 +168,18 @@ def before_request():
     except:
         pass
     db.close()
+    if not session and request.endpoint in ['manageListing','manageFAQ','manageDelivery','analytics','OrderHistory',
+                                            'map','UserChats','editUser','createUserImages','createListing','createFAQ',
+                                            'Cart','AllChats','createDelivery','retrieveDelivery','retrieveUsers','pendingListing']:
+        return redirect(url_for('unauthorize'))
 
-@app.route('/',methods=['GET', 'POST'])
+
+@app.route('/unauthorize', methods=['GET','POST'])
+def unauthorize():
+    return render_template('error401.html', alert = navbar()[0] , logout = navbar()[1] , regform = navbar()[2] , logform = navbar()[3] , fpwform= navbar()[4])
+
+
+@app.route('/', methods=['GET', 'POST'])
 def home():
     listingList = []
     listingDict = {}
@@ -189,7 +201,6 @@ def home():
     try :
         db = shelve.open('storage.db', 'r')
         listingDict = db['Listings']
-        print(listingDict)
         db.close()
     except :
         db = shelve.open('storage.db', 'c')
@@ -218,6 +229,7 @@ def home():
             break
 
     return render_template('home.html', popularLists=mostViewedList, newestLists =newestLists,alert = navbar()[0] , logout = navbar()[1] , regform = navbar()[2] , logform = navbar()[3] , fpwform= navbar()[4])
+
 
 @app.route('/changePassword/<int:id>/', methods=['GET', 'POST'])
 def changePassword(id):
@@ -433,15 +445,20 @@ def listingPage(listingID) :
             else:
                 pass
 
-    if listingDict[listingID].get_OP() != session['userID']:
-        listingDict[listingID].set_visits(listingDict[listingID].get_visits() + 1)
-        print('Number of visits: for ', listingDict[listingID].get_name(),'is',listingDict[listingID].get_visits())
+    # if listingDict[listingID].get_OP() != session['userID']:
+    listingDict[listingID].set_visits(listingDict[listingID].get_visits() + 1)
+        # print('Number of visits: for ', listingDict[listingID].get_name(),'is',listingDict[listingID].get_visits())
+
+    u_id = ''
+    for i in usersDict:
+        if listingDict[listingID].get_seller_name() == usersDict[i].get_username():
+            u_id = usersDict[i].get_userID()
 
     piclist = listingDict[listingID].get_piclist()
     db['Listings'] = listingDict
     db.close()
 
-    return render_template('listingPage.html',piclist=piclist,chatform=chatform,listingID = listingDict[listingID],alert = navbar()[0] , logout = navbar()[1] , regform = navbar()[2] , logform = navbar()[3] , fpwform= navbar()[4])
+    return render_template('listingPage.html', u_id=u_id, piclist=piclist,chatform=chatform,listingID = listingDict[listingID],alert = navbar()[0] , logout = navbar()[1] , regform = navbar()[2] , logform = navbar()[3] , fpwform= navbar()[4])
 
 
 @app.route('/allListing', methods=['POST','GET'])
@@ -527,18 +544,41 @@ def analytics():
     labels = []
     values = []
     listingDict = {}
+    userdict = {}
+
     try:
         db = shelve.open('storage.db')
         listingDict = db['Listings']
+        userdict = db['Users']
+        db.close()
     except:
         print('db Listing error')
+
     for listingID in listingDict:
         if session.get('username') == listingDict[listingID].get_seller_name():
             labels.append(listingDict[listingID].get_name())
             values.append(listingDict[listingID].get_visits())
-    legend = 'Traffic'
-    print(values)
-    return render_template('analytics.html',count=len(labels), values=values, labels=labels, legend=legend,alert = navbar()[0] , logout = navbar()[1] , regform = navbar()[2] , logform = navbar()[3] , fpwform= navbar()[4])
+
+    sales = 0
+    sales_by_product = {}
+    sales_labels = []
+    sales_values = []
+
+    try:
+        for j in userdict[session['userID']].get_sales():
+            sales += j.get_price()
+            if listingDict[j.get_productID()].get_name() in sales_by_product:
+                sales_by_product[listingDict[j.get_productID()].get_name()] += j.get_price()
+            else:
+                sales_by_product[listingDict[j.get_productID()].get_name()] = j.get_price()
+    except:
+        pass
+
+    for i in sales_by_product:
+        sales_labels.append(i)
+        sales_values.append(sales_by_product[i])
+
+    return render_template('analytics.html', sales_values=sales_values, sales_labels=sales_labels, sales=(("%.2f")%(sales)), count=len(labels), values=values, labels=labels, alert = navbar()[0] , logout = navbar()[1] , regform = navbar()[2] , logform = navbar()[3] , fpwform= navbar()[4])
 
 
 @app.route('/UserChats/<int:chatID>/',methods=['GET', 'POST'])
@@ -1147,24 +1187,35 @@ def retrieveDelivery():
 
     return render_template('retrieveDelivery.html', deliveryList=deliveryList, count=len(deliveryList),alert = navbar()[0] , logout = navbar()[1] , regform = navbar()[2] , logform = navbar()[3] , fpwform= navbar()[4])
 
+from geopy.geocoders import Nominatim
+from geopy.distance import geodesic
+geolocator = Nominatim(user_agent=str(app), timeout=10)
+
 
 def validateaddress(location):
-    center_point = [{'lat': 1.290270, 'lng': 103.851959}] #center point of singapore coordinates
-    address = geocoder.osm(location)
-    x = address.lat
-    y = address.lng
-    test_point = [{'lat': x, 'lng': y}]
-    radius = 24 # in kilometer
-
-    center_point_tuple = tuple(center_point[0].values())
-    test_point_tuple = tuple(test_point[0].values())
-
-    dis = distance.distance(center_point_tuple, test_point_tuple).km
-    print("Distance: {}".format(dis))
-
-    if dis <= radius: # if the location is in Singapore
+    # center_point = [{'lat': 1.290270, 'lng': 103.851959}] #center point of singapore coordinates
+    # address = geocoder.osm(location)
+    # x = address.lat
+    # y = address.lng
+    # test_point = [{'lat': x, 'lng': y}]
+    # radius = 24 # in kilometer
+    #
+    # center_point_tuple = tuple(center_point[0].values())
+    # test_point_tuple = tuple(test_point[0].values())
+    #
+    # dis = distance.distance(center_point_tuple, test_point_tuple).km
+    # print("Distance: {}".format(dis))
+    #
+    # if dis <= radius: # if the location is in Singapore
+    #     return True
+    # else:            # if the  location is not in Singapore
+    #     return False
+    location = geolocator.geocode(location)
+    coordinates = (location.latitude, location.longitude)
+    distance = geodesic(coordinates,(1.352100, 103.819800)).kilometers
+    if distance <= 30:
         return True
-    else:            # if the  location is not in Singapore
+    else:
         return False
 
 
@@ -1177,6 +1228,7 @@ def createDelivery():
         userDict = {}
         deliveryDict = {}
         listingDict = {}
+
         db = shelve.open('storage.db', 'c')
 
         try:
@@ -1189,7 +1241,6 @@ def createDelivery():
             listingDict = db['Listings']
         except:
             print("Error in retrieving listings from storage")
-
         try:
             userDict = db['Users']
         except:
@@ -1238,9 +1289,10 @@ def createDelivery():
             print(deliveryDict)
             db.close()
             print("valid address")
+
             return redirect(url_for('manageDelivery'))
         else:
-            print("Invalid address")
+            print("Invalid address or Error 403 osm request")
             invalidlocation = True
             return render_template('createDelivery.html', form=createDeliveryForm,invalidlocation=invalidlocation,alert = navbar()[0] , logout = navbar()[1] , regform = navbar()[2] , logform = navbar()[3] , fpwform= navbar()[4])
 
@@ -1360,8 +1412,8 @@ def CancelDelivery(id):
     return redirect(url_for('manageDelivery'))
 
 
-@app.route('/Proof')
-def Proof():
+@app.route('/OrderHistory')
+def OrderHistory():
     deliveryDict = {}
     db = shelve.open('storage.db', 'r')
     try:
@@ -1385,7 +1437,7 @@ def Proof():
 
     db.close()
 
-    return render_template('Proof.html', deliveryList=deliveryList, count=len(deliveryList),alert = navbar()[0] , logout = navbar()[1] , regform = navbar()[2] , logform = navbar()[3] , fpwform= navbar()[4])
+    return render_template('OrderHistory.html', deliveryList=deliveryList, count=len(deliveryList),alert = navbar()[0] , logout = navbar()[1] , regform = navbar()[2] , logform = navbar()[3] , fpwform= navbar()[4])
 
 
 @app.route('/Track/<int:id>')
@@ -1404,10 +1456,14 @@ def Track(id):
     tooltip = 'Pepestore'
     folium.Marker([1.3800,103.8489], popup='<strong>PepeStore</strong>',tooltip=tooltip).add_to(m)
 
-    pepe= geocoder.osm('Nanyang Polytechnic,Singapore')
-    address = geocoder.osm(locationx)
-    address_latlng = [address.lat, address.lng]
-    pepe_latlng = [pepe.lat, pepe.lng]
+    # pepe= geocoder.osm('Nanyang Polytechnic,Singapore')
+    # address = geocoder.osm(locationx)
+    # address_latlng = [address.lat, address.lng]
+    # pepe_latlng = [pepe.lat, pepe.lng]
+    pepe = geolocator.geocode("Nanyang Polytechnic,Singapore")
+    address = geolocator.geocode(locationx)
+    pepe_latlng = (pepe.latitude, pepe.longitude)
+    address_latlng = (address.latitude, address.longitude)
     folium.Marker(address_latlng, popup=locationx, tooltip=buyer).add_to(m)
     distance_path = [pepe_latlng,address_latlng]
     plugins.AntPath(distance_path,tooltip = "In Delivery",).add_to(m)
@@ -1426,8 +1482,8 @@ def map():
     return render_template("map.html")
 
 
-@app.route('/createFeedback', methods=['GET', 'POST'])
-def createFeedback():
+@app.route('/createFAQ', methods=['GET', 'POST'])
+def createFAQ():
     faqDict = {}
     createFeedbackForm = CreateFeedbackForm(request.form)
     if request.method == 'POST' and createFeedbackForm.validate():
@@ -1436,19 +1492,19 @@ def createFeedback():
         try:
             faqDict = db['FAQ']
         except:
-            print("Error in retrieving Feedback from storage.db.")
+            print("Error in retrieving FAQ from storage.db.")
 
         faq = Classes.FAQ(createFeedbackForm.question.data, createFeedbackForm.answer.data)
         faqDict[faq.get_id()] = faq
         db['FAQ'] = faqDict
         db.close()
 
-        return redirect(url_for('retrieveFeedback'))
-    return render_template('createFeedback.html', form=createFeedbackForm,alert = navbar()[0] , logout = navbar()[1] , regform = navbar()[2] , logform = navbar()[3] , fpwform= navbar()[4])
+        return redirect(url_for('manageFAQ'))
+    return render_template('createFAQ.html', form=createFeedbackForm,alert = navbar()[0] , logout = navbar()[1] , regform = navbar()[2] , logform = navbar()[3] , fpwform= navbar()[4])
 
 
-@app.route('/retrieveFeedback')
-def retrieveFeedback():
+@app.route('/manageFAQ')
+def manageFAQ():
     faqDict = {}
     db = shelve.open('storage.db', 'r')
     faqList = []
@@ -1456,13 +1512,13 @@ def retrieveFeedback():
         faqDict = db['FAQ']
         db.close()
     except:
-        print('error in retrieve Feeedback')
+        print('error in retrieve FAQ')
 
     for key in faqDict:
         user = faqDict.get(key)
         faqList.append(user)
 
-    return render_template('retrieveFeedback.html',faqList=faqList, count=len(faqList),alert = navbar()[0] , logout = navbar()[1] , regform = navbar()[2] , logform = navbar()[3] , fpwform= navbar()[4])
+    return render_template('manageFAQ.html',faqList=faqList, count=len(faqList),alert = navbar()[0] , logout = navbar()[1] , regform = navbar()[2] , logform = navbar()[3] , fpwform= navbar()[4])
 
 
 @app.route('/updateFAQ/<int:id>/', methods=['GET', 'POST'])
@@ -1478,7 +1534,7 @@ def updateFAQ(id):
         db['FAQ'] = faqDict
         db.close()
 
-        return redirect(url_for('retrieveFeedback'))
+        return redirect(url_for('manageFAQ'))
     else:
         faqDict = {}
         db = shelve.open('storage.db', 'r')
@@ -1487,7 +1543,7 @@ def updateFAQ(id):
         faq = faqDict.get(id)
         updateUserForm.question.data = faq.get_question()
         updateUserForm.answer.data = faq.get_answer()
-        return render_template('updateFeedback.html',form=updateUserForm,alert = navbar()[0] , logout = navbar()[1] , regform = navbar()[2] , logform = navbar()[3] , fpwform= navbar()[4])
+        return render_template('updateFAQ.html',form=updateUserForm,alert = navbar()[0] , logout = navbar()[1] , regform = navbar()[2] , logform = navbar()[3] , fpwform= navbar()[4])
 
 
 @app.route('/deleteFAQ/<int:id>', methods=['POST'])
@@ -1498,7 +1554,7 @@ def deleteFAQ(id):
     usersDict.pop(id)
     db['FAQ'] = usersDict
     db.close()
-    return redirect(url_for('retrieveFeedback'))
+    return redirect(url_for('manageFAQ'))
 
 
 @app.route('/FAQ', methods=['POST','GET'])
@@ -1510,7 +1566,7 @@ def FAQ():
         faqDict = db['FAQ']
         db.close()
     except:
-        print('error in retrieve Feeedback')
+        print('error in retrieve FAQ')
 
     for key in faqDict:
         faq = faqDict.get(key)

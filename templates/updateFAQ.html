@@ -25,7 +25,7 @@
     <h1 class="display-4">Update FAQ</h1>
     <br>
      {{ render_field(form.question, class="form-control") }}
-     {{ render_field(form.answer, class="form-control") }}
+     {{ render_field(form.answer, class="form-control", style='height:400px;') }}
     <input type="submit" value="Update" class="btn btn-success"/>
     <a href="/retrieveFeedback"><input type="button" value="Back" class="btn btn-outline-secondary"/></a>
 </form>

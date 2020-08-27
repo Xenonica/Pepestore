@@ -70,17 +70,26 @@ position:flex;
 }
 
 #listingsWrapper{
-position: absolute;
 right:30px;
 top:325px;
 left:330px;
 padding:25px;
 border-radius:30px;
 box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+flex-grow:1;
 }
 
 .listing_wrapper{
 display:inline-block;
+padding:10px;
+}
+
+.listing_wrapper:hover{
+box-shadow: 0 0 8px grey;
+}
+
+.listing_wrapper img{
+max-width:100%;
 }
 
 #ProfPic{

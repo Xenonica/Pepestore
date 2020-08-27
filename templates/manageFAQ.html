@@ -63,7 +63,7 @@
         {% for faq in faqList %}
         <tr>
             <td>{{ faq.get_question() }}</td>
-            <td>{{ faq.get_answer() }}</td>
+            <td style="white-space:pre-line;">{{ faq.get_answer() }}</td>
             <td>
 
                 <div style="display:flex;"><a href="/updateFAQ/{{faq.get_id()}}">

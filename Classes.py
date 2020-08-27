@@ -92,14 +92,6 @@ class Listing :
     def approve(self):
         self.__approved = 1
 
-class Phone(Listing):
-    def __init__(self,name, price, description, category, seller_name, quantity, brand, ram, storage):
-        super().__init__(name, price, description, category, seller_name, quantity)
-        self.brand = brand
-        self.ram = ram
-        self.storage = storage
-
-
 
 class User :
     def __init__(self, username, email, password):

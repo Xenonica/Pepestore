@@ -5,10 +5,8 @@
 <style>
     .container{
     display:flex;
-    margin-left: 3%;
-    margin-top: 3%;
     padding:0;
-    margin-right:0;
+    margin:4vh 2vw 0 2vw;
     }
 
     .image_wrapper{
@@ -27,7 +25,6 @@
     img{
     object-fit: contain;
     max-width:100%;
-    height:auto;
     }
 
     .chat_button{
@@ -65,6 +62,7 @@
     .w3-opacity-off,.w3-hover-opacity-off:hover{opacity:1}
     .w3-opacity,.w3-hover-opacity:hover{opacity:0.60}
 </style>
+
 <div class="container">
     <div class="image_wrapper">
         {% for i in piclist %}
@@ -75,9 +73,12 @@
         <img class="mySlides" src="{{i}}"
              style="display:none; width:400px; height:400px">
         {% endfor %}
-        <!--    <img src={{listingID.get_displaypic()}} class="image-responsive" height="400" width="400">-->
     </div>
         <div class="listing-info_wrapper">
+            <div>
+                <h5 class="listing_info">Seller: <a href="/userProfile/{{u_id}}"><b>{{listingID.get_seller_name()}}</b></a></h5>
+            </div>
+
             <div class="">
                 <h1 class="listing_info">{{listingID.get_name()}}</h1>
             </div>
@@ -87,7 +88,7 @@
             </div>
 
             <div class="description_div">
-                <p class="listing_info">
+                <p class="listing_info" style="white-space:pre-line;">
                     {{ listingID.get_description() }}
                 </p>
             </div>
@@ -96,7 +97,6 @@
                 <h6 class="listing_info">Quantity left: <span style="color:red">{{listingID.get_quantity()}}</span></h6>
                 <form method="POST">
                     {{ chatform.chat(class="chat_button") }}
-<!--                    <i class="fas fa-heart fa-2x"></i>-->
                 </form>
             </div>
         </div>

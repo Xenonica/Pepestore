@@ -112,15 +112,15 @@ function AlertC() {
   {% endif %}
 
   {% if delivery.get_status() == "In Delivery" %}
-  <td><a href="/Track/{{delivery.get_deliveryID()}} " class="btn btn-info">Track</a>
+  <td style="display:flex;"><a href="/Track/{{delivery.get_deliveryID()}} " class="btn btn-info">Track</a>
    <a href="/updateDelivery/{{delivery.get_deliveryID()}}" class="btn btn-success">Update</a>
    <a href="/CancelDelivery/{{delivery.get_deliveryID()}}" class="btn btn-danger">Cancel</a></td>
   {% elif delivery.get_status() == "Cancelled" %}
-  <td><a href="#" onclick="AlertC()" class="btn btn-info">Track</a>
+  <td style="display:flex;"><a href="#" onclick="AlertC()" class="btn btn-info">Track</a>
    <a href="#" onclick="AlertC()" class="btn btn-success">Update</a>
    <a href="#" onclick="AlertC()" class="btn btn-danger">Cancel</a></td>
   {% else %}
-  <td ><a href="#" onclick="Alert()" class="btn btn-info">Track</a>
+  <td style="display:flex;"><a href="#" onclick="Alert()" class="btn btn-info">Track</a>
    <a href="#" onclick="Alert()" class="btn btn-success">Update</a>
    <a href="#" onclick="Alert()" class="btn btn-danger">Cancel</a>
   {% endif %}
@@ -161,6 +161,9 @@ border:1px solid black;
 margin-left:30px;
 }
 
+.btn{
+margin-right:8px;
+}
 
 
 </style>
