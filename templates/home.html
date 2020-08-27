@@ -5,17 +5,15 @@
 {% block content %}
 <style>
 .home_container{
-margin-left:2vw;
-margin-right:2vw;
+
 }
 
-#listings_container,#popular-listing_container{
-display:flex;
+.listing_container{
+padding: 50px 0px;
 }
+
 .listing_wrapper{
-align: center;
-padding:.5vh .5vw;
-flex-wrap:wrap;
+padding: 10px;
 }
 
 .listing_wrapper:hover{
@@ -53,17 +51,22 @@ height:200px;
     font-size:50px;
 }
 
+
+
+
+
+
 </style>
 
 <div class="hero-image">
-  <div class="hero-text">
-    <h1 class="hero-header">Pepestore</h1>
-    <p>Welcome to Pepestore. Have fun.</p>
-  </div>
+    <div class="hero-text">
+        <h1 class="hero-header">Pepestore</h1>
+        <p>Welcome to Pepestore. Have fun.</p>
+    </div>
 </div>
 <br>
 
-<div class="home_container">
+
 <!--    <h5 style="color:red">*All requested listings will be sent to the admin account for approval. Once approved, your listing will be in the 'Available Listings' page.</h5>-->
 <!--    <br><br>-->
 <!--    <h1>About Pepestore</h1>-->
@@ -80,23 +83,30 @@ height:200px;
 <!--        5. Once submitted, your requested listing will be sent to the admin for approval.<br>-->
 <!--        6. Once the admin has approve the listing, the listing will be seen by everyone at 'Available Listings' on-->
 <!--        navbar.</p>-->
-    <br><br><br>
-    <h1>Latest Listings</h1>
-    <div id="listings_container">
 
-        {% for i in newestLists %}
-        {{ filter(i) }}
-        {% endfor %}
-    </div>
-    <br><br><br><br>
-    <h1>Most Visited Listings</h1>
-    <div id="popular-listing_container">
-
-        {% for i in popularLists %}
-        {{ filter(i) }}
-        {% endfor %}
+<div class="container">
+    <div class="listing_container">
+        <h1 style="font-size:2.5rem">Latest Listings</h1>
+        <div class="row">
+            {% for i in newestLists %}
+            <div class="col-12 col-md-6 col-lg-3">
+                {{ filter(i) }}
+            </div>
+            {% endfor %}
+        </div>
     </div>
 
+    <div class="listing_container">
+        <h1 style="font-size:2.5rem">Most Visited Listings</h1>
+        <div class="row">
+            {% for i in popularLists %}
+            <div class="col-12 col-md-6 col-lg-3">
+                {{ filter(i) }}
+            </div>
+            {% endfor %}
+        </div>
+    </div>
 </div>
+
 
 {% endblock %}

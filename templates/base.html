@@ -5,45 +5,97 @@
     <title>{% block title %}{% endblock %}</title>
 
     <!-- Bootstrap 4.3.1 CSS -->
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+          integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.2/css/all.css">
 </head>
 <body>
-    {% block navbar %}
-        {% include 'includes/_navbar2.0.html' %}
-    {% endblock %}
+{% block navbar %}
+{% include 'includes/_navbar2.0.html' %}
+{% endblock %}
 
-    <div class="container-fluid">
-        {% block content %}
-        {% endblock %}
+<div class="container-fluid">
+    {% block content %}
+    {% endblock %}
+</div>
+
+{% block scripts %}
+<!-- jQuery 3.3.1 + Popper.js 1.14.7 + Bootstrap JavaScript Plugins 4.3.1 -->
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+        integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+        crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+        integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+        crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+        integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+        crossorigin="anonymous"></script>
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js" type="text/javascript"></script>
+{% endblock %}
+
+<div id="imageCon">
+    <button onclick="showChatbot()" id="btn1"><img src="/static/icons/chatbot.png" width="50px" height="50px"></button>
+</div>
+<div id="chatbotCon">
+    <button id="x_chat" onclick="hideChatbot()">&times;</button>
+    <iframe id='chatbot' allow="microphone;"
+            src="https://console.dialogflow.com/api-client/demo/embedded/fa8be0b4-b780-4c70-9fc4-44c1b7dcb020"></iframe>
+</div>
+
+
+<!-- Footer -->
+<footer class="page-footer font-small pt-4" style="background-color:black; color:white;">
+    <div class="container text-center text-md-left">
+        <div class="row text-center text-md-left mt-3 pb-3">
+            <div class="col-md-6 col-lg-6 col-xl-6 mx-auto mt-3">
+                <h6 class="text-uppercase mb-4 font-weight-bold">Pepestore</h6>
+                <p>Scuffed Carousell</p>
+            </div>
+            <div class="col-md-6 col-lg-6 col-xl-6 mx-auto mt-3">
+                <h6 class="text-uppercase mb-4 font-weight-bold">Contact</h6>
+                <p>
+                    <i class="fas fa-home mr-3"></i> 180 Ang Mo Kio Ave
+                    8, Singapore 569830</p>
+                <p>
+                    <i class="fas fa-envelope mr-3"></i> pepestorexd@gmail.com</p>
+                <p>
+                    <i class="fas fa-phone mr-3"></i> + 65 8888 8888</p>
+            </div>
+        </div>
+        <hr>
+        <div class="row d-flex align-items-center justify-content-between">
+            <div class="col-md-6 col-lg-7">
+                <p class="text-center text-md-left">© 2020 Copyright:
+                    <a href="/">
+                        <strong> Pepestore</strong>
+                    </a>
+                </p>
+            </div>
+            <div class="col-md-6 col-lg-5 ml-lg-0">
+                <div class="text-center text-md-right">
+                    <ul class="list-unstyled list-inline">
+                        <li class="list-inline-item">
+                            <a class="mx-1" href="https://www.facebook.com">
+                                <i class="fab fa-facebook-f"></i>
+                            </a>
+                        </li>
+                        <li class="list-inline-item">
+                            <a class="mx-1" href="https://www.twitter.com">
+                                <i class="fab fa-twitter"></i>
+                            </a>
+                        </li>
+                        <li class="list-inline-item">
+                            <a class="mx-1" href="https://www.google.com">
+                                <i class="fab fa-google-plus-g"></i>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
     </div>
-
-    {% block scripts %}
-        <!-- jQuery 3.3.1 + Popper.js 1.14.7 + Bootstrap JavaScript Plugins 4.3.1 -->
-        <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
-        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
-        <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js" type="text/javascript"></script>
-    {% endblock %}
-
-    <div id="imageCon"><button onclick="showChatbot()" id="btn1"><img src="/static/icons/chatbot.png" width="50px" height="50px"></button></div>
-    <div id="chatbotCon"><button id="x_chat" onclick="hideChatbot()">&times;</button><iframe id='chatbot' allow="microphone;" src="https://console.dialogflow.com/api-client/demo/embedded/fa8be0b4-b780-4c70-9fc4-44c1b7dcb020"></iframe></div>
-
-    <footer class="footer">
-        <div class="about_us-container" style="flex-direction:column; margin-top:3vh;margin-left:2vw;">
-            <h4>Contact Us</h4>
-            <p style="font-size:1rem; margin-bottom:.3rem"><i class="fas fa-map-marker-alt"></i>&nbsp;180 Ang Mo Kio Ave 8, Singapore 569830</p>
-            <p style="font-size:1rem; margin-bottom:.3rem"><i class="fas fa-phone-alt"></i>&nbsp;+65 8888 8888</p>
-            <p style="font-size:1rem; margin-bottom:.3rem"><i class="fas fa-envelope"></i>&nbsp;pepestorexd@gmail.com</p>
-        </div>
-        <div class="socials-container" style="margin-top:3vh;margin-right:25vw;">
-            <h4>Socials</h4>
-            <a href="https://www.facebook.com" style="margin-right:.5vw;"><i class="fab fa-facebook fa-3x"></i></a>
-            <a href="https://www.twitter.com" style="margin-right:.5vw;"><i class="fab fa-twitter-square fa-3x"></i></a>
-            <a href="https://www.instagram.com" style="margin-right:.5vw;"><i class="fab fa-instagram fa-3x"></i></a>
-        </div>
-    </footer>
+</footer>
 
 </body>
 </html>
@@ -62,6 +114,7 @@ function hideChatbot(){
   y.style.display = 'none';
 
 }
+
 </script>
 
 <style>
