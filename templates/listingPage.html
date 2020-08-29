@@ -3,25 +3,6 @@
 {% block content %}
 
 <style>
-    .container{
-    display:flex;
-    padding:0;
-    margin:4vh 2vw 0 2vw;
-    }
-
-    .image_wrapper{
-    }
-
-    .listing-info_wrapper{
-    margin-left:10%;
-    display:flex;
-    flex-direction: column;
-    }
-
-    .description_div{
-    flex-grow:1;
-    }
-
     img{
     object-fit: contain;
     max-width:100%;
@@ -31,20 +12,18 @@
     border-radius: 50px;
     -moz-border-radius: 50px;
     -webkit-border-radius: 50px;
-    width: 200px;
-    height: 40px;
     background-color: #343a40;
     color: white;
     border: 1px solid black;
     }
 
-    .images_container{
-    margin-left: 3%;
-    margin-top: 3%;
-    margin-right:3%;
-    margin-bottom: 3%;
-    padding:0;
-    display:flex;
+    .chat_button:hover{
+        color: white;
+        background-color: #464d54;
+    }
+
+    .listing_info{
+    margin-bottom: 1.3rem;
     }
 
     .opac{
@@ -61,54 +40,48 @@
 
     .w3-opacity-off,.w3-hover-opacity-off:hover{opacity:1}
     .w3-opacity,.w3-hover-opacity:hover{opacity:0.60}
+
 </style>
 
-<div class="container">
-    <div class="image_wrapper">
-        {% for i in piclist %}
-        {% if piclist.index(i) == 0 %}
-        <img class="mySlides" src="{{i}}"
-             style="width:400px; height:400px">
-        {% endif %}
-        <img class="mySlides" src="{{i}}"
-             style="display:none; width:400px; height:400px">
-        {% endfor %}
-    </div>
-        <div class="listing-info_wrapper">
-            <div>
-                <h5 class="listing_info">Seller: <a href="/userProfile/{{u_id}}"><b>{{listingID.get_seller_name()}}</b></a></h5>
+<div class="container" style="padding-top:60px;">
+    <div class="card" style="padding:30px;">
+        <div class="row">
+            <div class="col-12 col-lg-7">
+                {% for i in piclist %}
+                {% if piclist.index(i) == 0 %}
+                <img class="mySlides" src="{{i}}"
+                     style="width:400px; height:400px">
+                {% endif %}
+                <img class="mySlides" src="{{i}}"
+                     style="display:none; width:400px; height:400px">
+                {% endfor %}
             </div>
-
-            <div class="">
+            <div class="col-12 col-lg-5 d-flex flex-column">
+                <h5 class="listing_info">Seller: <a href="/userProfile/{{u_id}}"><b>{{listingID.get_seller_name()}}</b></a>
+                </h5>
                 <h1 class="listing_info">{{listingID.get_name()}}</h1>
-            </div>
-
-            <div class="">
                 <h3 class="listing_info" style="color:red">S${{ listingID.get_price() }}</h3>
-            </div>
-
-            <div class="description_div">
-                <p class="listing_info" style="white-space:pre-line;">
+                <p class="listing_info" style="white-space:pre-line; flex-grow:1;">
                     {{ listingID.get_description() }}
                 </p>
-            </div>
-
-            <div id="quantity-chat-button_div">
                 <h6 class="listing_info">Quantity left: <span style="color:red">{{listingID.get_quantity()}}</span></h6>
                 <form method="POST">
-                    {{ chatform.chat(class="chat_button") }}
+                    {{ chatform.chat(class="btn chat_button w-50") }}
                 </form>
             </div>
         </div>
+        <div class="row" style="margin-top: 40px">
+            <div class="col-12">
+                {% for i in piclist %}
+                <img class="demo w3-opacity w3-hover-opacity-off" src="{{i}}"
+                     style="width:100px;height:100px;float:left;cursor:pointer;margin-right:10px"
+                     onclick="currentDiv({{piclist.index(i)+2}})">
+                {% endfor %}
+            </div>
+        </div>
+    </div>
 </div>
 
-<div class="images_container">
-    {% for i in piclist %}
-    <img class="demo w3-opacity w3-hover-opacity-off" src="{{i}}"
-         style="width:100px;height:100px;float:left;cursor:pointer;margin-right:10px"
-         onclick="currentDiv({{piclist.index(i)+2}})">
-    {% endfor %}
-</div>
 
 <script>
 function currentDiv(n) {
@@ -130,6 +103,12 @@ function showDivs(n) {
   x[slideIndex-1].style.display = "block";
   dots[slideIndex-1].className += "w3-opacity-off";
 }
+
+
+
+
+
+
 </script>
 
 {% endblock %}

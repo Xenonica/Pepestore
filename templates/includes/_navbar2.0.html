@@ -107,7 +107,7 @@
 <h1 class="form-popup" id="alert">{{ alert }}</h1>
 {% endif %}
 <div class="form-popup" id="Register">
-  <form class="form-container card w3-animate-top" id="regform" name="register" method="post">
+  <form class="form-container card w3-animate-top" name="register" method="post">
       <a onclick="closeRegister()" class="closebtn"><i class="fas fa-times fa-2x" style="float:right; cursor:pointer;"></i></a>
       <div class="card-header" style="background-color: white;">
           <h1 class="card-title">Register</h1>
@@ -154,18 +154,22 @@
 </div>
 
 <div class="form-popup" id="ForgetPassword">
-  <form class="form-container" name="login" method="post">
-    <h1>Forget Password</h1>
-    <div class="form-group">
-    {{ render_field(fpwform.forgetemail, class="form-control") }}
-    </div>
-    {% if alert == "WEmail" %}
-      <p style="color:red">Please enter a valid email</p>
-    {% endif %}
-    <div class="form-group">
-    {{ fpwform.submit }}
-    </div>
-    <button type="reset" onclick="closeFPW()" class="closebtn">Close</button>
+  <form class="form-container card" name="login" method="post">
+      <a onclick="closeFPW()" class="closebtn"><i class="fas fa-times fa-2x" style="float:right; cursor:pointer;"></i></a>
+      <div class="card-header" style="background-color: white;">
+          <h1>Forget Password</h1>
+      </div>
+      <div class="card-body">
+          <div class="form-group">
+              {{ render_field(fpwform.forgetemail, class="form-control") }}
+          </div>
+          {% if alert == "WEmail" %}
+          <p style="color:red">Please enter a valid email</p>
+          {% endif %}
+          <div class="form-group">
+              {{ fpwform.submit }}
+          </div>
+      </div>
   </form>
 </div>
 
@@ -344,7 +348,7 @@ background-color:  #ff9999;
     height: 30rem;
 }
 
-#login, #register {
+.form-container #login, #register, #submit {
     width: 100%;
     color: #fff;
     background-color: #007bff;
