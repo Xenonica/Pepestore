@@ -4,51 +4,47 @@
 {% block content %}
 {% from "includes/_formHelper.html" import render_field %}
 
-<div class="createListing_container">
-  <div style="display:flex; align-items:center; justify-content:center;">
-    <h1 class="display-4">Create Listing</h1>
-  </div>
-  <br>
-  <div style="display:flex;">
-    <div>
-      <img src="{{Img1}}" height="400px" width="400px" id="DisplayImg">
+<div class="container">
+
+    <h1 class="display-4 mb-5" style="text-align:center;">Create Listing</h1>
+
+    <div class="row">
+        <div class="col-lg-6 col-md-6 col-12">
+            <img src="{{Img1}}" height="400px" width="400px" id="DisplayImg">
+        </div>
+        <div class="col-lg-6 col-md-6 col-12">
+            <form method="POST" action="" class="list-info-container">
+                {{ render_field(form.name, class="form-control") }}
+                {{ render_field(form.price, class="form-control") }}
+                {{ render_field(form.description, class="form-control") }}
+                {{ render_field(form.category, class="form-control") }}
+                {{ render_field(form.quantity, class="form-control") }}
+                <input type="submit" value="Submit" class="btn btn-primary"/>
+                <a href="/createUserImages"><input type="button" id="button_back" class="btn btn-outline-secondary"
+                                                   value="Back"></a>
+            </form>
+        </div>
     </div>
-    <form method="POST" action="" class="list-info-container">
-      {{ render_field(form.name, class="form-control") }}
-      {{ render_field(form.price, class="form-control") }}
-      {{ render_field(form.description, class="form-control") }}
-      {{ render_field(form.category, class="form-control") }}
-      {{ render_field(form.quantity, class="form-control") }}
-      <input type="submit" value="Submit" class="btn btn-primary"/>
-      <a href="/createUserImages"><input type="button" id="button_back" class="btn btn-outline-secondary" value="Back"></a>
-    </form>
-  </div>
+
+
 </div>
 
 <style>
-.btn{
-width:100px;
-height:40px;
-margin-right:8px;
-}
+  .btn{
+  width:100px;
+  height:40px;
+  margin-right:8px;
+  }
 
   #DisplayImg{
     object-fit:cover;
     max-width:100%;
     }
 
-   .createListing_container{
-   display:flex;
-   margin:0 2vw;
-   padding:0;
-   flex-direction:column;
-   }
-
-   .list-info-container{
-   margin-left:3vw;
-   }
    .form-control{
    margin-bottom:2vh;
    }
+
+
 </style>
 {% endblock %}

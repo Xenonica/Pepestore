@@ -107,41 +107,49 @@
 <h1 class="form-popup" id="alert">{{ alert }}</h1>
 {% endif %}
 <div class="form-popup" id="Register">
-  <form class="form-container" name="register" method="post">
-    <h1>Register</h1>
-    <div class="form-group">
-        {{ render_field(regform.username, class="form-control") }}
-        </div>
+  <form class="form-container card w3-animate-top" id="regform" name="register" method="post">
+      <a onclick="closeRegister()" class="closebtn"><i class="fas fa-times fa-2x" style="float:right; cursor:pointer;"></i></a>
+      <div class="card-header" style="background-color: white;">
+          <h1 class="card-title">Register</h1>
+      </div>
+      <div class="card-body">
         <div class="form-group">
-        {{ render_field(regform.email, class="form-control") }}
+            <div class="form-group">
+            {{ render_field(regform.username, class="form-control") }}
+            </div>
+            <div class="form-group">
+            {{ render_field(regform.email, class="form-control") }}
+            </div>
+            <div class="form-group">
+            {{ render_field(regform.password, class="form-control") }}
+            </div>
+            {{ regform.register }}
         </div>
-        <div class="form-group">
-        {{ render_field(regform.password, class="form-control") }}
-        </div>
-        <div class="form-group">
-        {{ regform.register }}
-        </div>
-    <button type="reset" onclick="closeRegister()" class="closebtn">Close</button>
+      </div>
   </form>
 </div>
 
 <div class="form-popup" id="Login">
-  <form class="form-container" name="login" method="post">
-    <h1>Login</h1>
-    <div class="form-group">
-    {{ render_field(logform.username, class="form-control") }}
-    </div>
-    <div class="form-group">
-    {{ render_field(logform.password, class="form-control") }}
-    </div>
-    {% if alert == "WPW" %}
-      <p style="color:red">Wrong Password</p>
-    {% endif %}
-    <a onclick="openFPW()" style="color:red;cursor:pointer;">Forgot password</a>
-    <div class="form-group" style="margin-top:10px;">
-    {{ logform.login }}
-    </div>
-    <button type="reset" onclick="closeLogin()" class="closebtn">Close</button>
+  <form class="form-container w3-animate-top card" name="login" method="post">
+      <a onclick="closeLogin()" class="closebtn"><i class="fas fa-times fa-2x" style="float:right; cursor:pointer;"></i></a>
+      <div class="card-header" style="background-color: white;">
+          <h1 class="card-title">Login</h1>
+      </div>
+      <div class="card-body">
+          <div class="form-group">
+          {{ render_field(logform.username, class="form-control") }}
+          </div>
+          <div class="form-group">
+          {{ render_field(logform.password, class="form-control") }}
+          </div>
+          {% if alert == "WPW" %}
+          <p style="color:red">Wrong Password</p>
+          {% endif %}
+          <a onclick="openFPW()" style="color:red;cursor:pointer;"><u>Forgot password?</u></a>
+          <div class="form-group" style="margin-top:10px;">
+          {{ logform.login }}
+          </div>
+      </div>
   </form>
 </div>
 
@@ -318,33 +326,44 @@ background-color:  #ff9999;
 }
 
 .form-container {
-    max-width: 300px;
-    padding: 10px;
+    height: 35rem;
+    width: 35rem;
+    padding: 20px 50px 20px 50px;
     background-color: white;
+    margin: 10px;
 }
 
-.form-container input[type=text], .form-container input[type=password] {
+.w3-animate-top{position:relative;animation:animatetop 0.4s}@keyframes animatetop{from{top:-300px;opacity:0} to{top:0;opacity:1}}
+
+
+.form-container label {
+    float: left;
+}
+
+#Login .form-container {
+    height: 30rem;
+}
+
+#login, #register {
     width: 100%;
-    padding: 15px;
-    margin: 5px 0 22px 0;
-    border: none;
-    background: #f1f1f1;
+    color: #fff;
+    background-color: #007bff;
+    border-color: #007bff;
+    font-weight: 400;
+    text-align: center;
+    vertical-align: middle;
+    user-select: none;
+    border: 1px solid transparent;
+    padding: .375rem .75rem;
+    font-size: 1rem;
+    line-height: 1.5;
+    border-radius: .25rem;
+    transition: color .15s ease-in-out,background-color .15s ease-in-out,border-color .15s ease-in-out,box-shadow .15s ease-in-out;
+    margin-top: 45px;
 }
 
-.form-container input[type=text]:focus, .form-container input[type=password]:focus {
-    background-color: #ddd;
-    outline: none;
-}
-
-.form-container .btn {
-    background-color: #4CAF50;
-    color: white;
-    padding: 16px 20px;
-    border: none;
-    cursor: pointer;
-    width: 100%;
-    margin-bottom:10px;
-    opacity: 0.8;
+#login:hover {
+    background-color: #0069d9;
 }
 
 .form-container .cancel {
