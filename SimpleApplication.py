@@ -2,6 +2,7 @@ from flask import Flask, render_template, request, redirect, url_for , session, 
 from Forms import CreateListing , CreateAccount , LoginAccount, Logout , Chat , ChatOffer , ProfileForm , CreateDeliveryForm,CreateFeedbackForm,ForgetPassword,ChangePassword
 from flask_socketio import SocketIO , send , disconnect
 from datetime import datetime , timedelta
+from werkzeug.utils import *
 import shelve, os , Classes , hashlib,shutil
 import folium
 import geocoder
@@ -263,6 +264,7 @@ def changePassword(id):
 def createUserImages():
     if request.method == 'POST':
         todelete = request.form['todelete']
+
         if todelete == '':
 
             #Path of where to store images
@@ -280,7 +282,7 @@ def createUserImages():
                     if filename == '' :
                         break
                     else :
-                        filename = file.filename
+                        filename = secure_filename(filename)
                         #Make directory for image
                         destination = '/'.join([target]+[filename])
                         file.save(destination)
