@@ -140,9 +140,9 @@ dmypy.json
 .pytype/
 
 # Shelve
-storage.db.bak
-storage.db.dat
-storage.db.dir
+#storage.db.bak
+#storage.db.dat
+#storage.db.dir
 
 #User files
 static/listings
