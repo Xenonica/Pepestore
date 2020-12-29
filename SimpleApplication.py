@@ -182,7 +182,6 @@ def unauthorize():
 
 @app.route('/', methods=['GET', 'POST'])
 def home():
-    print(Flask(__name__))
     listingList = []
     listingDict = {}
     mostViewedList = []
