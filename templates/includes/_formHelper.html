@@ -31,7 +31,11 @@
         <div class="card-body">
             <h5 class="card-title">{{ i.get_name() }}</h5>
             <p class="card-text">${{ i.get_price() }}</p>
-            <p class="card-text" style="color:red; font-weight:bold;">Quantity:{{ i.get_quantity() }}</p>
+            {% if i.get_quantity() == 0 %}
+            <p class="card-text" style="color:red; font-weight:bold;">Stock: OUT OF STOCK</p>
+            {% else %}
+            <p class="card-text" style="color:red; font-weight:bold;">Stock:{{ i.get_quantity() }}</p>
+            {% endif %}
         </div>
     </a>
 </div>
