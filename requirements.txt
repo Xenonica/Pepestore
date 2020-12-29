@@ -19,3 +19,7 @@ folium==0.10.1
 
 #Asynchronous services
 eventlet==0.30.0
+
+#heroku
+gunicorn==20.0.4
+
