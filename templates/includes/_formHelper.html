@@ -9,20 +9,6 @@
 {% endmacro %}
 
 {% macro filter(i) %}
-{% if i.get_approved() != 0 %}
-<!--<div class="listing_wrapper">-->
-<!--    <a href="/listingPage/{{i.get_listingID()}}" style="color:black; text-decoration:none;">-->
-<!--        <span>Seller: <b>{{ i.get_seller_name() }}</b></span>-->
-<!--        <br>-->
-<!--        <img src='{{i.get_displaypic()}}' width="250px" height="250px" style="object-fit:cover;">-->
-<!--        <br>-->
-<!--        <span><b>{{ i.get_name() }}</b></span>-->
-<!--        <br>-->
-<!--        <span><b>${{ i.get_price() }}</b></span>-->
-<!--        <br>-->
-<!--        <span>Quantity: <b style="color:red">{{ i.get_quantity() }}</b></span>-->
-<!--    </a>-->
-<!--</div>-->
 <div class="card listing_wrapper">
     <a href="/listingPage/{{i.get_listingID()}}" style="color:black; text-decoration:none;">
         <span>Seller: <b>{{ i.get_seller_name() }}</b></span>
@@ -39,7 +25,6 @@
         </div>
     </a>
 </div>
-{% endif %}
 {% endmacro %}
 
 {% macro reviews(i) %}

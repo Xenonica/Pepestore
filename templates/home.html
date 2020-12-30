@@ -88,9 +88,11 @@ height:200px;
         <h1 style="font-size:2.5rem">Latest Listings</h1>
         <div class="row">
             {% for i in newestLists %}
+            {% if i.get_approved() != 0 %}
             <div class="col-12 col-md-6 col-lg-3">
                 {{ filter(i) }}
             </div>
+            {% endif %}
             {% endfor %}
         </div>
     </div>

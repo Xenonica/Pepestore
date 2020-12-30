@@ -185,6 +185,7 @@ def home():
     listingList = []
     listingDict = {}
     mostViewedList = []
+    newestLists = []
     a=[]
     print(session)
     if 'userID' not in session :
@@ -215,19 +216,25 @@ def home():
 
     a = sorted(a, key=lambda a:a.get_visits(), reverse=True)
 
-    for key in listingList:
-        if len(listingList) > 5:
-            listingList.remove(key)
-        if len(listingList) == 5:
-            break
-    newestLists = listingList[::-1]
+    if len(listingList) >=1:
+        for key in listingList:
+            if len(listingList) > 5:
+                listingList.remove(key)
+            if len(listingList) == 5:
+                break
+        newestLists = listingList[::-1]
 
-    for i in range(0,5):
-        try:
-            mostViewedList.append(a[i])
-        except IndexError:
-            print('IndexError (Most viewed)')
-            break
+        for i in range(0,5):
+            try:
+                if i == len(a):
+                    break
+                else:
+                    mostViewedList.append(a[i])
+            except IndexError:
+                print('IndexError (Most viewed)')
+                break
+    else:
+        print("No listings found")
 
     return render_template('home.html', popularLists=mostViewedList, newestLists =newestLists,alert = navbar()[0] , logout = navbar()[1] , regform = navbar()[2] , logform = navbar()[3] , fpwform= navbar()[4])
 
@@ -259,6 +266,7 @@ def changePassword(id):
     else:
         return redirect(url_for('home'))
     return render_template('changePassword.html',same=same,cpwform = cpwform,alert = navbar()[0] , logout = navbar()[1] , regform = navbar()[2] , logform = navbar()[3] , fpwform= navbar()[4])
+
 
 @app.route('/createUserImages',methods=['GET', 'POST'])
 def createUserImages():
@@ -936,6 +944,7 @@ def userProfileReviews(id):
 
     return render_template('userProfileReviews.html',Description=Description,select='all',userReviews=userReviews,id=id,reviewsamt=reviewsamt,userRating=userRating,Username=Username,Banner=Banner,ProfPic = ProfPic,userListings = userListings,alert = navbar()[0] , logout = navbar()[1] , regform = navbar()[2] , logform = navbar()[3] , fpwform= navbar()[4])
 
+
 @app.route('/userProfile/<int:id>/reviews/sellers/', methods=['GET', 'POST'])
 def userProfileReviewsSellers(id):
     db = shelve.open('storage.db', 'w')
@@ -969,6 +978,7 @@ def userProfileReviewsSellers(id):
 
     return render_template('userProfileReviews.html',Description=Description,select = 'sellers',userReviews=userSellerReviews,id=id,reviewsamt=reviewsamt,userRating=userRating,Username=Username,Banner=Banner,ProfPic = ProfPic,userListings = userListings,alert = navbar()[0] , logout = navbar()[1] , regform = navbar()[2] , logform = navbar()[3] , fpwform= navbar()[4])
 
+
 @app.route('/userProfile/<int:id>/reviews/buyers/', methods=['GET', 'POST'])
 def userProfileReviewsBuyers(id):
     db = shelve.open('storage.db', 'w')
@@ -1001,6 +1011,7 @@ def userProfileReviewsBuyers(id):
     reviewsamt = len(userReviews)
 
     return render_template('userProfileReviews.html',Description=Description,select = 'buyers',userReviews=userBuyerReviews,id=id,reviewsamt=reviewsamt,userRating=userRating,Username=Username,Banner=Banner,ProfPic = ProfPic,userListings = userListings,alert = navbar()[0] , logout = navbar()[1] , regform = navbar()[2] , logform = navbar()[3] , fpwform= navbar()[4])
+
 
 @app.route('/Cart',methods=['GET', 'POST'])
 def Cart():
@@ -1040,6 +1051,7 @@ def Cart():
 
     return render_template('Cart.html',TotalPrice=('%.2f'%TotalPrice),Purchases = Purchases,listingDict = listingDict,alert = navbar()[0] , logout = navbar()[1] , regform = navbar()[2] , logform = navbar()[3] , fpwform= navbar()[4])
 
+
 @app.route('/pendingListing', methods=['GET', 'POST'])
 def pendingListing():
     if session['status'] == 'Admin' or session['status'] == 'Owner':
@@ -1061,6 +1073,7 @@ def pendingListing():
 
     return render_template('pendingListing.html', listingList = listingList,alert = navbar()[0] , logout = navbar()[1] , regform = navbar()[2] , logform = navbar()[3] , fpwform= navbar()[4])
 
+
 @app.route('/approveListing/<int:id>', methods=['GET', 'POST'])
 def approveListing(id):
     listingsDict = {}
@@ -1070,6 +1083,7 @@ def approveListing(id):
     db['Listings'] = listingsDict
     db.close()
     return redirect(url_for('pendingListing'))
+
 
 @app.route('/retrieveUsers', methods=['GET', 'POST'])
 def retrieveUsers():
@@ -1091,6 +1105,7 @@ def retrieveUsers():
 
     return render_template('retrieveUsers.html', userList=userList, count=len(userList),alert = navbar()[0] , logout = navbar()[1] , regform = navbar()[2] , logform = navbar()[3] , fpwform= navbar()[4])
 
+
 @app.route('/deleteUser/<int:id>', methods=['GET', 'POST'])
 def deleteUser(id):
     usersDict = {}
@@ -1104,6 +1119,7 @@ def deleteUser(id):
     else:
         return redirect(url_for('home'))
 
+
 @app.route('/makeAdmin/<int:id>', methods=['GET', 'POST'])
 def makeAdmin(id):
     if id != 1 :
@@ -1115,6 +1131,7 @@ def makeAdmin(id):
         db.close()
     return redirect(url_for('retrieveUsers'))
 
+
 @app.route('/makeNormal/<int:id>', methods=['GET', 'POST'])
 def makeNormal(id):
     if id != 1 :
@@ -1125,6 +1142,7 @@ def makeNormal(id):
         db['Users'] = usersDict
         db.close()
     return redirect(url_for('retrieveUsers'))
+
 
 @app.route('/AllChats')
 def AllChats():
@@ -1157,6 +1175,7 @@ def AllChats():
 
 
     return render_template('AllChats.html',userDict = userDict,listingDict = listingDict,ChatList = ChatList,alert = navbar()[0] , logout = navbar()[1] , regform = navbar()[2] , logform = navbar()[3] , fpwform= navbar()[4])
+
 
 @app.route('/retrieveDelivery')
 def retrieveDelivery():
