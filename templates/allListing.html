@@ -54,7 +54,9 @@ heigh:250px;
     <div class="listing_container">
         {% for id in listingDict %}
         {% if selected_category == 'All' %}
+        {% if listingDict[id].get_approved() != 0 %}
         {{ filter(listingDict[id]) }}
+        {% endif %}
         {% elif listingDict[id].get_category() == selected_category %}
         {{ filter(listingDict[id]) }}
         {% endif %}
