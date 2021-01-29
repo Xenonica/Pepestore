@@ -10,7 +10,7 @@
         <button id="toggleListing" class="togglebtns" onclick="window.location.href='/userProfile/{{id}}/'">Listing</button>
         <button id="toggleReviews" class="togglebtns" onclick="window.location.href='/userProfile/{{id}}/reviews/'">Reviews</button>
     </div>
-    <div class="container">
+    <div id="container">
 
         <div id="User_container">
             <h2 id="Username">{{ Username }}</h2>
@@ -52,12 +52,6 @@
 width:150px;
 }
 
-.container{
-display: flex;
-flex-direction:row;
-margin:0;
-}
-
 #Description{
 word-wrap: break-word;
 max-width: 250px;
@@ -76,7 +70,6 @@ left:330px;
 padding:25px;
 border-radius:30px;
 box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
-flex-grow:1;
 }
 
 .listing_wrapper{
@@ -107,6 +100,15 @@ max-width:100%;
   border-width: 5px;
   border-style: solid;
   border-color: white;
+}
+@media only screen and (max-width: 600px) {
+  #ProfPic{
+  position:absolute;
+  min-width: 150px;
+  max-width: 150px;
+  min-height: 150px;
+  max-height: 150px;
+  }
 }
 
 #User_container{
@@ -147,7 +149,10 @@ max-width:100%;
 .togglebtns:hover{
   background-color:rgb(230, 230, 230);
 }
-
+#container{
+display: flex;
+margin:15px;
+}
 
 /****** Style Star Rating Widget *****/
 
